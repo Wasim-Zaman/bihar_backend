@@ -27,6 +27,12 @@ model User {
   @@map("user")
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
 model Grievance {
   id                     String   @id @default(uuid())
   category               String   // Category of the grievance
@@ -47,11 +53,23 @@ model Grievance {
   updatedAt              DateTime @updatedAt      // Timestamp for when the grievance was last updated
 }
 
+model Event {
+  id             String   @id @default(uuid())
+  eventTitle     String
+  date           DateTime
+  constituency   String
+  boothNumber    Int
+  mobileNumber   String
+  status         Status      
+  document       String?  // Optional field for storing document file path
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
+  @@map("events")
 }
 
-
+enum Status {
+    0
+    1
+    2
+}
