@@ -27,6 +27,27 @@ model User {
   @@map("user")
 }
 
+model Grievance {
+  id                     String   @id @default(uuid())
+  category               String   // Category of the grievance
+  subCategory            String   // Sub-category of the grievance
+  fullName               String?  // Full name of the person submitting the grievance
+  fatherName             String?  // Father's name
+  legislativeConstituency String? // Legislative constituency of the person
+  boothNameOrNumber      String?  // Booth name or number
+  contactNumber          String   // Contact number of the person
+  gender                 Gender?  // Gender of the person
+  age                    Int?     // Age of the person
+  voterId                String?  // Voter ID (EPIC No)
+  ticketTitle            String   // Title of the grievance ticket
+  description            String?  // Description of the grievance
+  attachment             String?  // File path to the attachment
+
+  createdAt              DateTime @default(now()) // Timestamp for when the grievance was created
+  updatedAt              DateTime @updatedAt      // Timestamp for when the grievance was last updated
+}
+
+
 enum Gender {
   MALE
   FEMALE

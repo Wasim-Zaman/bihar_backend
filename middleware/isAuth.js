@@ -38,6 +38,7 @@ module.exports = (req, res, next) => {
     throw error;
   }
 
+  req.user = decodedToken;
   req.mobileNumber = decodedToken.mobileNumber;
 
   next();

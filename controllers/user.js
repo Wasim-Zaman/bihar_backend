@@ -25,7 +25,7 @@ exports.login = async (req, res, next) => {
     }
 
     // Create a JWT token
-    const token = JWT.createToken(user);
+    const token = JWT.createToken(user, (options = { algorithm: "HS256" }));
 
     // Return the user data and token
     res.status(200).json(
