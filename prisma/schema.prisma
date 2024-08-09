@@ -15,15 +15,15 @@ datasource db {
 
 model User {
   id                      String   @id @default(uuid())
-  fullName                String
-  fatherName              String
-  epicId                  String
-  mobileNumber            String
+  fullName                String?
+  fatherName              String?
+  epicId                  String?
+  mobileNumber            String   @unique
   legislativeConstituency String?
   boothNameOrNumber       String?
-  gender                  Gender
-  age                     Int
-  email                   String   @unique  
+  gender                  Gender?
+  age                     Int?
+  email                   String?  @unique  
   @@map("user")
 }
 

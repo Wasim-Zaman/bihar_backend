@@ -50,16 +50,14 @@ class User {
 
   static async updateById(id, data) {
     try {
-      console.log(
-        `Updating user with ID ${id} and data: ${JSON.stringify(data)}`
-      );
+      // Perform the update
       return await prisma.user.update({
-        where: { id: id },
+        where: { id: id.toString() },
         data,
       });
     } catch (error) {
-      console.error("Error updating user by id:", error);
-      throw error;
+      console.error(`Error updating user with id ${id}:`, error.message);
+      throw new Error(`Unable to update user with id ${id}`);
     }
   }
 
@@ -123,6 +121,26 @@ class User {
       };
     } catch (error) {
       console.error("Error getting users with pagination and search:", error);
+      throw error;
+    }
+  }
+
+  // New login method
+  static async login(mobileNumber) {
+    try {
+      let user = await this.findByMobileNumber(mobileNumber);
+
+      if (!user) {
+        // If user doesn't exist, create a new one with only mobileNumber
+        user = await this.create({ mobileNumber });
+        console.log(`Created new user with mobile number: ${mobileNumber}`);
+      } else {
+        console.log(`User with mobile number: ${mobileNumber} already exists`);
+      }
+
+      return user;
+    } catch (error) {
+      console.error("Error during login process:", error);
       throw error;
     }
   }

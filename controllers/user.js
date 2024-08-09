@@ -4,7 +4,43 @@ const response = require("../utils/response");
 const JWT = require("../utils/jwt");
 const Bcrypt = require("../utils/bcrypt");
 
-// Register a new user
+// Login or register a user based on mobile number
+exports.login = async (req, res, next) => {
+  try {
+    const { mobileNumber } = req.body;
+
+    if (!mobileNumber) {
+      throw new CustomError("Mobile number is required", 400);
+    }
+
+    // Check if the user already exists
+    let user = await User.findByMobileNumber(mobileNumber);
+
+    // If the user does not exist, create a new user
+    if (!user) {
+      user = await User.create({ mobileNumber });
+      console.log(`New user created with mobile number: ${mobileNumber}`);
+    } else {
+      console.log(`User with mobile number: ${mobileNumber} already exists`);
+    }
+
+    // Create a JWT token
+    const token = JWT.createToken(user);
+
+    // Return the user data and token
+    res.status(200).json(
+      response(200, true, "Login successful", {
+        user: user,
+        token,
+      })
+    );
+  } catch (error) {
+    console.log(`Error in login: ${error.message}`);
+    next(error);
+  }
+};
+
+// Register or update a user based on mobile number with authorization check
 exports.register = async (req, res, next) => {
   const {
     fullName,
@@ -19,23 +55,33 @@ exports.register = async (req, res, next) => {
   } = req.body;
 
   try {
-    let existingUser = await User.findByMobileNumber(mobileNumber);
-    if (existingUser) {
-      throw new CustomError(
-        "User already exists with the entered mobile number",
-        400
-      );
-    }
-    existingUser = await User.findByEmail(email);
-    if (existingUser) {
-      throw new CustomError("User already exists with the entered email", 400);
+    // Check if the mobile number from the token matches the mobile number in the request
+    if (req.mobileNumber !== mobileNumber) {
+      throw new CustomError("Unauthorized: Mobile number mismatch", 401);
     }
 
-    const newUser = await User.create({
+    // Find the user by mobile number
+    let user = await User.findByMobileNumber(mobileNumber);
+    if (!user) {
+      throw new CustomError(
+        "User not found with the entered mobile number",
+        404
+      );
+    }
+
+    // If an email is provided, check if it already exists for another user
+    if (email) {
+      const userByEmail = await User.findByEmail(email);
+      if (userByEmail && userByEmail.id !== user.id) {
+        throw new CustomError("Email already registered", 409);
+      }
+    }
+
+    // Update user details
+    user = await User.updateById(user.id, {
       fullName,
       fatherName,
       epicId,
-      mobileNumber,
       gender,
       age,
       email,
@@ -43,59 +89,27 @@ exports.register = async (req, res, next) => {
       boothNameOrNumber,
     });
 
-    console.log(`User registered with email: ${email}`);
+    console.log(
+      `User with mobile number: ${mobileNumber} updated successfully`
+    );
 
-    res.status(201).json(
-      response(201, true, "User registered successfully", {
+    res.status(200).json(
+      response(200, true, "User updated successfully", {
         user: {
-          id: newUser.id,
-          email: newUser.email,
-          fullName: newUser.fullName,
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+          fatherName: user.fatherName,
+          epicId: user.epicId,
+          gender: user.gender,
+          age: user.age,
+          legislativeConstituency: user.legislativeConstituency,
+          boothNameOrNumber: user.boothNameOrNumber,
         },
       })
     );
   } catch (error) {
     console.log(`Error in register: ${error.message}`);
-    next(error);
-  }
-};
-
-// Login an existing user
-exports.login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      throw new CustomError("Email and password are required", 400);
-    }
-
-    const user = await User.findByEmail(email);
-    if (!user) {
-      throw new CustomError("No user found with the entered email", 401);
-    }
-
-    const isPasswordValid = await Bcrypt.comparePassword(
-      password,
-      user.password
-    );
-    if (!isPasswordValid) {
-      throw new CustomError("Invalid password entered", 401);
-    }
-
-    const token = JWT.createToken(user);
-
-    res.status(200).json(
-      response(200, true, "Login successful", {
-        user: {
-          id: user.id,
-          email: user.email,
-          fullName: user.fullName,
-        },
-        token,
-      })
-    );
-  } catch (error) {
-    console.log(`Error in login: ${error.message}`);
     next(error);
   }
 };
