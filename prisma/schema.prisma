@@ -23,9 +23,8 @@ model User {
   boothNameOrNumber       String?
   gender                  Gender
   age                     Int
-  email                   String   @unique
-  
-  @map("registration")
+  email                   String   @unique  
+  @@map("user")
 }
 
 enum Gender {

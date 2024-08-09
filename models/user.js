@@ -25,6 +25,17 @@ class User {
     }
   }
 
+  static async findByMobileNumber(mobileNumber) {
+    try {
+      return await prisma.user.findUnique({
+        where: { mobileNumber: mobileNumber },
+      });
+    } catch (error) {
+      console.error("Error finding user by mobile number:", error);
+      throw error;
+    }
+  }
+
   static async create(data) {
     try {
       console.log(`Creating user with data: ${JSON.stringify(data)}`);
