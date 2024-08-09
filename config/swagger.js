@@ -4,17 +4,21 @@ const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerDefinition = {
   openapi: "3.0.0",
   info: {
-    title: "APP NAME",
+    title: "Bihar",
     version: "1.0.0",
     description: "APIs Documentation",
     contact: {
-      name: "Your Name",
-      email: "your_email@example.com",
+      name: "Wasim Zaman",
+      email: "wasimxaman13@gmail.com",
     },
   },
   servers: [
     {
-      url: "http://localhost:8080",
+      url: process.env.DOMAIN,
+      description: "Production server",
+    },
+    {
+      url: process.env.LOCAL_HOST,
       description: "Development server",
     },
     // add more hosts...
@@ -24,6 +28,7 @@ const swaggerDefinition = {
 var options = {
   swaggerDefinition: swaggerDefinition,
   apis: [
+    path.join(__dirname, "../docs/swagger/user.js"),
     path.join(__dirname, "../docs/swagger/testDocs.js"),
     // add more paths...
   ],
