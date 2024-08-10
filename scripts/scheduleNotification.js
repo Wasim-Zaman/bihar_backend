@@ -1,13 +1,15 @@
 const schedule = require("node-schedule");
 
+const User = require("../models/user");
+
 async function scheduleNotification(
-  userId,
+  mobileNumber,
   eventId,
   eventTitle,
   eventDate,
   eventTime
 ) {
-  const user = await prisma.user.findUnique({ where: { id: userId } });
+  const user = await User.findByMobileNumber(mobileNumber);
   if (!user || !user.fcmToken) {
     console.log(`No FCM token found for user ${userId}`);
     return;

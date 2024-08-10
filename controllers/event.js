@@ -1,6 +1,7 @@
 const Event = require("../models/event");
 const CustomError = require("../utils/error");
 const generateResponse = require("../utils/response");
+const scheduleNotification = require("../scripts/scheduleNotification");
 
 // Create a new event
 exports.createEvent = async (req, res, next) => {
@@ -8,7 +9,7 @@ exports.createEvent = async (req, res, next) => {
     const {
       eventTitle,
       date,
-      time, // Added time field
+      time,
       constituency,
       boothNumber,
       mobileNumber,
@@ -41,7 +42,7 @@ exports.createEvent = async (req, res, next) => {
     const newEvent = await Event.create({
       eventTitle,
       date: new Date(date),
-      time, // Store the time as provided
+      time,
       constituency,
       boothNumber: parseInt(boothNumber),
       mobileNumber,
@@ -50,6 +51,9 @@ exports.createEvent = async (req, res, next) => {
     });
 
     console.log(`Event created with title: ${eventTitle}`);
+
+    scheduleNotification();
+
     res
       .status(201)
       .json(
