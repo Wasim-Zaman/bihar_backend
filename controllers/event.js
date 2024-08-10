@@ -5,8 +5,15 @@ const generateResponse = require("../utils/response");
 // Create a new event
 exports.createEvent = async (req, res, next) => {
   try {
-    const { eventTitle, date, constituency, boothNumber, mobileNumber } =
-      req.body;
+    const {
+      eventTitle,
+      date,
+      time, // Added time field
+      constituency,
+      boothNumber,
+      mobileNumber,
+      status,
+    } = req.body;
 
     if (req.user.mobileNumber != mobileNumber) {
       throw new CustomError(
@@ -22,9 +29,11 @@ exports.createEvent = async (req, res, next) => {
     if (
       !eventTitle ||
       !date ||
+      !time || // Validate time field
       !constituency ||
       !boothNumber ||
-      !mobileNumber
+      !mobileNumber ||
+      status === undefined
     ) {
       throw new CustomError("All required fields must be provided", 400);
     }
@@ -32,9 +41,11 @@ exports.createEvent = async (req, res, next) => {
     const newEvent = await Event.create({
       eventTitle,
       date: new Date(date),
+      time, // Store the time as provided
       constituency,
       boothNumber: parseInt(boothNumber),
       mobileNumber,
+      status: parseInt(status), // Ensure the status is an integer
       document,
     });
 
@@ -93,7 +104,8 @@ exports.getEvents = async (req, res, next) => {
 // Update an event by ID
 exports.updateEventById = async (req, res, next) => {
   const { id } = req.params;
-  const { eventTitle, date, constituency, boothNumber } = req.body;
+  const { eventTitle, date, time, constituency, boothNumber, status } =
+    req.body;
 
   try {
     console.log(`Attempting to update event with ID: ${id}`);
@@ -111,8 +123,10 @@ exports.updateEventById = async (req, res, next) => {
     const updatedEvent = await Event.updateById(id, {
       eventTitle,
       date: new Date(date),
+      time,
       constituency,
       boothNumber: parseInt(boothNumber),
+      status: parseInt(status), // Ensure status is correctly parsed as an integer
       document,
     });
 

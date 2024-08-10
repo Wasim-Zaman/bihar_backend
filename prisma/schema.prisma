@@ -57,6 +57,7 @@ model Event {
   id             String   @id @default(uuid())
   eventTitle     String
   date           DateTime
+  time           String
   constituency   String
   boothNumber    Int
   mobileNumber   String

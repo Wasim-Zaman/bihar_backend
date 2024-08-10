@@ -23,13 +23,17 @@ router.get("/v1/events", controller.getEvents);
 // Update an event by ID
 router.put(
   "/v1/events/:id",
-  isAuth, // Requiring user authentication instead of admin authentication
+  //   isAdmin, // Requiring admin authentication instead of user authentication
   uploadSingle("document"),
   controller.updateEventById
 );
 
 // Delete an event by ID
-router.delete("/v1/events/:id", isAuth, controller.deleteEventById);
+router.delete(
+  "/v1/events/:id",
+  //   isAdmin, // Requiring admin authentication instead of user authentication
+  controller.deleteEventById
+);
 
 // Update event status based on mobile number
 router.patch("/v1/events/status/:id", controller.updateStatus);

@@ -39,9 +39,13 @@
  *                 description: The title of the event
  *               date:
  *                 type: string
- *                 format: date-time
- *                 example: "2024-03-26T12:42:00Z"
- *                 description: The date and time of the event
+ *                 format: date
+ *                 example: "2024-03-26"
+ *                 description: The date of the event
+ *               time:
+ *                 type: string
+ *                 example: "12:42 PM"
+ *                 description: The time of the event
  *               constituency:
  *                 type: string
  *                 example: "Samastipur"
@@ -54,6 +58,10 @@
  *                 type: string
  *                 example: "1234567890"
  *                 description: The mobile number associated with the event
+ *               status:
+ *                 type: integer
+ *                 example: 1
+ *                 description: The status of the event (0, 1, 2)
  *               document:
  *                 type: string
  *                 format: binary
@@ -305,7 +313,10 @@
  *               date:
  *                 type: string
  *                 format: date-time
- *                 description: The date and time of the event
+ *                 description: The date of the event
+ *               time:
+ *                 type: string
+ *                 description: The time of the event (e.g., "14:00")
  *               constituency:
  *                 type: string
  *                 description: The constituency of the event
@@ -316,6 +327,9 @@
  *                 type: string
  *                 format: binary
  *                 description: The new document file (e.g., doc, pdf, jpg)
+ *               status:
+ *                 type: integer
+ *                 description: The status of the event (0, 1, 2)
  *     responses:
  *       200:
  *         description: Event updated successfully
@@ -343,6 +357,9 @@
  *                       type: string
  *                       format: date-time
  *                       example: "2024-03-26T12:42:00Z"
+ *                     time:
+ *                       type: string
+ *                       example: "14:00"
  *                     constituency:
  *                       type: string
  *                       example: "Samastipur"
@@ -357,7 +374,7 @@
  *                       example: "https://example.com/new-document.pdf"
  *                     status:
  *                       type: integer
- *                       example: 0
+ *                       example: 1
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -431,7 +448,7 @@
  * @swagger
  * /api/events/v1/events/status/{id}:
  *   patch:
- *     summary: Update the status of an event based on mobile number
+ *     summary: Update the status of an event based on the event ID
  *     tags: [Events]
  *     parameters:
  *       - in: path
@@ -439,7 +456,7 @@
  *         schema:
  *           type: string
  *         required: true
- *         description: ID associated with the event
+ *         description: The ID associated with the event
  *     requestBody:
  *       required: true
  *       content:
@@ -511,8 +528,6 @@
  *                 message:
  *                   type: string
  *                   example: Event not found
- *     security:
- *       - bearerAuth: []
  */
 
 /**

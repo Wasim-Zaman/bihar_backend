@@ -27,7 +27,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(testRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/grievances", grievanceRoutes);
-app.use("/api/event", eventRoutes);
+app.use("/api/events", eventRoutes);
 // Add your routes...
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
