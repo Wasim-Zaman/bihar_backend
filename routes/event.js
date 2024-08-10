@@ -41,7 +41,8 @@ router.patch("/v1/events/status/:id", controller.updateStatus);
 // Get events by mobile number with status 2
 router.get(
   "/v1/events/status2/:mobileNumber",
-  controller.getEventsByMobileNumberWithStatus2
+  isAuth,
+  controller.getStatus2Events
 );
 
 module.exports = router;

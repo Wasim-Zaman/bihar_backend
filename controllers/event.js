@@ -170,19 +170,12 @@ exports.updateStatus = async (req, res, next) => {
   const { status } = req.body;
 
   try {
-    console.log(
-      `Updating status for event with mobile number: ${mobileNumber}`
-    );
-
     const event = await Event.findById(id);
     if (!event) {
       throw new CustomError("Event not found", 404);
     }
 
-    const updatedEvent = await Event.updateStatus(
-      mobileNumber,
-      parseInt(status)
-    );
+    const updatedEvent = await Event.updateStatus(id, parseInt(status));
 
     res
       .status(200)
@@ -201,13 +194,20 @@ exports.updateStatus = async (req, res, next) => {
 };
 
 // Get events by mobile number with status 2
-exports.getEventsByMobileNumberWithStatus2 = async (req, res, next) => {
+exports.getStatus2Events = async (req, res, next) => {
   const { mobileNumber } = req.params;
 
   try {
     console.log(
       `Fetching events for mobile number: ${mobileNumber} with status 2`
     );
+
+    if (req.user.mobileNumber != mobileNumber) {
+      throw new CustomError(
+        "Unauthorized access, please enter correct mobile number",
+        401
+      );
+    }
     const events = await Event.getByMobileNumberWithStatus2(mobileNumber);
 
     if (!events.length) {
