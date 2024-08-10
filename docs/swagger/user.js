@@ -397,3 +397,107 @@
  *                   type: string
  *                   example: "Email already registered"
  */
+
+/**
+ * @swagger
+ * /api/user/v1/users:
+ *   get:
+ *     summary: Retrieve a list of users with pagination and optional search query
+ *     tags: [User]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *           description: The page number to retrieve.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *           description: The number of items per page.
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
+ *           example: "John Doe"
+ *           description: An optional search query to filter users by name, email, or mobile number.
+ *     responses:
+ *       200:
+ *         description: Users retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Users retrieved successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: integer
+ *                       example: 1
+ *                     totalPages:
+ *                       type: integer
+ *                       example: 5
+ *                     totalItems:
+ *                       type: integer
+ *                       example: 50
+ *                     itemsPerPage:
+ *                       type: integer
+ *                       example: 10
+ *                     users:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "c56a4180-65aa-42ec-a945-5fd21dec0538"
+ *                           fullName:
+ *                             type: string
+ *                             example: "John Doe"
+ *                           email:
+ *                             type: string
+ *                             example: "user@example.com"
+ *                           mobileNumber:
+ *                             type: string
+ *                             example: "1234567890"
+ *                           epicId:
+ *                             type: string
+ *                             example: "ABC123XYZ"
+ *                           gender:
+ *                             type: string
+ *                             example: "MALE"
+ *                           age:
+ *                             type: integer
+ *                             example: 30
+ *                           legislativeConstituency:
+ *                             type: string
+ *                             example: "XYZ Constituency"
+ *                           boothNameOrNumber:
+ *                             type: string
+ *                             example: "Booth 12"
+ *                           image:
+ *                             type: string
+ *                             example: "https://example.com/profile-picture.jpg"
+ *       404:
+ *         description: No users found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: No users found
+ */

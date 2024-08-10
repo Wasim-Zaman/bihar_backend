@@ -20,4 +20,6 @@ router.put(
   userController.updateUser
 );
 
+router.get("/v1/users", userController.getUsers);
+
 module.exports = router;

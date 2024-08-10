@@ -111,7 +111,7 @@ class User {
       const totalPages = Math.ceil(totalUsers / limit);
 
       return {
-        data: users,
+        users: users,
         pagination: {
           currentPage: page,
           totalPages,

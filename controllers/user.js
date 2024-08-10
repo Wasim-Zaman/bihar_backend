@@ -3,7 +3,6 @@ const CustomError = require("../utils/error");
 const response = require("../utils/response");
 const JWT = require("../utils/jwt");
 
-// Login or register a user based on mobile number
 exports.login = async (req, res, next) => {
   try {
     const { mobileNumber, fcmToken } = req.body;
@@ -44,7 +43,6 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// Register or update a user based on mobile number with authorization check
 exports.register = async (req, res, next) => {
   const {
     fullName,
@@ -176,6 +174,23 @@ exports.updateUser = async (req, res, next) => {
       .json(response(200, true, "User updated successfully", user));
   } catch (error) {
     console.log(`Error in updateUser: ${error.message}`);
+    next(error);
+  }
+};
+
+exports.getUsers = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, query = "" } = req.query;
+
+    const result = await User.get(Number(page), Number(limit), query);
+    if (!result || result.users.length === 0) {
+      throw new CustomError("No users found", 404);
+    }
+
+    res
+      .status(200)
+      .json(response(200, true, "Users retrieved successfully", result));
+  } catch (error) {
     next(error);
   }
 };
