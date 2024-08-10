@@ -18,6 +18,7 @@ model User {
   fullName                String?
   fatherName              String?
   epicId                  String?
+  image                   String?
   mobileNumber            String   @unique
   fcmToken                String   @unique
   legislativeConstituency String?
@@ -69,4 +70,19 @@ model Event {
   updatedAt      DateTime @updatedAt
 
   @@map("events")
+}
+
+model EpicUser {
+  id                      String   @id @default(uuid())
+  fullName                String?
+  fatherName              String?
+  image                   String? 
+  epicId                  String?
+  mobileNumber            String   @unique
+  fcmToken                String   @unique
+  legislativeConstituency String?
+  boothNameOrNumber       String?
+  gender                  Gender?
+  age                     Int?
+  email                   String?  @unique  
 }

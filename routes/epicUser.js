@@ -1,23 +1,20 @@
 const express = require("express");
 const { uploadSingle } = require("multermate");
 
-const userController = require("../controllers/user");
+const controller = require("../controllers/epicUser");
 const isAuth = require("../middleware/isAuth");
 
 const router = express.Router();
 
-// Route for user registration
-router.post("/v1/register", isAuth, userController.register);
-
 // Route for user login
-router.post("/v1/login", userController.login);
+router.post("/v1/login", controller.login);
 
 // Update user
 router.put(
-  "/v1/update",
+  "/v1/updateUser",
   isAuth,
   uploadSingle("image"),
-  userController.updateUser
+  controller.updateUser
 );
 
 module.exports = router;

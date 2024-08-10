@@ -1,0 +1,39 @@
+const schedule = require("node-schedule");
+
+async function scheduleNotification(
+  userId,
+  eventId,
+  eventTitle,
+  eventDate,
+  eventTime
+) {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user || !user.fcmToken) {
+    console.log(`No FCM token found for user ${userId}`);
+    return;
+  }
+
+  const [hours, minutes] = eventTime.split(":");
+  const scheduledTime = new Date(eventDate);
+  scheduledTime.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
+
+  schedule.scheduleJob(scheduledTime, async function () {
+    try {
+      await admin.messaging().send({
+        token: user.fcmToken,
+        notification: {
+          title: "Event Reminder",
+          body: `Your event "${eventTitle}" is starting now!`,
+        },
+        data: {
+          eventId: eventId,
+        },
+      });
+      console.log(`Notification sent to user ${userId} for event ${eventId}`);
+    } catch (error) {
+      console.error("Error sending notification:", error);
+    }
+  });
+}
+
+module.exports = scheduleNotification;

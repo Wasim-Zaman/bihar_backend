@@ -29,6 +29,7 @@ var options = {
   swaggerDefinition: swaggerDefinition,
   apis: [
     path.join(__dirname, "../docs/swagger/user.js"),
+    path.join(__dirname, "../docs/swagger/epicUser.js"),
     path.join(__dirname, "../docs/swagger/grievance.js"),
     path.join(__dirname, "../docs/swagger/event.js"),
     // add more paths...
