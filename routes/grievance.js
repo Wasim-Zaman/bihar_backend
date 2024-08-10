@@ -17,9 +17,6 @@ router.post(
 // Get a grievance by ID
 router.get("/v1/grievances/:id", controller.getGrievanceById);
 
-// Get all grievances
-router.get("/v1/grievances/all", controller.getAllGrievances);
-
 // Get paginated grievances with optional search query
 router.get("/v1/grievances", controller.getGrievances);
 

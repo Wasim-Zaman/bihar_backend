@@ -60,16 +60,10 @@ model Event {
   constituency   String
   boothNumber    Int
   mobileNumber   String
-  status         Status      
+  status         Int      
   document       String?  // Optional field for storing document file path
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   @@map("events")
-}
-
-enum Status {
-    0
-    1
-    2
 }

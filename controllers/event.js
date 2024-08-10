@@ -68,26 +68,6 @@ exports.getEventById = async (req, res, next) => {
   }
 };
 
-// Get all events
-exports.getAllEvents = async (req, res, next) => {
-  try {
-    const events = await Event.getAll();
-
-    if (!events.length) {
-      throw new CustomError("No events found", 404);
-    }
-
-    res
-      .status(200)
-      .json(
-        generateResponse(200, true, "Events retrieved successfully", events)
-      );
-  } catch (error) {
-    console.log(`Error in getAllEvents: ${error.message}`);
-    next(error);
-  }
-};
-
 // Get paginated events with optional search query
 exports.getEvents = async (req, res, next) => {
   try {

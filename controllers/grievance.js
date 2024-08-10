@@ -75,30 +75,6 @@ exports.getGrievanceById = async (req, res, next) => {
   }
 };
 
-exports.getAllGrievances = async (req, res, next) => {
-  try {
-    const grievances = await Grievance.getAll();
-
-    if (!grievances.length) {
-      throw new CustomError("No grievances found", 404);
-    }
-
-    res
-      .status(200)
-      .json(
-        generateResponse(
-          200,
-          true,
-          "Grievances retrieved successfully",
-          grievances
-        )
-      );
-  } catch (error) {
-    console.log(`Error in getAllGrievances: ${error.message}`);
-    next(error);
-  }
-};
-
 exports.getGrievances = async (req, res, next) => {
   try {
     const { page = 1, limit = 10, query = "" } = req.query;

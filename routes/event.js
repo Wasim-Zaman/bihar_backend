@@ -17,9 +17,6 @@ router.post(
 // Get an event by ID
 router.get("/v1/events/:id", controller.getEventById);
 
-// Get all events
-router.get("/v1/events/all", controller.getAllEvents);
-
 // Get paginated events with optional search query
 router.get("/v1/events", controller.getEvents);
 
