@@ -25,6 +25,7 @@ exports.login = async (req, res, next) => {
       console.log(`New user created with mobile number: ${mobileNumber}`);
     } else {
       console.log(`User with mobile number: ${mobileNumber} already exists`);
+      user = await User.updateById(user.id, { fcmToken });
     }
 
     // Create a JWT token
