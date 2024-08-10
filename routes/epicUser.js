@@ -17,4 +17,6 @@ router.put(
   controller.updateUser
 );
 
+router.get("/v1/users", controller.getUsers);
+
 module.exports = router;

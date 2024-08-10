@@ -28,6 +28,7 @@ exports.login = async (req, res, next) => {
       epicUser = await User.create({ mobileNumber, fcmToken, epicId });
       console.log(`New user created with mobile number: ${mobileNumber}`);
     } else {
+      epicUser = await User.updateById(epicUser.id, { fcmToken, epicId });
       console.log(`User with mobile number: ${mobileNumber} already exists`);
     }
 
@@ -77,7 +78,7 @@ exports.updateUser = async (req, res, next) => {
     let user = await User.findByMobileNumber(mobileNumber);
     if (!user) {
       throw new CustomError(
-        "User not found with the entered mobile number",
+        "Epic User not found with the entered mobile number",
         404
       );
     }
@@ -108,7 +109,7 @@ exports.updateUser = async (req, res, next) => {
     );
 
     res.status(200).json(
-      response(200, true, "User updated successfully", {
+      response(200, true, "Epic User updated successfully", {
         epicUser: {
           fullName: epicUser.fullName,
           email: epicUser.email,
@@ -121,6 +122,23 @@ exports.updateUser = async (req, res, next) => {
     );
   } catch (error) {
     console.log(`Error in updateUser: ${error.message}`);
+    next(error);
+  }
+};
+
+exports.getUsers = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, query = "" } = req.query;
+
+    const result = await User.get(Number(page), Number(limit), query);
+    if (!result || result.users.length === 0) {
+      throw new CustomError("No Epic Users found", 404);
+    }
+
+    res
+      .status(200)
+      .json(response(200, true, "Epic Users retrieved successfully", result));
+  } catch (error) {
     next(error);
   }
 };
