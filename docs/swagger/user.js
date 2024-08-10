@@ -22,7 +22,7 @@
  * @swagger
  * /api/user/v1/login:
  *   post:
- *     summary: Login or register a user based on mobile number
+ *     summary: Login or register a user based on mobile number and FCM token
  *     tags: [User]
  *     requestBody:
  *       required: true
@@ -30,11 +30,18 @@
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - mobileNumber
+ *               - fcmToken
  *             properties:
  *               mobileNumber:
  *                 type: string
  *                 example: "1234567890"
  *                 description: The user's mobile number
+ *               fcmToken:
+ *                 type: string
+ *                 example: "fcm-token-string"
+ *                 description: The user's FCM token for push notifications
  *     responses:
  *       200:
  *         description: Login or registration successful
@@ -61,11 +68,14 @@
  *                         mobileNumber:
  *                           type: string
  *                           example: "1234567890"
+ *                         fcmToken:
+ *                           type: string
+ *                           example: "fcm-token-string"
  *                     token:
  *                       type: string
  *                       example: "jwt-token-string"
  *       400:
- *         description: Mobile number is required
+ *         description: Mobile number or FCM token is required
  *         content:
  *           application/json:
  *             schema:
@@ -78,7 +88,6 @@
  *                   type: string
  *                   example: "Mobile number is required"
  */
-
 /**
  * @swagger
  * /api/user/v1/register:

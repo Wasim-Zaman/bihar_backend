@@ -19,6 +19,7 @@ model User {
   fatherName              String?
   epicId                  String?
   mobileNumber            String   @unique
+  fcmToken                String   @unique
   legislativeConstituency String?
   boothNameOrNumber       String?
   gender                  Gender?
@@ -48,6 +49,7 @@ model Grievance {
   ticketTitle            String   // Title of the grievance ticket
   description            String?  // Description of the grievance
   attachment             String?  // File path to the attachment
+  status                 Int      @default(0)
 
   createdAt              DateTime @default(now()) // Timestamp for when the grievance was created
   updatedAt              DateTime @updatedAt      // Timestamp for when the grievance was last updated

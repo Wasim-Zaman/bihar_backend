@@ -7,10 +7,14 @@ const Bcrypt = require("../utils/bcrypt");
 // Login or register a user based on mobile number
 exports.login = async (req, res, next) => {
   try {
-    const { mobileNumber } = req.body;
+    const { mobileNumber, fcmToken } = req.body;
 
     if (!mobileNumber) {
       throw new CustomError("Mobile number is required", 400);
+    }
+
+    if (!fcmToken) {
+      throw new CustomError("Fcm token is required", 400);
     }
 
     // Check if the user already exists
@@ -18,7 +22,7 @@ exports.login = async (req, res, next) => {
 
     // If the user does not exist, create a new user
     if (!user) {
-      user = await User.create({ mobileNumber });
+      user = await User.create({ mobileNumber, fcmToken });
       console.log(`New user created with mobile number: ${mobileNumber}`);
     } else {
       console.log(`User with mobile number: ${mobileNumber} already exists`);
