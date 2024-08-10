@@ -4,3 +4,4 @@ node_modules
 config.env
 /prisma/migrations
 /uploads/
+firebase.json

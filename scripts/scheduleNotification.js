@@ -1,6 +1,7 @@
 const schedule = require("node-schedule");
 
 const User = require("../models/user");
+const admin = require("../config/firebase");
 
 async function scheduleNotification(
   mobileNumber,
@@ -11,7 +12,7 @@ async function scheduleNotification(
 ) {
   const user = await User.findByMobileNumber(mobileNumber);
   if (!user || !user.fcmToken) {
-    console.log(`No FCM token found for user ${userId}`);
+    console.log(`No FCM token found for user ${mobileNumber}`);
     return;
   }
 
