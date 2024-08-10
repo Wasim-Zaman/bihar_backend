@@ -532,7 +532,7 @@
 
 /**
  * @swagger
- * /api/events/v1/events/status2/{mobileNumber}:
+ * /api/events/v1/events/user/{mobileNumber}:
  *   get:
  *     summary: Retrieve events by mobile number with status 2
  *     tags: [Events]

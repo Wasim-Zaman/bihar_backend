@@ -101,6 +101,53 @@ class Event {
     }
   }
 
+  static async getUserEvents(mobileNumber, page = 1, limit = 10, query = "") {
+    try {
+      const skip = (page - 1) * limit;
+
+      // Build the search condition based on mobile number and optional query
+      const where = {
+        mobileNumber: mobileNumber, // Filter by mobile number
+        ...(query && {
+          OR: [
+            { eventTitle: { contains: query, mode: "insensitive" } },
+            { constituency: { contains: query, mode: "insensitive" } },
+          ],
+        }),
+      };
+
+      // Fetch the paginated events
+      const events = await prisma.event.findMany({
+        skip,
+        take: limit,
+        where,
+      });
+
+      // Count the total number of events matching the criteria
+      const totalEvents = await prisma.event.count({ where });
+
+      // Calculate the total number of pages
+      const totalPages = Math.ceil(totalEvents / limit);
+
+      // Return the data and pagination details
+      return {
+        data: events,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalItems: totalEvents,
+          itemsPerPage: limit,
+        },
+      };
+    } catch (error) {
+      console.error(
+        "Error getting events by mobile number with pagination and search:",
+        error
+      );
+      throw error;
+    }
+  }
+
   // Function to update status based on mobileNumber
   static async updateStatus(id, status) {
     try {

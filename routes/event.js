@@ -39,10 +39,6 @@ router.delete(
 router.patch("/v1/events/status/:id", controller.updateStatus);
 
 // Get events by mobile number with status 2
-router.get(
-  "/v1/events/status2/:mobileNumber",
-  isAuth,
-  controller.getStatus2Events
-);
+router.get("/v1/events/user/:mobileNumber", isAuth, controller.getUserEvents);
 
 module.exports = router;

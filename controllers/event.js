@@ -225,40 +225,39 @@ exports.updateStatus = async (req, res, next) => {
 };
 
 // Get events by mobile number with status 2
-exports.getStatus2Events = async (req, res, next) => {
+exports.getUserEvents = async (req, res, next) => {
+  console.log("req.params:", req.params); // Log request parameters
+  console.log("req.user:", req.user); // Log user object
+
   const { mobileNumber } = req.params;
+  const { page = 1, limit = 20, query = "" } = req.query;
 
   try {
-    console.log(
-      `Fetching events for mobile number: ${mobileNumber} with status 2`
-    );
-
-    if (req.user.mobileNumber != mobileNumber) {
+    if (req.user && req.user.mobileNumber !== mobileNumber) {
       throw new CustomError(
         "Unauthorized access, please enter correct mobile number",
         401
       );
     }
-    const events = await Event.getByMobileNumberWithStatus2(mobileNumber);
 
-    if (!events.length) {
-      throw new CustomError("No events found with status 2", 404);
+    const events = await Event.getUserEvents(
+      mobileNumber,
+      Number(page),
+      Number(limit),
+      query
+    );
+
+    if (!events.data.length) {
+      throw new CustomError("No events found", 404);
     }
 
     res
       .status(200)
       .json(
-        generateResponse(
-          200,
-          true,
-          "Events with status 2 retrieved successfully",
-          events
-        )
+        generateResponse(200, true, "Events retrieved successfully", events)
       );
   } catch (error) {
-    console.log(
-      `Error in getEventsByMobileNumberWithStatus2: ${error.message}`
-    );
+    console.log(`Error in getUserEvents: ${error.message}`);
     next(error);
   }
 };
