@@ -16,7 +16,8 @@ exports.createEvent = async (req, res, next) => {
       status,
     } = req.body;
 
-    if (req.user.mobileNumber != mobileNumber) {
+    // Check if the mobile number matches the authenticated user's mobile number
+    if (req.user.mobileNumber !== mobileNumber) {
       throw new CustomError(
         "Unauthorized access, please enter correct mobile number",
         401
@@ -39,21 +40,35 @@ exports.createEvent = async (req, res, next) => {
       throw new CustomError("All required fields must be provided", 400);
     }
 
+    // Parse date and time
+    const eventDate = new Date(date);
+    const [hours, minutes] = time.split(":").map(Number);
+    eventDate.setUTCHours(hours, minutes, 0, 0);
+
+    // Create the event
     const newEvent = await Event.create({
       eventTitle,
-      date: new Date(date),
-      time,
+      date: eventDate, // Store combined date and time as Date object
+      time, // Store original time string for reference
       constituency,
-      boothNumber: parseInt(boothNumber),
+      boothNumber: parseInt(boothNumber, 10),
       mobileNumber,
-      status: parseInt(status), // Ensure the status is an integer
+      status: parseInt(status, 10), // Ensure the status is an integer
       document,
     });
 
     console.log(`Event created with title: ${eventTitle}`);
 
-    scheduleNotification();
+    // Schedule the notification
+    scheduleNotification(
+      newEvent.mobileNumber,
+      newEvent.id,
+      newEvent.eventTitle,
+      newEvent.date,
+      newEvent.time
+    );
 
+    // Send response back to the client
     res
       .status(201)
       .json(
@@ -113,26 +128,38 @@ exports.updateEventById = async (req, res, next) => {
 
   try {
     console.log(`Attempting to update event with ID: ${id}`);
+
+    // Find the existing event by ID
     const event = await Event.findById(id);
     if (!event) {
       throw new CustomError("Event not found", 404);
     }
 
+    // Handle document upload
     let document = req.file ? req.file.path : event.document;
 
-    if (req.file) {
+    // If a new document is uploaded, delete the old one
+    if (req.file && event.document) {
       await fileHelper.deleteFile(event.document);
     }
 
+    // Parse the date and time
+    const updatedDate = new Date(date);
+    const [hours, minutes] = time.split(":").map(Number);
+    updatedDate.setUTCHours(hours, minutes, 0, 0);
+
+    // Update the event with new data
     const updatedEvent = await Event.updateById(id, {
       eventTitle,
-      date: new Date(date),
-      time,
+      date: updatedDate, // Store the combined date and time as a Date object
+      time, // Store the time string for reference
       constituency,
-      boothNumber: parseInt(boothNumber),
-      status: parseInt(status), // Ensure status is correctly parsed as an integer
+      boothNumber: parseInt(boothNumber, 10),
+      status: parseInt(status, 10), // Ensure status is correctly parsed as an integer
       document,
     });
+
+    console.log(`Event updated successfully with ID: ${id}`);
 
     res
       .status(200)
