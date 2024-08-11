@@ -83,6 +83,13 @@ exports.updateUser = async (req, res, next) => {
       );
     }
 
+    if (gender != "MALE" || gender != "FEMALE" || gender != "OTHER") {
+      throw new CustomError(
+        "Invalid gender. Please enter MALE, FEMALE, or OTHER",
+        400
+      );
+    }
+
     // Handle image file upload
     let image = req.file ? req.file.path : user.image;
 
