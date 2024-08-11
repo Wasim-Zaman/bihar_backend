@@ -226,20 +226,10 @@ exports.updateStatus = async (req, res, next) => {
 
 // Get events by mobile number with status 2
 exports.getUserEvents = async (req, res, next) => {
-  console.log("req.params:", req.params); // Log request parameters
-  console.log("req.user:", req.user); // Log user object
-
-  const { mobileNumber } = req.params;
+  const { mobileNumber } = req.user.mobileNumber;
   const { page = 1, limit = 20, query = "" } = req.query;
 
   try {
-    if (req.user && req.user.mobileNumber !== mobileNumber) {
-      throw new CustomError(
-        "Unauthorized access, please enter correct mobile number",
-        401
-      );
-    }
-
     const events = await Event.getUserEvents(
       mobileNumber,
       Number(page),
