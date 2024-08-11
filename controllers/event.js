@@ -237,7 +237,7 @@ exports.getUserEvents = async (req, res, next) => {
       query
     );
 
-    if (!events.data.length) {
+    if (!events.data.length > 0) {
       throw new CustomError("No events found", 404);
     }
 
