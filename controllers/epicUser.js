@@ -85,7 +85,7 @@ exports.updateUser = async (req, res, next) => {
 
     console.log(gender);
     if (gender) {
-      if (["Male", "Female", "Other"].indexOf(gender.toLowerCase()) === -1) {
+      if (["Male", "Female", "Other"].indexOf(gender) === -1) {
         throw new CustomError(
           "Invalid gender provided. Must be either Male, Female, or Other",
           400
