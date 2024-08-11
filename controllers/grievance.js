@@ -214,7 +214,7 @@ exports.updateGrievance = async (req, res, next) => {
   }
 };
 
-exports.updateGrievance = async (req, res, next) => {
+exports.updateGrievanceV2 = async (req, res, next) => {
   const { id } = req.params;
   const {
     fullName,

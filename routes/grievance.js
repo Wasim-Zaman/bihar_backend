@@ -37,6 +37,15 @@ router.put(
   controller.updateGrievance
 );
 
+router.put(
+  "/v1/grievances/:id",
+  isAuth,
+  uploadMultiple({
+    fields: [{ name: "attachments" }],
+  }),
+  controller.updateGrievanceV2
+);
+
 // Delete a grievance by ID
 router.delete("/v1/grievances/:id", isAuth, controller.deleteGrievance);
 

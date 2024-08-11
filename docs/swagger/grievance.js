@@ -121,6 +121,109 @@
 
 /**
  * @swagger
+ * /api/grievances/v2/grievances:
+ *   post:
+ *     summary: Create a new grievance with multiple attachments
+ *     tags: [Grievances]
+ *     consumes:
+ *       - multipart/form-data
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               category:
+ *                 type: string
+ *                 example: "Category Name"
+ *                 description: The category of the grievance
+ *               subCategory:
+ *                 type: string
+ *                 example: "Sub Category Name"
+ *                 description: The sub-category of the grievance
+ *               fullName:
+ *                 type: string
+ *                 example: "John Doe"
+ *                 description: The full name of the user registering the grievance
+ *               fatherName:
+ *                 type: string
+ *                 example: "Father Name"
+ *                 description: The father's name of the user
+ *               legislativeConstituency:
+ *                 type: string
+ *                 example: "Legislative Constituency"
+ *                 description: The legislative constituency
+ *               boothNameOrNumber:
+ *                 type: string
+ *                 example: "Booth Name/Number"
+ *                 description: The booth name or number
+ *               contactNumber:
+ *                 type: string
+ *                 example: "1234567890"
+ *                 description: The contact number of the user
+ *               gender:
+ *                 type: string
+ *                 example: "MALE"
+ *                 description: The gender of the user (MALE, FEMALE, OTHER)
+ *               age:
+ *                 type: integer
+ *                 example: 30
+ *                 description: The age of the user
+ *               voterId:
+ *                 type: string
+ *                 example: "Voter ID"
+ *                 description: The voter ID of the user
+ *               ticketTitle:
+ *                 type: string
+ *                 example: "Ticket Title"
+ *                 description: The title of the grievance ticket
+ *               description:
+ *                 type: string
+ *                 example: "Grievance Description"
+ *                 description: The description of the grievance
+ *               attachments:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Array of attachment files (e.g., doc, pdf, jpg)
+ *     responses:
+ *       201:
+ *         description: Grievance created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Grievance created successfully
+ *                 data:
+ *                   type: object
+ *                   nullable: true
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Validation error
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
  * /api/grievances/v1/grievances/{id}:
  *   get:
  *     summary: Retrieve a grievance by ID
