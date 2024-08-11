@@ -532,7 +532,7 @@
 
 /**
  * @swagger
- * /api/events/v1/events/user:
+ * /api/events/v1/user-events:
  *   get:
  *     summary: Retrieve paginated events by mobile number with status 2 and optional search query
  *     tags: [Events]
