@@ -79,6 +79,13 @@ exports.register = async (req, res, next) => {
       }
     }
 
+    if (gender != "MALE" || gender != "FEMALE" || gender != "OTHER") {
+      throw new CustomError(
+        "Invalid gender. Please enter MALE, FEMALE, or OTHER",
+        400
+      );
+    }
+
     // Update user details
     user = await User.updateById(user.id, {
       fullName,
