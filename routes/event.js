@@ -40,7 +40,9 @@ router.put(
 router.put(
   "/v2/events/:id",
   //   isAdmin, // Requiring admin authentication instead of user authentication
-  uploadSingle("document"),
+  uploadMultiple({
+    fields: [{ name: "documents" }],
+  }),
   controller.updateEventByIdV2
 );
 
