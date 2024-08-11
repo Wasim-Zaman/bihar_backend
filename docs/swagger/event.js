@@ -534,8 +534,24 @@
  * @swagger
  * /api/events/v1/events/user:
  *   get:
- *     summary: Retrieve events by mobile number with status 2
+ *     summary: Retrieve paginated events by mobile number with status 2 and optional search query
  *     tags: [Events]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: The page number to retrieve.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: The number of items to retrieve per page.
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
+ *         description: The search query to filter events.
  *     responses:
  *       200:
  *         description: Events retrieved successfully
@@ -551,40 +567,52 @@
  *                   type: string
  *                   example: Events retrieved successfully
  *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                         example: "uuid"
- *                       eventTitle:
- *                         type: string
- *                         example: "Meeting"
- *                       date:
- *                         type: string
- *                         format: date-time
- *                         example: "2024-03-26T12:42:00Z"
- *                       constituency:
- *                         type: string
- *                         example: "Samastipur"
- *                       boothNumber:
- *                         type: integer
- *                         example: 52
- *                       mobileNumber:
- *                         type: string
- *                         example: "1234567890"
- *                       status:
- *                         type: integer
- *                         example: 2
- *                       createdAt:
- *                         type: string
- *                         format: date-time
- *                         example: "2023-07-24T12:00:00Z"
- *                       updatedAt:
- *                         type: string
- *                         format: date-time
- *                         example: "2023-07-25T12:00:00Z"
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: integer
+ *                       example: 1
+ *                     totalPages:
+ *                       type: integer
+ *                       example: 5
+ *                     totalItems:
+ *                       type: integer
+ *                       example: 50
+ *                     events:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "uuid"
+ *                           eventTitle:
+ *                             type: string
+ *                             example: "Meeting"
+ *                           date:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2024-03-26T12:42:00Z"
+ *                           constituency:
+ *                             type: string
+ *                             example: "Samastipur"
+ *                           boothNumber:
+ *                             type: integer
+ *                             example: 52
+ *                           mobileNumber:
+ *                             type: string
+ *                             example: "1234567890"
+ *                           status:
+ *                             type: integer
+ *                             example: 2
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2023-07-24T12:00:00Z"
+ *                           updatedAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2023-07-25T12:00:00Z"
  *       404:
  *         description: No events found with status 2
  *         content:
