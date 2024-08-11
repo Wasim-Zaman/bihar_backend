@@ -185,6 +185,67 @@ class Event {
       );
     }
   }
+
+  static async getEventsByDate(mobileNumber, date, page = 1, limit = 10) {
+    try {
+      const skip = (page - 1) * limit;
+
+      // Parse the provided date and normalize it to remove time components
+      const searchDate = new Date(date);
+      searchDate.setUTCHours(0, 0, 0, 0);
+
+      // Calculate the start and end of the day for filtering events
+      const startOfDay = new Date(searchDate);
+      const endOfDay = new Date(searchDate);
+      endOfDay.setUTCHours(23, 59, 59, 999);
+
+      // Fetch paginated events from the database
+      const events = await prisma.event.findMany({
+        skip,
+        take: limit,
+        where: {
+          mobileNumber: mobileNumber,
+          date: {
+            gte: startOfDay,
+            lte: endOfDay,
+          },
+        },
+      });
+
+      // Count the total number of events matching the criteria
+      const totalEvents = await prisma.event.count({
+        where: {
+          mobileNumber: mobileNumber,
+          date: {
+            gte: startOfDay,
+            lte: endOfDay,
+          },
+        },
+      });
+
+      // Calculate the total number of pages
+      const totalPages = Math.ceil(totalEvents / limit);
+
+      // Return the data and pagination details
+      return {
+        data: events,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalItems: totalEvents,
+          itemsPerPage: limit,
+        },
+      };
+    } catch (error) {
+      console.error(
+        `Error getting events by date for mobile number ${mobileNumber}:`,
+        error.message
+      );
+      throw new Error(
+        `Unable to get events by date for mobile number ${mobileNumber}`
+      );
+    }
+  }
 }
 
 module.exports = Event;

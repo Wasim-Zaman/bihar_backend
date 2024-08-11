@@ -251,3 +251,34 @@ exports.getUserEvents = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getPaginatedEventsByDate = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 20, date } = req.query;
+    const { mobileNumber } = req.user;
+
+    if (!date) {
+      throw new CustomError("Date must be provided", 400);
+    }
+
+    const events = await Event.getEventsByDate(
+      mobileNumber,
+      date,
+      Number(page),
+      Number(limit)
+    );
+
+    if (events.data.length === 0) {
+      throw new CustomError("No events found for the given date", 404);
+    }
+
+    res
+      .status(200)
+      .json(
+        generateResponse(200, true, "Events retrieved successfully", events)
+      );
+  } catch (error) {
+    console.log(`Error in getPaginatedEventsByDate: ${error.message}`);
+    next(error);
+  }
+};
