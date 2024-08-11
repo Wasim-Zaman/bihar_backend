@@ -81,7 +81,7 @@ exports.register = async (req, res, next) => {
     console.log(gender);
 
     if (gender) {
-      if (["MALE", "FEMALE", "OTHER"].indexOf(gender) === -1) {
+      if (["male", "female", "other"].indexOf(gender.toLowerCase()) === -1) {
         throw new CustomError(
           "Invalid gender provided. Must be either Male, Female, or Other",
           400
@@ -94,7 +94,7 @@ exports.register = async (req, res, next) => {
       fullName,
       fatherName,
       epicId,
-      gender,
+      gender: gender.toLowerCase(),
       age,
       email,
       legislativeConstituency,
