@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -44,6 +38,7 @@ model Grievance {
   ticketTitle            String   // Title of the grievance ticket
   description            String?  // Description of the grievance
   attachment             String?  // File path to the attachment
+  documents              Json
   status                 Int      @default(0)
 
   createdAt              DateTime @default(now()) // Timestamp for when the grievance was created
@@ -54,17 +49,20 @@ model Event {
   id             String   @id @default(uuid())
   eventTitle     String
   date           DateTime
-  time           String
+  fromTime       String?  // Make optional
+  toTime         String?  // Make optional
   constituency   String
   boothNumber    Int
   mobileNumber   String
   status         Int      
-  document       String?  // Optional field for storing document file path
+  document       String?  
+  documents      Json?    // Updated to Json to store a list of document paths
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   @@map("events")
 }
+
 
 model EpicUser {
   id                      String   @id @default(uuid())

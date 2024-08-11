@@ -23,6 +23,9 @@ async function scheduleNotification(
     const scheduledTime = new Date(eventDate);
     scheduledTime.setUTCHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
 
+    // Subtract 10 minutes from the scheduled time
+    scheduledTime.setMinutes(scheduledTime.getMinutes() - 10);
+
     // Schedule the notification
     schedule.scheduleJob(scheduledTime, async function () {
       try {
@@ -30,7 +33,7 @@ async function scheduleNotification(
           token: user.fcmToken,
           notification: {
             title: "Event Reminder",
-            body: `Your event "${eventTitle}" is starting now!`,
+            body: `Your event "${eventTitle}" is starting in 10 minutes!`,
           },
           data: {
             eventId: eventId,

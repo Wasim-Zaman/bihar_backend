@@ -42,10 +42,14 @@
  *                 format: date
  *                 example: "2024-03-26"
  *                 description: The date of the event
- *               time:
+ *               fromTime:
  *                 type: string
  *                 example: "13:23"
- *                 description: The time of the event
+ *                 description: The start time of the event
+ *               toTime:
+ *                 type: string
+ *                 example: "15:00"
+ *                 description: The end time of the event
  *               constituency:
  *                 type: string
  *                 example: "Samastipur"
@@ -83,6 +87,127 @@
  *                 data:
  *                   type: object
  *                   nullable: true
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Validation error
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/events/v2/events:
+ *   post:
+ *     summary: Create a new event with multiple documents
+ *     tags: [Events]
+ *     consumes:
+ *       - multipart/form-data
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               eventTitle:
+ *                 type: string
+ *                 example: "Meeting"
+ *                 description: The title of the event
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-03-26"
+ *                 description: The date of the event
+ *               fromTime:
+ *                 type: string
+ *                 example: "13:23"
+ *                 description: The start time of the event
+ *               toTime:
+ *                 type: string
+ *                 example: "15:00"
+ *                 description: The end time of the event
+ *               constituency:
+ *                 type: string
+ *                 example: "Samastipur"
+ *                 description: The constituency of the event
+ *               boothNumber:
+ *                 type: integer
+ *                 example: 52
+ *                 description: The booth number of the event
+ *               mobileNumber:
+ *                 type: string
+ *                 example: "1234567890"
+ *                 description: The mobile number associated with the event
+ *               status:
+ *                 type: integer
+ *                 example: 1
+ *                 description: The status of the event (0, 1, 2)
+ *               documents:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Array of attachment files (e.g., doc, pdf, jpg)
+ *     responses:
+ *       201:
+ *         description: Event created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Event created successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "uuid-1234-5678-91011"
+ *                     eventTitle:
+ *                       type: string
+ *                       example: "Meeting"
+ *                     date:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2024-03-26T13:23:00Z"
+ *                     fromTime:
+ *                       type: string
+ *                       example: "13:23"
+ *                     toTime:
+ *                       type: string
+ *                       example: "15:00"
+ *                     constituency:
+ *                       type: string
+ *                       example: "Samastipur"
+ *                     boothNumber:
+ *                       type: integer
+ *                       example: 52
+ *                     mobileNumber:
+ *                       type: string
+ *                       example: "1234567890"
+ *                     status:
+ *                       type: integer
+ *                       example: 1
+ *                     documents:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         example: "https://example.com/document1.pdf"
  *       400:
  *         description: Validation error
  *         content:
@@ -312,11 +437,14 @@
  *                 description: The title of the event
  *               date:
  *                 type: string
- *                 format: date-time
+ *                 format: date
  *                 description: The date of the event
- *               time:
+ *               fromTime:
  *                 type: string
- *                 description: The time of the event (e.g., "14:00")
+ *                 description: The start time of the event (e.g., "14:00")
+ *               toTime:
+ *                 type: string
+ *                 description: The end time of the event (e.g., "16:00")
  *               constituency:
  *                 type: string
  *                 description: The constituency of the event
@@ -357,9 +485,12 @@
  *                       type: string
  *                       format: date-time
  *                       example: "2024-03-26T12:42:00Z"
- *                     time:
+ *                     fromTime:
  *                       type: string
  *                       example: "14:00"
+ *                     toTime:
+ *                       type: string
+ *                       example: "16:00"
  *                     constituency:
  *                       type: string
  *                       example: "Samastipur"
@@ -372,6 +503,131 @@
  *                     document:
  *                       type: string
  *                       example: "https://example.com/new-document.pdf"
+ *                     status:
+ *                       type: integer
+ *                       example: 1
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-24T12:00:00Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-25T12:00:00Z"
+ *       404:
+ *         description: Event not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Event not found
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/events/v2/events/{id}:
+ *   put:
+ *     summary: Update an event with multiple documents
+ *     tags: [Events]
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the event to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               eventTitle:
+ *                 type: string
+ *                 description: The title of the event
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 description: The date of the event
+ *               fromTime:
+ *                 type: string
+ *                 description: The start time of the event (e.g., "14:00")
+ *               toTime:
+ *                 type: string
+ *                 description: The end time of the event (e.g., "16:00")
+ *               constituency:
+ *                 type: string
+ *                 description: The constituency of the event
+ *               boothNumber:
+ *                 type: integer
+ *                 description: The booth number of the event
+ *               documents:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Array of new document files (e.g., doc, pdf, jpg)
+ *               status:
+ *                 type: integer
+ *                 description: The status of the event (0, 1, 2)
+ *     responses:
+ *       200:
+ *         description: Event updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Event updated successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "uuid"
+ *                     eventTitle:
+ *                       type: string
+ *                       example: "Meeting"
+ *                     date:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2024-03-26T12:42:00Z"
+ *                     fromTime:
+ *                       type: string
+ *                       example: "14:00"
+ *                     toTime:
+ *                       type: string
+ *                       example: "16:00"
+ *                     constituency:
+ *                       type: string
+ *                       example: "Samastipur"
+ *                     boothNumber:
+ *                       type: integer
+ *                       example: 52
+ *                     mobileNumber:
+ *                       type: string
+ *                       example: "1234567890"
+ *                     documents:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         example: "https://example.com/document1.pdf"
  *                     status:
  *                       type: integer
  *                       example: 1

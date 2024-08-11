@@ -9,7 +9,8 @@ exports.createEvent = async (req, res, next) => {
     const {
       eventTitle,
       date,
-      time,
+      fromTime,
+      toTime,
       constituency,
       boothNumber,
       mobileNumber,
@@ -31,7 +32,8 @@ exports.createEvent = async (req, res, next) => {
     if (
       !eventTitle ||
       !date ||
-      !time || // Validate time field
+      !fromTime ||
+      !toTime ||
       !constituency ||
       !boothNumber ||
       !mobileNumber ||
@@ -40,16 +42,15 @@ exports.createEvent = async (req, res, next) => {
       throw new CustomError("All required fields must be provided", 400);
     }
 
-    // Parse date and time
+    // Parse date and times
     const eventDate = new Date(date);
-    const [hours, minutes] = time.split(":").map(Number);
-    eventDate.setUTCHours(hours, minutes, 0, 0);
 
     // Create the event
     const newEvent = await Event.create({
       eventTitle,
-      date: eventDate, // Store combined date and time as Date object
-      time, // Store original time string for reference
+      date: eventDate, // Store the event date
+      fromTime, // Store original fromTime string
+      toTime, // Store original toTime string
       constituency,
       boothNumber: parseInt(boothNumber, 10),
       mobileNumber,
@@ -65,7 +66,7 @@ exports.createEvent = async (req, res, next) => {
       newEvent.id,
       newEvent.eventTitle,
       newEvent.date,
-      newEvent.time
+      newEvent.fromTime
     );
 
     // Send response back to the client
@@ -76,6 +77,85 @@ exports.createEvent = async (req, res, next) => {
       );
   } catch (error) {
     console.log(`Error in createEvent: ${error.message}`);
+    next(error);
+  }
+};
+
+exports.createEventV2 = async (req, res, next) => {
+  try {
+    const {
+      eventTitle,
+      date,
+      fromTime,
+      toTime,
+      constituency,
+      boothNumber,
+      mobileNumber,
+      status,
+    } = req.body;
+
+    // Check if the mobile number matches the authenticated user's mobile number
+    if (req.user.mobileNumber !== mobileNumber) {
+      throw new CustomError(
+        "Unauthorized access, please enter correct mobile number",
+        401
+      );
+    }
+
+    // Assuming document uploads are handled by Multer and stored in req.files
+    const documents = req.files
+      ? req.files.documents.map((file) => file.path)
+      : [];
+
+    // Validate necessary fields
+    if (
+      !eventTitle ||
+      !date ||
+      !fromTime ||
+      !toTime ||
+      !constituency ||
+      !boothNumber ||
+      !mobileNumber ||
+      status === undefined
+    ) {
+      throw new CustomError("All required fields must be provided", 400);
+    }
+
+    // Parse date and times
+    const eventDate = new Date(date);
+
+    // Create the event
+    const newEvent = await Event.create({
+      eventTitle,
+      date: eventDate, // Store the event date
+      fromTime, // Store original fromTime string
+      toTime, // Store original toTime string
+      constituency,
+      boothNumber: parseInt(boothNumber, 10),
+      mobileNumber,
+      status: parseInt(status, 10), // Ensure the status is an integer
+      documents, // Store the array of document paths as a JSON array
+    });
+
+    console.log(`Event created with title: ${eventTitle}`);
+
+    // Schedule the notification
+    scheduleNotification(
+      newEvent.mobileNumber,
+      newEvent.id,
+      newEvent.eventTitle,
+      newEvent.date,
+      newEvent.fromTime
+    );
+
+    // Send response back to the client
+    res
+      .status(201)
+      .json(
+        generateResponse(201, true, "Event created successfully", newEvent)
+      );
+  } catch (error) {
+    console.log(`Error in createEventV2: ${error.message}`);
     next(error);
   }
 };
@@ -123,8 +203,15 @@ exports.getEvents = async (req, res, next) => {
 // Update an event by ID
 exports.updateEventById = async (req, res, next) => {
   const { id } = req.params;
-  const { eventTitle, date, time, constituency, boothNumber, status } =
-    req.body;
+  const {
+    eventTitle,
+    date,
+    fromTime,
+    toTime,
+    constituency,
+    boothNumber,
+    status,
+  } = req.body;
 
   try {
     console.log(`Attempting to update event with ID: ${id}`);
@@ -143,16 +230,12 @@ exports.updateEventById = async (req, res, next) => {
       await fileHelper.deleteFile(event.document);
     }
 
-    // Parse the date and time
-    const updatedDate = new Date(date);
-    const [hours, minutes] = time.split(":").map(Number);
-    updatedDate.setUTCHours(hours, minutes, 0, 0);
-
     // Update the event with new data
     const updatedEvent = await Event.updateById(id, {
       eventTitle,
-      date: updatedDate, // Store the combined date and time as a Date object
-      time, // Store the time string for reference
+      date: new Date(date), // Store the event date
+      fromTime, // Store the updated fromTime string
+      toTime, // Store the updated toTime string
       constituency,
       boothNumber: parseInt(boothNumber, 10),
       status: parseInt(status, 10), // Ensure status is correctly parsed as an integer
@@ -168,6 +251,67 @@ exports.updateEventById = async (req, res, next) => {
       );
   } catch (error) {
     console.log(`Error in updateEventById: ${error.message}`);
+    next(error);
+  }
+};
+
+exports.updateEventByIdV2 = async (req, res, next) => {
+  const { id } = req.params;
+  const {
+    eventTitle,
+    date,
+    fromTime,
+    toTime,
+    constituency,
+    boothNumber,
+    status,
+  } = req.body;
+
+  try {
+    console.log(`Attempting to update event with ID: ${id}`);
+
+    // Find the existing event by ID
+    const event = await Event.findById(id);
+    if (!event) {
+      throw new CustomError("Event not found", 404);
+    }
+
+    // Handle multiple document uploads
+    let documents = event.documents || [];
+
+    if (req.files && req.files.documents.length > 0) {
+      // Delete old documents if new ones are uploaded
+      if (event.documents && event.documents.length > 0) {
+        for (const file of event.documents) {
+          await fileHelper.deleteFile(file);
+        }
+      }
+
+      // Add new documents
+      documents = req.files.documents.map((file) => file.path);
+    }
+
+    // Update the event with new data
+    const updatedEvent = await Event.updateById(id, {
+      eventTitle,
+      date: new Date(date), // Store the event date
+      fromTime, // Store the updated fromTime string
+      toTime, // Store the updated toTime string
+      constituency,
+      boothNumber: parseInt(boothNumber, 10),
+      status: parseInt(status, 10), // Ensure status is correctly parsed as an integer
+      documents, // Update the documents field with new paths
+    });
+
+    console.log(`Event updated successfully with ID: ${id}`);
+
+    res
+      .status(200)
+      .json(
+        generateResponse(200, true, "Event updated successfully", updatedEvent)
+      );
+  } catch (error) {
+    console.log(`Error in updateEventByIdV2: ${error.message}`);
     next(error);
   }
 };

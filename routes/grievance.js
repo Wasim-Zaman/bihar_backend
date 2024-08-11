@@ -2,7 +2,7 @@ const express = require("express");
 
 const controller = require("../controllers/grievance");
 const isAuth = require("../middleware/isAuth");
-const { uploadSingle } = require("multermate");
+const { uploadSingle, uploadMultiple } = require("multermate");
 
 const router = express.Router();
 
@@ -11,6 +11,15 @@ router.post(
   "/v1/grievances",
   isAuth,
   uploadSingle({ filename: "attachment" }),
+  controller.createGrievance
+);
+
+router.post(
+  "/v1/grievances",
+  isAuth,
+  uploadMultiple({
+    fields: [{ name: "attachments" }],
+  }),
   controller.createGrievance
 );
 
