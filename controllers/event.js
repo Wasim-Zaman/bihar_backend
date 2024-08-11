@@ -1,5 +1,3 @@
-const { faker } = require("@faker-js/faker");
-
 const Event = require("../models/event");
 const CustomError = require("../utils/error");
 const generateResponse = require("../utils/response");
