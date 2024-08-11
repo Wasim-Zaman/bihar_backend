@@ -532,17 +532,10 @@
 
 /**
  * @swagger
- * /api/events/v1/events/user/{mobileNumber}:
+ * /api/events/v1/events/user:
  *   get:
  *     summary: Retrieve events by mobile number with status 2
  *     tags: [Events]
- *     parameters:
- *       - in: path
- *         name: mobileNumber
- *         schema:
- *           type: string
- *         required: true
- *         description: The mobile number associated with the events
  *     responses:
  *       200:
  *         description: Events retrieved successfully

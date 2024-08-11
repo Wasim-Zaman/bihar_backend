@@ -226,7 +226,7 @@ exports.updateStatus = async (req, res, next) => {
 
 // Get events by mobile number with status 2
 exports.getUserEvents = async (req, res, next) => {
-  const { mobileNumber } = req.user.mobileNumber;
+  const { mobileNumber } = req.user;
   const { page = 1, limit = 20, query = "" } = req.query;
 
   try {
