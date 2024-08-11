@@ -5,6 +5,11 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
+    "generate-prisma-schema": "prisma generate",
+    "format": "prettier --write '**/*.{js,jsx,ts,tsx}'",
+    "lint": "eslint --ext.js,.jsx,.ts,.tsx.",
+    "lint:fix": "eslint --ext.js,.jsx,.ts,.tsx --fix",
+    "precommit": "lint-staged",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
