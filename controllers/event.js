@@ -102,6 +102,8 @@ exports.createEventV2 = async (req, res, next) => {
       );
     }
 
+    console.log(req.files);
+
     // Assuming document uploads are handled by Multer and stored in req.files
     const documents = req.files
       ? req.files.documents.map((file) => file.path)
