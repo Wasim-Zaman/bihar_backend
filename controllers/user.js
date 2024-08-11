@@ -78,7 +78,7 @@ exports.register = async (req, res, next) => {
         throw new CustomError("Email already registered", 409);
       }
     }
-
+    console.log(gender);
     if (gender != "MALE" || gender != "FEMALE" || gender != "OTHER") {
       throw new CustomError(
         "Invalid gender. Please enter MALE, FEMALE, or OTHER",

@@ -23,16 +23,10 @@ model User {
   fcmToken                String   @unique
   legislativeConstituency String?
   boothNameOrNumber       String?
-  gender                  Gender?
+  gender                  String?
   age                     Int?
   email                   String?  @unique  
   @@map("user")
-}
-
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
 }
 
 model Grievance {
@@ -44,7 +38,7 @@ model Grievance {
   legislativeConstituency String? // Legislative constituency of the person
   boothNameOrNumber      String?  // Booth name or number
   contactNumber          String   // Contact number of the person
-  gender                 Gender?  // Gender of the person
+  gender                 String?  // Gender of the person
   age                    Int?     // Age of the person
   voterId                String?  // Voter ID (EPIC No)
   ticketTitle            String   // Title of the grievance ticket
@@ -82,7 +76,7 @@ model EpicUser {
   fcmToken                String   @unique
   legislativeConstituency String?
   boothNameOrNumber       String?
-  gender                  Gender?
+  gender                  String?
   age                     Int?
   email                   String?  @unique  
 }
