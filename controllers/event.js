@@ -129,14 +129,14 @@ exports.createEventV2 = async (req, res, next) => {
     // Create the event
     const newEvent = await Event.create({
       eventTitle,
-      date: eventDate, // Store the event date
-      fromTime, // Store original fromTime string
-      toTime, // Store original toTime string
+      date: eventDate,
+      fromTime,
+      toTime,
       constituency,
-      boothNumber: parseInt(boothNumber, 10),
+      boothNumber,
       mobileNumber,
-      status: parseInt(status, 10), // Ensure the status is an integer
-      documents, // Store the array of document paths as a JSON array
+      status: parseInt(status, 10),
+      documents,
     });
 
     console.log(`Event created with title: ${eventTitle}`);

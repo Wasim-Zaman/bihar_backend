@@ -52,7 +52,7 @@ model Event {
   fromTime       String?  // Make optional
   toTime         String?  // Make optional
   constituency   String
-  boothNumber    Int
+  boothNumber    String
   mobileNumber   String
   status         Int      
   document       String?  
