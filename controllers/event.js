@@ -438,7 +438,7 @@ exports.sendNotification = async (req, res, next) => {
     const eventId = "event123";
     const eventTitle = "Team Meeting";
     const eventDate = "2024-08-12T06:30:28.534Z"; // UTC time
-    const eventTime = "11:55";
+    const eventTime = "20:28";
 
     scheduleNotification(
       mobileNumber,

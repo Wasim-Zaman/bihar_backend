@@ -2,14 +2,14 @@ const schedule = require("node-schedule");
 const moment = require("moment-timezone");
 
 const User = require("../models/user");
-const messaging = require("../config/firebase");
+const messaging = require("../config/firebase"); // Adjust to the correct path
 
 async function scheduleNotification(
   mobileNumber,
   eventId,
   eventTitle,
-  eventDateTime, // This should be in UTC
-  eventTime
+  eventDateTime, // This will be the full ISO date string
+  eventTime // This will be the time string e.g., "11:42"
 ) {
   try {
     const user = await User.findByMobileNumber(mobileNumber);
@@ -18,34 +18,28 @@ async function scheduleNotification(
       return;
     }
 
-    // Parse the incoming UTC date
-    const eventDate = moment.utc(eventDateTime);
+    console.log(user);
 
-    // Extract hours and minutes from eventTime
+    // Parse the incoming ISO string into a moment object
+    const eventDate = moment(eventDateTime);
+
+    // Extract the hours and minutes from the eventTime string
     const [hours, minutes] = eventTime.split(":");
 
-    // Set the time for the eventDate object (still in UTC)
+    // Set the time for the eventDate object
     eventDate.set({ hour: parseInt(hours, 10), minute: parseInt(minutes, 10) });
 
-    // Subtract 10 minutes for the notification (still in UTC)
-    const notificationTime = eventDate.subtract(10, "minutes");
+    // Subtract 10 minutes for the notification
+    const scheduledTime = eventDate.subtract(10, "minutes");
 
-    console.log(`Event time (UTC): ${eventDate.format()}`);
-    console.log(`Notification time (UTC): ${notificationTime.format()}`);
-
-    // Schedule the job using UTC time
-    schedule.scheduleJob(notificationTime.toDate(), async function () {
+    schedule.scheduleJob(scheduledTime.toDate(), async function () {
       try {
-        // When this runs, convert to user's local time for the notification message
-        const userLocalTime = notificationTime.tz(user.timezone || "UTC");
-
+        console.log(messaging);
         await messaging.send({
           token: user.fcmToken,
           notification: {
             title: "Event Reminder",
-            body: `Your event "${eventTitle}" is starting in 10 minutes! (${userLocalTime.format(
-              "HH:mm"
-            )} your time)`,
+            body: `Your event "${eventTitle}" is starting in 10 minutes!`,
           },
           data: {
             eventId: eventId,
@@ -56,18 +50,14 @@ async function scheduleNotification(
         );
       } catch (error) {
         console.error("Error sending notification:", error);
-        console.error("Error details:", JSON.stringify(error, null, 2));
       }
     });
 
     console.log(
-      `Notification scheduled for user ${
-        user.id
-      } at ${notificationTime.format()} UTC`
+      `Notification scheduled for user ${user.id} at ${scheduledTime.toDate()}`
     );
   } catch (error) {
     console.error("Error scheduling notification:", error);
-    console.error("Error details:", JSON.stringify(error, null, 2));
   }
 }
 
