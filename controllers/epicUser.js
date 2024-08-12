@@ -6,7 +6,7 @@ const JWT = require("../utils/jwt");
 // Login or register a user based on mobile number
 exports.login = async (req, res, next) => {
   try {
-    const { mobileNumber, fcmToken, epicId } = req.body;
+    const { mobileNumber, fcmToken, epicId, timeZone } = req.body;
 
     if (!mobileNumber) {
       throw new CustomError("Mobile number is required", 400);
@@ -25,10 +25,19 @@ exports.login = async (req, res, next) => {
 
     // If the user does not exist, create a new user
     if (!epicUser) {
-      epicUser = await User.create({ mobileNumber, fcmToken, epicId });
+      epicUser = await User.create({
+        mobileNumber,
+        fcmToken,
+        epicId,
+        timeZone: timeZone || "UTC",
+      });
       console.log(`New user created with mobile number: ${mobileNumber}`);
     } else {
-      epicUser = await User.updateById(epicUser.id, { fcmToken, epicId });
+      epicUser = await User.updateById(epicUser.id, {
+        fcmToken,
+        epicId,
+        timeZone: timeZone || "UTC",
+      });
       console.log(`User with mobile number: ${mobileNumber} already exists`);
     }
 

@@ -5,7 +5,7 @@ const JWT = require("../utils/jwt");
 
 exports.login = async (req, res, next) => {
   try {
-    const { mobileNumber, fcmToken } = req.body;
+    const { mobileNumber, fcmToken, timeZone } = req.body;
 
     if (!mobileNumber) {
       throw new CustomError("Mobile number is required", 400);
@@ -20,11 +20,18 @@ exports.login = async (req, res, next) => {
 
     // If the user does not exist, create a new user
     if (!user) {
-      user = await User.create({ mobileNumber, fcmToken });
+      user = await User.create({
+        mobileNumber,
+        fcmToken,
+        timeZone: timeZone || "UTC",
+      });
       console.log(`New user created with mobile number: ${mobileNumber}`);
     } else {
       console.log(`User with mobile number: ${mobileNumber} already exists`);
-      user = await User.updateById(user.id, { fcmToken });
+      user = await User.updateById(user.id, {
+        fcmToken,
+        timeZone: timeZone || "UTC",
+      });
     }
 
     // Create a JWT token
@@ -200,6 +207,29 @@ exports.getUsers = async (req, res, next) => {
     res
       .status(200)
       .json(response(200, true, "Users retrieved successfully", result));
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+
+    if (!user) {
+      throw new CustomError("User not found", 404);
+    }
+
+    const deletedUser = await User.deleteById(id);
+    console.log(`User with id: ${id} deleted successfully`);
+    if (!deletedUser) {
+      throw new CustomError("Failed to delete user", 500);
+    }
+
+    res
+      .status(200)
+      .json(response(200, true, "User deleted successfully", deletedUser));
   } catch (error) {
     next(error);
   }
