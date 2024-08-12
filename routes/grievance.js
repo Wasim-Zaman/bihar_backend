@@ -15,7 +15,7 @@ router.post(
 );
 
 router.post(
-  "/v1/grievances",
+  "/v2/grievances",
   isAuth,
   uploadMultiple({
     fields: [{ name: "attachments" }],
@@ -38,7 +38,7 @@ router.put(
 );
 
 router.put(
-  "/v1/grievances/:id",
+  "/v2/grievances/:id",
   isAuth,
   uploadMultiple({
     fields: [{ name: "attachments" }],
