@@ -60,4 +60,6 @@ router.get("/v1/user-events", isAuth, controller.getUserEvents);
 
 router.get("/v1/date-events", isAuth, controller.getPaginatedEventsByDate);
 
+router.get("/send-notification", controller.sendNotification);
+
 module.exports = router;

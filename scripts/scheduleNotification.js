@@ -1,7 +1,7 @@
 const schedule = require("node-schedule");
 
 const User = require("../models/user");
-const admin = require("../config/firebase");
+const messaging = require("../config/firebase"); // Adjust to the correct path
 
 async function scheduleNotification(
   mobileNumber,
@@ -11,25 +11,23 @@ async function scheduleNotification(
   eventTime
 ) {
   try {
-    // Find the user by mobile number
     const user = await User.findByMobileNumber(mobileNumber);
     if (!user || !user.fcmToken) {
       console.log(`No FCM token found for user ${mobileNumber}`);
       return;
     }
 
-    // Parse the time (HH:mm) and combine it with the date
+    console.log(user);
+
     const [hours, minutes] = eventTime.split(":");
     const scheduledTime = new Date(eventDate);
     scheduledTime.setUTCHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
-
-    // Subtract 10 minutes from the scheduled time
     scheduledTime.setMinutes(scheduledTime.getMinutes() - 10);
 
-    // Schedule the notification
     schedule.scheduleJob(scheduledTime, async function () {
       try {
-        await admin.messaging().send({
+        console.log(messaging);
+        await messaging.send({
           token: user.fcmToken,
           notification: {
             title: "Event Reminder",
@@ -40,7 +38,7 @@ async function scheduleNotification(
           },
         });
         console.log(
-          `Notification sent to user ${user._id} for event ${eventId}`
+          `Notification sent to user ${user.id} for event ${eventId}`
         );
       } catch (error) {
         console.error("Error sending notification:", error);
@@ -48,7 +46,7 @@ async function scheduleNotification(
     });
 
     console.log(
-      `Notification scheduled for user ${user._id} at ${scheduledTime}`
+      `Notification scheduled for user ${user.id} at ${scheduledTime}`
     );
   } catch (error) {
     console.error("Error scheduling notification:", error);

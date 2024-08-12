@@ -428,3 +428,20 @@ exports.getPaginatedEventsByDate = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.sendNotification = async (req, res, next) => {
+  // Schedule the notification
+  try {
+    scheduleNotification(
+      "+923201704665",
+      "newEvent.id",
+      "Event Title",
+      new Date("2024-08-12"),
+      "11:12"
+    );
+
+    res.send("sent");
+  } catch (err) {
+    next(err);
+  }
+};
