@@ -432,12 +432,19 @@ exports.getPaginatedEventsByDate = async (req, res, next) => {
 exports.sendNotification = async (req, res, next) => {
   // Schedule the notification
   try {
+    // Dummy data
+    const mobileNumber = "+923201704665";
+    const eventId = "event123";
+    const eventTitle = "Team Meeting";
+    const eventDate = "2024-08-12";
+    const eventTime = "11:35"; // PST
+
     scheduleNotification(
-      "+923201704665",
-      "newEvent.id",
-      "Event Title",
-      new Date("2024-08-12"),
-      "11:12"
+      mobileNumber,
+      eventId,
+      eventTitle,
+      eventDate,
+      eventTime
     );
 
     res.send("sent");

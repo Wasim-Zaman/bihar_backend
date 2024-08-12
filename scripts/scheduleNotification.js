@@ -1,4 +1,5 @@
 const schedule = require("node-schedule");
+const moment = require("moment-timezone");
 
 const User = require("../models/user");
 const messaging = require("../config/firebase"); // Adjust to the correct path
@@ -19,12 +20,14 @@ async function scheduleNotification(
 
     console.log(user);
 
-    const [hours, minutes] = eventTime.split(":");
-    const scheduledTime = new Date(eventDate);
-    scheduledTime.setUTCHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
-    scheduledTime.setMinutes(scheduledTime.getMinutes() - 10);
+    // Convert eventDate and eventTime from PST to UTC
+    const eventDateTimePST = `${eventDate} ${eventTime}`;
+    const scheduledTime = moment.tz(eventDateTimePST, "Asia/Karachi").utc();
 
-    schedule.scheduleJob(scheduledTime, async function () {
+    // Subtract 10 minutes for the notification
+    scheduledTime.subtract(10, "minutes");
+
+    schedule.scheduleJob(scheduledTime.toDate(), async function () {
       try {
         console.log(messaging);
         await messaging.send({
@@ -46,7 +49,7 @@ async function scheduleNotification(
     });
 
     console.log(
-      `Notification scheduled for user ${user.id} at ${scheduledTime}`
+      `Notification scheduled for user ${user.id} at ${scheduledTime.toDate()}`
     );
   } catch (error) {
     console.error("Error scheduling notification:", error);
