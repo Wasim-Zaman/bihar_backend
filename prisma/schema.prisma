@@ -20,7 +20,7 @@ model User {
   gender                  String?
   age                     Int?
   email                   String?  @unique
-  timezone                String   @default("UTC")
+  timeZone                String?   @default("UTC")
 
   @@map("user")
 }
@@ -78,5 +78,5 @@ model EpicUser {
   gender                  String?
   age                     Int?
   email                   String?  @unique
-  timezone                String   @default("UTC")
+  timeZone                String?   @default("UTC")
 }
