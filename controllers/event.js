@@ -436,8 +436,8 @@ exports.sendNotification = async (req, res, next) => {
     const mobileNumber = "+923201704665";
     const eventId = "event123";
     const eventTitle = "Team Meeting";
-    const eventDate = "2024-08-12";
-    const eventTime = "11:35"; // PST
+    const eventDate = "2024-08-12T06:30:28.534Z";
+    const eventTime = "11:44"; // PST
 
     scheduleNotification(
       mobileNumber,

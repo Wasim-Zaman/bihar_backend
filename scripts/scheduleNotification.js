@@ -8,8 +8,8 @@ async function scheduleNotification(
   mobileNumber,
   eventId,
   eventTitle,
-  eventDate,
-  eventTime
+  eventDateTime, // This will be the full ISO date string
+  eventTime // This will be the time string e.g., "11:42"
 ) {
   try {
     const user = await User.findByMobileNumber(mobileNumber);
@@ -20,12 +20,17 @@ async function scheduleNotification(
 
     console.log(user);
 
-    // Convert eventDate and eventTime from PST to UTC
-    const eventDateTimePST = `${eventDate} ${eventTime}`;
-    const scheduledTime = moment.tz(eventDateTimePST, "Asia/Karachi").utc();
+    // Parse the incoming ISO string into a moment object
+    const eventDate = moment(eventDateTime);
+
+    // Extract the hours and minutes from the eventTime string
+    const [hours, minutes] = eventTime.split(":");
+
+    // Set the time for the eventDate object
+    eventDate.set({ hour: parseInt(hours, 10), minute: parseInt(minutes, 10) });
 
     // Subtract 10 minutes for the notification
-    scheduledTime.subtract(10, "minutes");
+    const scheduledTime = eventDate.subtract(10, "minutes");
 
     schedule.scheduleJob(scheduledTime.toDate(), async function () {
       try {
