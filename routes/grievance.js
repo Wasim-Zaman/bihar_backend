@@ -20,7 +20,7 @@ router.post(
   uploadMultiple({
     fields: [{ name: "attachments" }],
   }),
-  controller.createGrievance
+  controller.createGrievanceV2
 );
 
 // Get a grievance by ID
