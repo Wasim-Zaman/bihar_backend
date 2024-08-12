@@ -94,7 +94,8 @@ exports.createEventV2 = async (req, res, next) => {
       status,
     } = req.body;
 
-    // Check if the mobile number matches the authenticated user's mobile number
+    console.log("Received event creation request:", req.body);
+
     if (req.user.mobileNumber !== mobileNumber) {
       throw new CustomError(
         "Unauthorized access, please enter correct mobile number",
@@ -102,14 +103,12 @@ exports.createEventV2 = async (req, res, next) => {
       );
     }
 
-    console.log(req.files);
+    console.log("Files received:", req.files);
 
-    // Assuming document uploads are handled by Multer and stored in req.files
     const documents = req.files
       ? req.files.documents.map((file) => file.path)
       : [];
 
-    // Validate necessary fields
     if (
       !eventTitle ||
       !date ||
@@ -123,10 +122,9 @@ exports.createEventV2 = async (req, res, next) => {
       throw new CustomError("All required fields must be provided", 400);
     }
 
-    // Parse date and times
     const eventDate = new Date(date);
+    console.log("Parsed event date:", eventDate);
 
-    // Create the event
     const newEvent = await Event.create({
       eventTitle,
       date: eventDate,
@@ -139,7 +137,9 @@ exports.createEventV2 = async (req, res, next) => {
       documents,
     });
 
-    console.log(`Event created with title: ${eventTitle}`);
+    console.log(
+      `Event created with ID: ${newEvent.id} and title: ${eventTitle}`
+    );
 
     // Schedule the notification
     scheduleNotification(
@@ -150,7 +150,8 @@ exports.createEventV2 = async (req, res, next) => {
       newEvent.fromTime
     );
 
-    // Send response back to the client
+    console.log("Notification scheduled.");
+
     res
       .status(201)
       .json(
@@ -436,8 +437,8 @@ exports.sendNotification = async (req, res, next) => {
     const mobileNumber = "+923201704665";
     const eventId = "event123";
     const eventTitle = "Team Meeting";
-    const eventDate = "2024-08-12T06:30:28.534Z";
-    const eventTime = "11:44"; // PST
+    const eventDate = "2024-08-12T06:30:28.534Z"; // UTC time
+    const eventTime = "11:55";
 
     scheduleNotification(
       mobileNumber,
