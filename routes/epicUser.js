@@ -19,4 +19,6 @@ router.put(
 
 router.get("/v1/users", controller.getUsers);
 
+router.delete("/v1/users/:id", controller.deleteUser);
+
 module.exports = router;

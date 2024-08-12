@@ -161,3 +161,26 @@ exports.getUsers = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+
+    if (!user) {
+      throw new CustomError("User not found", 404);
+    }
+
+    const deletedUser = await User.deleteById(id);
+    console.log(`User with id: ${id} deleted successfully`);
+    if (!deletedUser) {
+      throw new CustomError("Failed to delete user", 500);
+    }
+
+    res
+      .status(200)
+      .json(response(200, true, "User deleted successfully", deletedUser));
+  } catch (error) {
+    next(error);
+  }
+};

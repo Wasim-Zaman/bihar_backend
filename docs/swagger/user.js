@@ -501,3 +501,94 @@
  *                   type: string
  *                   example: No users found
  */
+
+/**
+ * @swagger
+ * /api/user/v1/{id}:
+ *   delete:
+ *     summary: Delete a user by ID
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "c56a4180-65aa-42ec-a945-5fd21dec0538"
+ *         description: The ID of the user to delete
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "User deleted successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "c56a4180-65aa-42ec-a945-5fd21dec0538"
+ *                     fullName:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     email:
+ *                       type: string
+ *                       example: "user@example.com"
+ *                     mobileNumber:
+ *                       type: string
+ *                       example: "1234567890"
+ *                     epicId:
+ *                       type: string
+ *                       example: "ABC123XYZ"
+ *                     gender:
+ *                       type: string
+ *                       example: "MALE"
+ *                     age:
+ *                       type: integer
+ *                       example: 30
+ *                     legislativeConstituency:
+ *                       type: string
+ *                       example: "XYZ Constituency"
+ *                     boothNameOrNumber:
+ *                       type: string
+ *                       example: "Booth 12"
+ *                     image:
+ *                       type: string
+ *                       example: "https://example.com/profile-picture.jpg"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"
+ *       500:
+ *         description: Failed to delete user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to delete user"
+ */
