@@ -40,7 +40,7 @@ model Grievance {
   ticketTitle            String   // Title of the grievance ticket
   description            String?  // Description of the grievance
   attachment             String?  // File path to the attachment
-  documents              Json
+  attachments            Json
   status                 Int      @default(0)
 
   createdAt              DateTime @default(now()) // Timestamp for when the grievance was created
