@@ -33,7 +33,7 @@ router.get("/v1/events", controller.getEvents);
 router.put(
   "/v1/events/:id",
   //   isAdmin, // Requiring admin authentication instead of user authentication
-  uploadSingle("document"),
+  uploadSingle({ filename: "document" }),
   controller.updateEventById
 );
 

@@ -157,6 +157,7 @@ exports.updateUser = async (req, res, next) => {
       );
     }
 
+    console.log(req.file);
     // Handle image file upload
     let image = req.file ? req.file.path : user.image;
 

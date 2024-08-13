@@ -16,7 +16,7 @@ router.post("/v1/login", userController.login);
 router.put(
   "/v1/update",
   isAuth,
-  uploadSingle("image"),
+  uploadSingle({ filename: "image" }),
   userController.updateUser
 );
 

@@ -13,7 +13,7 @@ router.post("/v1/login", controller.login);
 router.put(
   "/v1/updateUser",
   isAuth,
-  uploadSingle("image"),
+  uploadSingle({ filename: "image" }),
   controller.updateUser
 );
 
