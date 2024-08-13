@@ -9,6 +9,10 @@ const router = express.Router();
 // Route for user login
 router.post("/v1/login", controller.login);
 
+router.post("/v1/register", isAuth, controller.register);
+
+router.post("");
+
 // Update user
 router.put(
   "/v1/updateUser",

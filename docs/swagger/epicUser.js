@@ -18,11 +18,96 @@
  *   description: Epic User management
  */
 
+// /**
+//  * @swagger
+//  * /api/epicUser/v1/login:
+//  *   post:
+//  *     summary: Login or register an epic user based on mobile number, FCM token, and Epic ID
+//  *     tags: [EpicUser]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - mobileNumber
+//  *               - fcmToken
+//  *               - epicId
+//  *             properties:
+//  *               mobileNumber:
+//  *                 type: string
+//  *                 example: "1234567890"
+//  *                 description: The user's mobile number
+//  *               fcmToken:
+//  *                 type: string
+//  *                 example: "fcm-token-string"
+//  *                 description: The user's FCM token for push notifications
+//  *               epicId:
+//  *                 type: string
+//  *                 example: "ABC123XYZ"
+//  *                 description: The user's Epic ID
+//  *     responses:
+//  *       200:
+//  *         description: Login or registration successful
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 success:
+//  *                   type: boolean
+//  *                   example: true
+//  *                 message:
+//  *                   type: string
+//  *                   example: "Login successful"
+//  *                 data:
+//  *                   type: object
+//  *                   properties:
+//  *                     epicUser:
+//  *                       type: object
+//  *                       properties:
+//  *                         fullName:
+//  *                           type: string
+//  *                           example: "John Doe"
+//  *                         email:
+//  *                           type: string
+//  *                           example: "user@example.com"
+//  *                         mobileNumber:
+//  *                           type: string
+//  *                           example: "1234567890"
+//  *                         epicId:
+//  *                           type: string
+//  *                           example: "ABC123XYZ"
+//  *                         image:
+//  *                           type: string
+//  *                           example: "https://example.com/profile-picture.jpg"
+//  *                         fcmToken:
+//  *                           type: string
+//  *                           example: "fcm-token-string"
+//  *                     token:
+//  *                       type: string
+//  *                       example: "jwt-token-string"
+//  *       400:
+//  *         description: Mobile number, FCM token, or Epic ID is required
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 success:
+//  *                   type: boolean
+//  *                   example: false
+//  *                 message:
+//  *                   type: string
+//  *                   example: "Mobile number, FCM token, or Epic ID is required"
+//  */
+
 /**
  * @swagger
  * /api/epicUser/v1/login:
  *   post:
- *     summary: Login or register an epic user based on mobile number, FCM token, and Epic ID
+ *     summary: Login or register a user based on mobile number and FCM token
  *     tags: [EpicUser]
  *     requestBody:
  *       required: true
@@ -33,7 +118,6 @@
  *             required:
  *               - mobileNumber
  *               - fcmToken
- *               - epicId
  *             properties:
  *               mobileNumber:
  *                 type: string
@@ -43,10 +127,6 @@
  *                 type: string
  *                 example: "fcm-token-string"
  *                 description: The user's FCM token for push notifications
- *               epicId:
- *                 type: string
- *                 example: "ABC123XYZ"
- *                 description: The user's Epic ID
  *     responses:
  *       200:
  *         description: Login or registration successful
@@ -60,28 +140,19 @@
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: "Login successful"
+ *                   example: Login successful
  *                 data:
  *                   type: object
  *                   properties:
- *                     epicUser:
+ *                     user:
  *                       type: object
  *                       properties:
- *                         fullName:
+ *                         id:
  *                           type: string
- *                           example: "John Doe"
- *                         email:
- *                           type: string
- *                           example: "user@example.com"
+ *                           example: "c56a4180-65aa-42ec-a945-5fd21dec0538"
  *                         mobileNumber:
  *                           type: string
  *                           example: "1234567890"
- *                         epicId:
- *                           type: string
- *                           example: "ABC123XYZ"
- *                         image:
- *                           type: string
- *                           example: "https://example.com/profile-picture.jpg"
  *                         fcmToken:
  *                           type: string
  *                           example: "fcm-token-string"
@@ -89,7 +160,7 @@
  *                       type: string
  *                       example: "jwt-token-string"
  *       400:
- *         description: Mobile number, FCM token, or Epic ID is required
+ *         description: Mobile number or FCM token is required
  *         content:
  *           application/json:
  *             schema:
@@ -100,7 +171,157 @@
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: "Mobile number, FCM token, or Epic ID is required"
+ *                   example: "Mobile number is required"
+ */
+
+/**
+ * @swagger
+ * /api/epicUser/v1/register:
+ *   post:
+ *     summary: Register or update a user based on mobile number with authorization check
+ *     tags: [EpicUser]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 example: "John Doe"
+ *                 description: The user's full name
+ *               fatherName:
+ *                 type: string
+ *                 example: "Doe Senior"
+ *                 description: The user's father's name
+ *               epicId:
+ *                 type: string
+ *                 example: "ABC123XYZ"
+ *                 description: The user's EPIC ID
+ *               mobileNumber:
+ *                 type: string
+ *                 example: "1234567890"
+ *                 description: The user's mobile number
+ *               gender:
+ *                 type: string
+ *                 enum: [MALE, FEMALE, OTHER]
+ *                 example: "MALE"
+ *                 description: The user's gender
+ *               age:
+ *                 type: integer
+ *                 example: 30
+ *                 description: The user's age
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *                 description: The user's email
+ *               legislativeConstituency:
+ *                 type: string
+ *                 example: "XYZ Constituency"
+ *                 description: The user's legislative constituency
+ *               boothNameOrNumber:
+ *                 type: string
+ *                 example: "Booth 12"
+ *                 description: The user's booth name or number
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "User updated successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "c56a4180-65aa-42ec-a945-5fd21dec0538"
+ *                     email:
+ *                       type: string
+ *                       example: "user@example.com"
+ *                     fullName:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     fatherName:
+ *                       type: string
+ *                       example: "Doe Senior"
+ *                     epicId:
+ *                       type: string
+ *                       example: "ABC123XYZ"
+ *                     gender:
+ *                       type: string
+ *                       example: "MALE"
+ *                     age:
+ *                       type: integer
+ *                       example: 30
+ *                     legislativeConstituency:
+ *                       type: string
+ *                       example: "XYZ Constituency"
+ *                     boothNameOrNumber:
+ *                       type: string
+ *                       example: "Booth 12"
+ *       400:
+ *         description: Validation error or unauthorized request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Validation error or unauthorized request"
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized: Mobile number mismatch"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"
+ *       409:
+ *         description: Email already registered
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Email already registered"
  */
 
 /**

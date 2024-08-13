@@ -4,62 +4,188 @@ const response = require("../utils/response");
 const JWT = require("../utils/jwt");
 
 // Login or register a user based on mobile number
+// exports.login = async (req, res, next) => {
+//   try {
+//     const { mobileNumber, fcmToken, epicId, timeZone } = req.body;
+
+//     if (!mobileNumber) {
+//       throw new CustomError("Mobile number is required", 400);
+//     }
+
+//     if (!fcmToken) {
+//       throw new CustomError("Fcm token is required", 400);
+//     }
+
+//     if (!epicId) {
+//       throw new CustomError("Epic ID is required", 400);
+//     }
+
+//     // Check if the user already exists
+//     let epicUser = await User.findByMobileNumber(mobileNumber);
+
+//     // If the user does not exist, create a new user
+//     if (!epicUser) {
+//       epicUser = await User.create({
+//         mobileNumber,
+//         fcmToken,
+//         epicId,
+//         timeZone: timeZone || "UTC",
+//       });
+//       console.log(`New user created with mobile number: ${mobileNumber}`);
+//     } else {
+//       epicUser = await User.updateById(epicUser.id, {
+//         fcmToken,
+//         epicId,
+//         timeZone: timeZone || "UTC",
+//       });
+//       console.log(`User with mobile number: ${mobileNumber} already exists`);
+//     }
+
+//     // Create a JWT token
+//     const token = JWT.createToken(epicUser, (options = { algorithm: "HS256" }));
+
+//     // Return the user data and token
+//     res.status(200).json(
+//       response(200, true, "Login successful", {
+//         epicUser: {
+//           fullName: epicUser.fullName,
+//           email: epicUser.email,
+//           mobileNumber: epicUser.mobileNumber,
+//           epicId: epicUser.epicId,
+//           image: epicUser.image,
+//           fcmToken: epicUser.fcmToken,
+//         },
+//         token,
+//       })
+//     );
+//   } catch (error) {
+//     console.log(`Error in login: ${error.message}`);
+//     next(error);
+//   }
+// };
+
 exports.login = async (req, res, next) => {
   try {
-    const { mobileNumber, fcmToken, epicId, timeZone } = req.body;
+    const { mobileNumber, fcmToken, timeZone } = req.body;
 
     if (!mobileNumber) {
       throw new CustomError("Mobile number is required", 400);
     }
 
-    if (!fcmToken) {
-      throw new CustomError("Fcm token is required", 400);
-    }
-
-    if (!epicId) {
-      throw new CustomError("Epic ID is required", 400);
-    }
-
     // Check if the user already exists
-    let epicUser = await User.findByMobileNumber(mobileNumber);
+    let user = await User.findByMobileNumber(mobileNumber);
 
     // If the user does not exist, create a new user
-    if (!epicUser) {
-      epicUser = await User.create({
+    if (!user) {
+      user = await User.create({
         mobileNumber,
         fcmToken,
-        epicId,
         timeZone: timeZone || "UTC",
       });
       console.log(`New user created with mobile number: ${mobileNumber}`);
     } else {
-      epicUser = await User.updateById(epicUser.id, {
-        fcmToken,
-        epicId,
+      console.log(`User with mobile number: ${mobileNumber} already exists`);
+      user = await User.updateById(user.id, {
+        fcmToken: fcmToken || user.fcmToken,
         timeZone: timeZone || "UTC",
       });
-      console.log(`User with mobile number: ${mobileNumber} already exists`);
     }
 
     // Create a JWT token
-    const token = JWT.createToken(epicUser, (options = { algorithm: "HS256" }));
+    const token = JWT.createToken(user, (options = { algorithm: "HS256" }));
 
     // Return the user data and token
     res.status(200).json(
       response(200, true, "Login successful", {
-        epicUser: {
-          fullName: epicUser.fullName,
-          email: epicUser.email,
-          mobileNumber: epicUser.mobileNumber,
-          epicId: epicUser.epicId,
-          image: epicUser.image,
-          fcmToken: epicUser.fcmToken,
-        },
+        user: user,
         token,
       })
     );
   } catch (error) {
     console.log(`Error in login: ${error.message}`);
+    next(error);
+  }
+};
+
+exports.register = async (req, res, next) => {
+  const {
+    fullName,
+    fatherName,
+    epicId,
+    mobileNumber,
+    gender,
+    age,
+    email,
+    legislativeConstituency,
+    boothNameOrNumber,
+  } = req.body;
+
+  try {
+    // Check if the mobile number from the token matches the mobile number in the request
+    if (req.mobileNumber !== mobileNumber) {
+      throw new CustomError("Unauthorized: Mobile number mismatch", 401);
+    }
+
+    // Find the user by mobile number
+    let user = await User.findByMobileNumber(mobileNumber);
+    if (!user) {
+      throw new CustomError(
+        "User not found with the entered mobile number",
+        404
+      );
+    }
+
+    // If an email is provided, check if it already exists for another user
+    if (email) {
+      const userByEmail = await User.findByEmail(email);
+      if (userByEmail && userByEmail.id !== user.id) {
+        throw new CustomError("Email already registered", 409);
+      }
+    }
+    console.log(gender);
+
+    if (gender) {
+      if (["male", "female", "other"].indexOf(gender.toLowerCase()) === -1) {
+        throw new CustomError(
+          "Invalid gender provided. Must be either Male, Female, or Other",
+          400
+        );
+      }
+    }
+
+    // Update user details
+    user = await User.updateById(user.id, {
+      fullName,
+      fatherName,
+      epicId,
+      gender: gender.toLowerCase(),
+      age,
+      email,
+      legislativeConstituency,
+      boothNameOrNumber,
+    });
+
+    console.log(
+      `User with mobile number: ${mobileNumber} updated successfully`
+    );
+
+    res.status(200).json(
+      response(200, true, "User updated successfully", {
+        user: {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+          fatherName: user.fatherName,
+          epicId: user.epicId,
+          gender: user.gender,
+          age: user.age,
+          legislativeConstituency: user.legislativeConstituency,
+          boothNameOrNumber: user.boothNameOrNumber,
+        },
+      })
+    );
+  } catch (error) {
+    console.log(`Error in register: ${error.message}`);
     next(error);
   }
 };
