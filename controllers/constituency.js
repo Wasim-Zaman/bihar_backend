@@ -140,7 +140,7 @@ exports.getAllConstituencies = async (req, res, next) => {
   try {
     const constituencies = await Constituency.getAll();
 
-    if (!constituencies.length) {
+    if (!constituencies || constituencies.length <= 0) {
       throw new CustomError("No constituencies found", 404);
     }
 

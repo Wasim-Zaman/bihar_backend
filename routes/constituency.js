@@ -8,13 +8,14 @@ const router = express.Router();
 // Create a new constituency
 router.post("/v1/constituencies", controller.createConstituency);
 
-// Get a constituency by ID
-router.get("/v1/constituencies/:id", controller.getConstituencyById);
-
 // Get paginated constituencies with optional search query
+
 router.get("/v1/constituencies", controller.getConstituencies);
 
 router.get("/v1/constituencies/all", controller.getAllConstituencies);
+
+// Get a constituency by ID
+router.get("/v1/constituencies/:id", controller.getConstituencyById);
 
 // Update a constituency by ID
 router.put("/v1/constituencies/:id", controller.updateConstituencyById);

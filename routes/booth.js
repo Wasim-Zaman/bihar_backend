@@ -8,13 +8,13 @@ const router = express.Router();
 // Create a new booth
 router.post("/v1/booths", controller.createBooth);
 
-// Get a booth by ID
-router.get("/v1/booths/:id", controller.getBoothById);
-
 // Get paginated booths with optional search query
 router.get("/v1/booths", controller.getBooths);
 
 router.get("/v1/booths/all", controller.getAllBooths);
+
+// Get a booth by ID
+router.get("/v1/booths/:id", controller.getBoothById);
 
 // Update a booth by ID
 router.put("/v1/booths/:id", controller.updateBoothById);
