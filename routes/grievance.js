@@ -29,7 +29,7 @@ router.post(
   controller.createAdminGrievance
 );
 
-router.get("/v1/admin/grievances", controller.getAdminGrievances);
+router.get("/v1/admin/grievances", isAuth, controller.getAdminGrievances);
 
 // Get a grievance by ID
 router.get("/v1/grievances/:id", controller.getGrievanceById);

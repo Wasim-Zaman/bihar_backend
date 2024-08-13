@@ -104,20 +104,26 @@ class Grievance {
     }
   }
 
-  static async getAdminGrievances(page = 1, limit = 10) {
+  static async getAdminGrievances(contactNumber, page = 1, limit = 10) {
     try {
       const skip = (page - 1) * limit;
 
-      // Fetch the paginated grievances where isAdmin is true
+      // Fetch the paginated grievances where isAdmin is true and contactNumber matches
       const grievances = await prisma.grievance.findMany({
         skip,
         take: limit,
-        where: { isAdmin: true },
+        where: {
+          isAdmin: true,
+          contactNumber: contactNumber,
+        },
       });
 
-      // Fetch the total number of admin grievances
+      // Fetch the total number of admin grievances with the specified contactNumber
       const totalGrievances = await prisma.grievance.count({
-        where: { isAdmin: true },
+        where: {
+          isAdmin: true,
+          contactNumber: contactNumber,
+        },
       });
 
       // Calculate total pages
@@ -133,7 +139,10 @@ class Grievance {
         },
       };
     } catch (error) {
-      console.error("Error getting admin grievances with pagination:", error);
+      console.error(
+        "Error getting admin grievances with pagination and contact number:",
+        error
+      );
       throw error;
     }
   }

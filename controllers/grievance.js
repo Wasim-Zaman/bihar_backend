@@ -388,7 +388,9 @@ exports.createAdminGrievance = async (req, res, next) => {
 exports.getAdminGrievances = async (req, res, next) => {
   try {
     const { page = 1, limit = 10 } = req.query;
+
     const adminGrievances = await Grievance.getAdminGrievances(
+      req.user.mobileNumber,
       Number(page),
       Number(limit)
     );

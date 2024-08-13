@@ -184,3 +184,17 @@ exports.deleteUser = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getUser = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      throw new CustomError("Unauthorized: No user found in token", 401);
+    }
+
+    res
+      .status(200)
+      .json(response(200, true, "User retrieved successfully", req.user));
+  } catch (error) {
+    next(error);
+  }
+};

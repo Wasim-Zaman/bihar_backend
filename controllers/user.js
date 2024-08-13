@@ -170,7 +170,7 @@ exports.updateUser = async (req, res, next) => {
       fatherName: fatherName || user.fatherName,
       epicId: epicId || user.epicId,
       gender: gender || user.gender,
-      age: age || user.age,
+      age: Number(age || user.age),
       email: email || user.email,
       legislativeConstituency:
         legislativeConstituency || user.legislativeConstituency,
@@ -226,6 +226,20 @@ exports.deleteUser = async (req, res, next) => {
     res
       .status(200)
       .json(response(200, true, "User deleted successfully", deletedUser));
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getUser = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      throw new CustomError("Unauthorized: No user found in token", 401);
+    }
+
+    res
+      .status(200)
+      .json(response(200, true, "User retrieved successfully", req.user));
   } catch (error) {
     next(error);
   }

@@ -21,4 +21,6 @@ router.get("/v1/users", controller.getUsers);
 
 router.delete("/v1/users/:id", controller.deleteUser);
 
+router.get("/v1/user", controller.getUser);
+
 module.exports = router;

@@ -32,6 +32,8 @@ var options = {
     path.join(__dirname, "../docs/swagger/epicUser.js"),
     path.join(__dirname, "../docs/swagger/grievance.js"),
     path.join(__dirname, "../docs/swagger/event.js"),
+    path.join(__dirname, "../docs/swagger/constituency.js"),
+    path.join(__dirname, "../docs/swagger/booth.js"),
     // add more paths...
   ],
 };
