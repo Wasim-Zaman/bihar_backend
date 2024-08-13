@@ -115,7 +115,7 @@ exports.updateUser = async (req, res, next) => {
       fatherName: fatherName || user.fatherName,
       epicId: epicId || user.epicId,
       gender: gender.toLowerCase() || user.gender,
-      age: age || user.age,
+      age: Number(age || user.age),
       email: email || user.email,
       legislativeConstituency:
         legislativeConstituency || user.legislativeConstituency,
