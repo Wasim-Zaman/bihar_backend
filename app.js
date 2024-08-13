@@ -38,7 +38,7 @@ app.use("/api/booths", boothRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use((req, res, next) => {
-  const error = new Error(`No route found for ${req.originalUrl}`);
+  const error = new CustomError(`No route found for ${req.originalUrl}`);
   error.statusCode = 404;
   next(error);
 });
