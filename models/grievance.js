@@ -103,6 +103,40 @@ class Grievance {
       throw error;
     }
   }
+
+  static async getAdminGrievances(page = 1, limit = 10) {
+    try {
+      const skip = (page - 1) * limit;
+
+      // Fetch the paginated grievances where isAdmin is true
+      const grievances = await prisma.grievance.findMany({
+        skip,
+        take: limit,
+        where: { isAdmin: true },
+      });
+
+      // Fetch the total number of admin grievances
+      const totalGrievances = await prisma.grievance.count({
+        where: { isAdmin: true },
+      });
+
+      // Calculate total pages
+      const totalPages = Math.ceil(totalGrievances / limit);
+
+      return {
+        data: grievances,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalItems: totalGrievances,
+          itemsPerPage: limit,
+        },
+      };
+    } catch (error) {
+      console.error("Error getting admin grievances with pagination:", error);
+      throw error;
+    }
+  }
 }
 
 module.exports = Grievance;

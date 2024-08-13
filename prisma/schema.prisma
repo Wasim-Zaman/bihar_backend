@@ -42,6 +42,8 @@ model Grievance {
   attachment             String?  // File path to the attachment
   attachments            Json
   status                 Int      @default(0)
+  note                   String?
+  isAdmin                Boolean?
 
   createdAt              DateTime @default(now()) // Timestamp for when the grievance was created
   updatedAt              DateTime @updatedAt      // Timestamp for when the grievance was last updated
@@ -53,10 +55,10 @@ model Event {
   date           DateTime
   fromTime       String?  // Make optional
   toTime         String?  // Make optional
-  constituency   String
-  boothNumber    String
-  mobileNumber   String
-  status         Int      
+  constituency   String?
+  boothNumber    String?
+  mobileNumber   String?
+  status         Int      @default(0)      
   document       String?  
   documents      Json?    // Updated to Json to store a list of document paths
   createdAt      DateTime @default(now())

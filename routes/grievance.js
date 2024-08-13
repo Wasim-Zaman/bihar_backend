@@ -23,6 +23,14 @@ router.post(
   controller.createGrievanceV2
 );
 
+router.post(
+  "/v1/admin/grievances",
+  uploadMultiple({ fields: [{ name: "attachments" }] }),
+  controller.createAdminGrievance
+);
+
+router.get("/v1/admin/grievances", controller.getAdminGrievances);
+
 // Get a grievance by ID
 router.get("/v1/grievances/:id", controller.getGrievanceById);
 

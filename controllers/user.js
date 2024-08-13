@@ -11,10 +11,6 @@ exports.login = async (req, res, next) => {
       throw new CustomError("Mobile number is required", 400);
     }
 
-    if (!fcmToken) {
-      throw new CustomError("Fcm token is required", 400);
-    }
-
     // Check if the user already exists
     let user = await User.findByMobileNumber(mobileNumber);
 
@@ -29,7 +25,7 @@ exports.login = async (req, res, next) => {
     } else {
       console.log(`User with mobile number: ${mobileNumber} already exists`);
       user = await User.updateById(user.id, {
-        fcmToken,
+        fcmToken: fcmToken || user.fcmToken,
         timeZone: timeZone || "UTC",
       });
     }

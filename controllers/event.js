@@ -1,4 +1,7 @@
+const moment = require("moment-timezone");
+
 const Event = require("../models/event");
+const User = require("../models/user");
 const CustomError = require("../utils/error");
 const generateResponse = require("../utils/response");
 const scheduleNotification = require("../scripts/scheduleNotification");
@@ -94,6 +97,15 @@ exports.createEventV2 = async (req, res, next) => {
       status,
     } = req.body;
 
+    const user = await User.findByMobileNumber(mobileNumber);
+
+    if (!user) {
+      throw new CustomError(
+        "User not found with the entered mobile number",
+        404
+      );
+    }
+
     console.log("Received event creation request:", req.body);
 
     if (req.user.mobileNumber !== mobileNumber) {
@@ -114,24 +126,24 @@ exports.createEventV2 = async (req, res, next) => {
       !date ||
       !fromTime ||
       !toTime ||
-      !constituency ||
-      !boothNumber ||
+      //   !constituency ||
+      //   !boothNumber ||
       !mobileNumber ||
       status === undefined
     ) {
       throw new CustomError("All required fields must be provided", 400);
     }
 
-    const eventDate = new Date(date);
-    console.log("Parsed event date:", eventDate);
+    const eventDate = moment.tz(date, "UTC").toDate();
+    console.log("Parsed event date (UTC):", eventDate);
 
     const newEvent = await Event.create({
       eventTitle,
       date: eventDate,
       fromTime,
       toTime,
-      constituency,
-      boothNumber,
+      constituency: constituency || user.legislativeConstituency,
+      boothNumber: boothNumber || user.boothNameOrNumber,
       mobileNumber,
       status: parseInt(status, 10),
       documents,
@@ -163,7 +175,6 @@ exports.createEventV2 = async (req, res, next) => {
   }
 };
 
-// Get an event by ID
 exports.getEventById = async (req, res, next) => {
   const { id } = req.params;
 

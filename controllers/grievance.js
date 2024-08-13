@@ -1,6 +1,7 @@
 const Grievance = require("../models/grievance");
 const CustomError = require("../utils/error");
 const generateResponse = require("../utils/response");
+const User = require("../models/user");
 
 exports.createGrievance = async (req, res, next) => {
   try {
@@ -74,6 +75,15 @@ exports.createGrievanceV2 = async (req, res, next) => {
       ticketTitle,
       description,
     } = req.body;
+
+    const user = await User.findByMobileNumber(contactNumber);
+
+    if (!user) {
+      throw new CustomError(
+        "User not found with the entered mobile number",
+        404
+      );
+    }
 
     if (req.user.mobileNumber != contactNumber) {
       throw new CustomError(
@@ -229,6 +239,8 @@ exports.updateGrievanceV2 = async (req, res, next) => {
     subCategory,
     ticketTitle,
     description,
+    status,
+    note,
   } = req.body;
 
   try {
@@ -254,19 +266,22 @@ exports.updateGrievanceV2 = async (req, res, next) => {
     }
 
     const updatedGrievance = await Grievance.updateById(id, {
-      fullName,
-      fatherName,
-      legislativeConstituency,
-      boothNameOrNumber,
-      contactNumber,
-      gender,
-      age,
-      voterId,
-      category,
-      subCategory,
-      ticketTitle,
-      description,
+      fullName: fullName || grievance.fullName,
+      fatherName: fatherName || grievance.fatherName,
+      legislativeConstituency:
+        legislativeConstituency || grievance.legislativeConstituency,
+      boothNameOrNumber: boothNameOrNumber || grievance.boothNameOrNumber,
+      contactNumber: contactNumber || grievance.contactNumber,
+      gender: gender || grievance.gender,
+      age: age || grievance.age,
+      voterId: voterId || grievance.voterId,
+      category: category || grievance.category,
+      subCategory: subCategory || grievance.subCategory,
+      ticketTitle: ticketTitle || grievance.ticketTitle,
+      description: description || grievance.description,
       attachments,
+      status: Number(status || grievance.status),
+      note: note || grievance.note,
     });
 
     res
@@ -296,6 +311,103 @@ exports.deleteGrievance = async (req, res, next) => {
       .json(generateResponse(200, true, "Grievance deleted successfully"));
   } catch (error) {
     console.log(`Error in deleteGrievance: ${error.message}`);
+    next(error);
+  }
+};
+
+exports.createAdminGrievance = async (req, res, next) => {
+  try {
+    const {
+      fullName,
+      fatherName,
+      legislativeConstituency,
+      boothNameOrNumber,
+      contactNumber,
+      gender,
+      age,
+      voterId,
+      category,
+      subCategory,
+      ticketTitle,
+      description,
+      isAdmin,
+    } = req.body;
+
+    const user = await User.findByMobileNumber(contactNumber);
+
+    if (!user) {
+      throw new CustomError(
+        "User not found with the entered mobile number",
+        404
+      );
+    }
+
+    // Assuming multiple attachments are handled by Multer and stored in req.files
+    console.log(req.files);
+
+    const attachments =
+      req.files && req.files.attachments
+        ? req.files.attachments.map((file) => file.path)
+        : [];
+
+    if (!ticketTitle || !description || !isAdmin) {
+      throw new CustomError(
+        "Ticket title, isAdmin and description are required",
+        400
+      );
+    }
+
+    const grievance = await Grievance.create({
+      fullName: fullName || user.fullName,
+      fatherName: fatherName || user.fatherName,
+      legislativeConstituency:
+        legislativeConstituency || user.legislativeConstituency,
+      boothNameOrNumber: boothNameOrNumber || user.boothNameOrNumber,
+      contactNumber,
+      gender: gender || user.gender,
+      age: Number(age ? age : user.age),
+      voterId,
+      category,
+      subCategory,
+      ticketTitle,
+      description,
+      isAdmin: Boolean(isAdmin),
+      attachments,
+    });
+
+    console.log(`Grievance created with title: ${ticketTitle}`);
+    res
+      .status(201)
+      .json(generateResponse(201, true, "Grievance created", grievance));
+  } catch (error) {
+    console.log(`Error in createGrievance: ${error.message}`);
+    next(error);
+  }
+};
+
+exports.getAdminGrievances = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const adminGrievances = await Grievance.getAdminGrievances(
+      Number(page),
+      Number(limit)
+    );
+
+    if (!adminGrievances || adminGrievances.length <= 0) {
+      throw new CustomError("No admin grievances found", 404);
+    }
+
+    res
+      .status(200)
+      .json(
+        generateResponse(
+          200,
+          true,
+          "Admin grievances retrieved successfully",
+          adminGrievances
+        )
+      );
+  } catch (error) {
     next(error);
   }
 };
