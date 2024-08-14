@@ -69,13 +69,16 @@ const messaging = require("../config/firebase");
 
 async function scheduleNotification(newEvent, user) {
   try {
+    // Parse the date (which is in UTC and ISO format) and extract the date part
     const eventDateTimeString =
       moment.utc(newEvent.date).format("YYYY-MM-DD") + ` ${newEvent.fromTime}`;
 
+    // Convert the combined date and time to the user's timezone
     const notificationTime = moment
       .tz(eventDateTimeString, "YYYY-MM-DD HH:mm", user.timeZone)
       .subtract(10, "minutes");
 
+    // If the notification time is in the past, skip scheduling
     if (moment().isAfter(notificationTime)) {
       console.log("Notification time is in the past, skipping notification.");
       return;
@@ -87,6 +90,7 @@ async function scheduleNotification(newEvent, user) {
       notificationTime.format("YYYY-MM-DD HH:mm:ss")
     );
 
+    // Schedule the notification using node-schedule
     schedule.scheduleJob(notificationTime.toDate(), async () => {
       try {
         const payload = {
