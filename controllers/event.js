@@ -117,9 +117,10 @@ exports.createEventV2 = async (req, res, next) => {
 
     console.log("Files received:", req.files);
 
-    const documents = req.files
-      ? req.files.documents.map((file) => file.path)
-      : [];
+    const documents =
+      req.files && req.files.documents
+        ? req.files.documents.map((file) => file.path)
+        : [];
 
     if (
       !eventTitle ||
@@ -154,13 +155,15 @@ exports.createEventV2 = async (req, res, next) => {
     );
 
     // Schedule the notification
-    scheduleNotification(
-      newEvent.mobileNumber,
-      newEvent.id,
-      newEvent.eventTitle,
-      newEvent.date,
-      newEvent.fromTime
-    );
+    // scheduleNotification(
+    //   newEvent.mobileNumber,
+    //   newEvent.id,
+    //   newEvent.eventTitle,
+    //   newEvent.date,
+    //   newEvent.fromTime
+    // );
+
+    scheduleNotification(newEvent, user);
 
     console.log("Notification scheduled.");
 

@@ -64,47 +64,56 @@
 // module.exports = scheduleNotification;
 
 const moment = require("moment-timezone");
+const schedule = require("node-schedule");
 const messaging = require("../config/firebase");
 
-const scheduleNotification = (user, event) => {
+async function scheduleNotification(newEvent, user) {
   try {
-    const userTimeZone = user.timeZone || "UTC"; // Default to UTC if no timezone is provided
-    console.log("User timezone:", userTimeZone);
+    const eventDateTimeString =
+      moment.utc(newEvent.date).format("YYYY-MM-DD") + ` ${newEvent.fromTime}`;
 
-    const userFromTime = moment.tz(
-      `${event.date} ${event.fromTime}`,
-      "YYYY-MM-DD HH:mm",
-      userTimeZone
-    );
-    const notificationTime = userFromTime.clone().subtract(10, "minutes").utc();
+    const notificationTime = moment
+      .tz(eventDateTimeString, "YYYY-MM-DD HH:mm", user.timeZone)
+      .subtract(10, "minutes");
 
-    console.log("User's fromTime:", userFromTime.format());
-    console.log("Notification time (UTC):", notificationTime.format());
-
-    const delay = notificationTime.diff(moment(), "milliseconds");
-    if (delay > 0) {
-      setTimeout(() => {
-        messaging
-          .send({
-            token: user.fcmToken,
-            notification: {
-              title: "Event Reminder",
-              body: `Your event "${event.eventTitle}" is starting soon!`,
-            },
-          })
-          .then((response) => {
-            console.log("Notification sent successfully:", response);
-          })
-          .catch((error) => {
-            console.log("Error sending notification:", error);
-          });
-      }, delay);
-    } else {
-      console.log("Notification time is in the past, skipping.");
+    if (moment().isAfter(notificationTime)) {
+      console.log("Notification time is in the past, skipping notification.");
+      return;
     }
+
+    console.log("User Timezone:", user.timeZone);
+    console.log(
+      "Notification Time (in user's timezone):",
+      notificationTime.format("YYYY-MM-DD HH:mm:ss")
+    );
+
+    schedule.scheduleJob(notificationTime.toDate(), async () => {
+      try {
+        const payload = {
+          notification: {
+            title: "Meeting Reminder",
+            body: `Your meeting for "${newEvent.eventTitle}" is about to start at ${newEvent.fromTime}.`,
+          },
+          token: user.fcmToken,
+        };
+
+        console.log("Payload to be sent:", payload);
+
+        const response = await messaging.send(payload);
+        console.log("Notification sent successfully:", response);
+      } catch (error) {
+        console.error("Error sending notification:", error);
+      }
+    });
+
+    console.log(
+      `Notification scheduled for ${notificationTime.format(
+        "YYYY-MM-DD HH:mm:ss"
+      )} in the user's timezone.`
+    );
   } catch (error) {
-    console.log(`Error in scheduleNotification: ${error.message}`);
+    console.error("Error in scheduleNotification:", error);
   }
-};
+}
 
 module.exports = scheduleNotification;
