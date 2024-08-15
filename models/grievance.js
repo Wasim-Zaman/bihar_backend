@@ -146,6 +146,58 @@ class Grievance {
       throw error;
     }
   }
+
+  static async getGrievancesByTab(contactNumber, tab, page = 1, limit = 10) {
+    try {
+      const skip = (page - 1) * limit;
+
+      const status =
+        tab === "accepted"
+          ? {
+              in: [0, 1],
+            }
+          : {
+              in: [2, 3],
+            };
+
+      // Fetch the paginated grievances where status is 0 or 1 and contactNumber matches
+      const grievances = await prisma.grievance.findMany({
+        skip,
+        take: limit,
+        where: {
+          contactNumber: contactNumber,
+          status: status,
+        },
+      });
+
+      // Fetch the total number of grievances with the specified contactNumber and status 0 or 1
+      const totalGrievances = await prisma.grievance.count({
+        where: {
+          contactNumber: contactNumber,
+          status: status,
+        },
+      });
+
+      // Calculate total pages
+      const totalPages = Math.ceil(totalGrievances / limit);
+
+      return {
+        data: grievances,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalItems: totalGrievances,
+          itemsPerPage: limit,
+        },
+      };
+    } catch (error) {
+      console.error(
+        "Error getting grievances with pagination and contact number:",
+        error
+      );
+      throw error;
+    }
+  }
 }
 
 module.exports = Grievance;

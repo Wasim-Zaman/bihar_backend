@@ -371,7 +371,7 @@ exports.createAdminGrievance = async (req, res, next) => {
       subCategory,
       ticketTitle,
       description,
-      isAdmin: Boolean(isAdmin),
+      isAdmin: true,
       attachments,
     });
 
@@ -407,6 +407,44 @@ exports.getAdminGrievances = async (req, res, next) => {
           true,
           "Admin grievances retrieved successfully",
           adminGrievances
+        )
+      );
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getGrievancesByTabName = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const { tab } = req.query;
+
+    if (tab.toLowerCase() !== "accepted" && tab.toLowerCase() !== "completed") {
+      throw new CustomError(
+        "Invalid tab name, tab name must be 'accepted' or 'completed'",
+        400
+      );
+    }
+
+    const grievances = await Grievance.getGrievancesByTab(
+      req.user.mobileNumber,
+      tab,
+      Number(page),
+      Number(limit)
+    );
+
+    if (!grievances || grievances.length <= 0) {
+      throw new CustomError("No admin grievances found", 404);
+    }
+
+    res
+      .status(200)
+      .json(
+        generateResponse(
+          200,
+          true,
+          "Admin grievances retrieved successfully",
+          grievances
         )
       );
   } catch (error) {

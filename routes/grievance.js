@@ -31,6 +31,8 @@ router.post(
 
 router.get("/v1/admin/grievances", isAuth, controller.getAdminGrievances);
 
+router.get("/v1/grievances/by-tab", isAuth, controller.getGrievancesByTabName);
+
 // Get a grievance by ID
 router.get("/v1/grievances/:id", controller.getGrievanceById);
 

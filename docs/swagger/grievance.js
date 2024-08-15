@@ -1094,3 +1094,120 @@
  *     security:
  *       - bearerAuth: []
  */
+
+/**
+ * @swagger
+ * /api/grievances/v1/grievances/by-tab:
+ *   get:
+ *     summary: Retrieve grievances by tab name
+ *     tags: [Grievances]
+ *     parameters:
+ *       - in: query
+ *         name: tab
+ *         schema:
+ *           type: string
+ *           enum: [accepted, completed]
+ *           description: The tab name to filter grievances by
+ *         required: true
+ *         example: accepted
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of items to retrieve per page
+ *     responses:
+ *       200:
+ *         description: Grievances retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Grievances retrieved successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     data:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "uuid"
+ *                           fullName:
+ *                             type: string
+ *                             example: "John Doe"
+ *                           contactNumber:
+ *                             type: string
+ *                             example: "1234567890"
+ *                           status:
+ *                             type: integer
+ *                             example: 1
+ *                           description:
+ *                             type: string
+ *                             example: "Grievance Description"
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2023-07-24T12:00:00Z"
+ *                           updatedAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2023-07-25T12:00:00Z"
+ *                     pagination:
+ *                       type: object
+ *                       properties:
+ *                         currentPage:
+ *                           type: integer
+ *                           example: 1
+ *                         totalPages:
+ *                           type: integer
+ *                           example: 5
+ *                         totalItems:
+ *                           type: integer
+ *                           example: 50
+ *                         itemsPerPage:
+ *                           type: integer
+ *                           example: 10
+ *       400:
+ *         description: Invalid tab name or validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Invalid tab name, tab name must be 'accepted' or 'completed'
+ *       404:
+ *         description: No grievances found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: No grievances found
+ *     security:
+ *       - bearerAuth: []
+ */
