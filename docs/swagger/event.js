@@ -139,6 +139,160 @@
  *               constituency:
  *                 type: string
  *                 example: "Samastipur"
+ *                 description: The constituency of the event. Defaults to the user's legislative constituency if not provided.
+ *               boothNumber:
+ *                 type: integer
+ *                 example: 52
+ *                 description: The booth number of the event. Defaults to the user's booth name or number if not provided.
+ *               mobileNumber:
+ *                 type: string
+ *                 example: "1234567890"
+ *                 description: The mobile number associated with the event
+ *               owner:
+ *                 type: string
+ *                 example: "User"
+ *                 description: The owner of the event. Must be 'user' or 'epic user'.
+ *               status:
+ *                 type: integer
+ *                 example: 1
+ *                 description: The status of the event (0, 1, 2)
+ *               documents:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Array of attachment files (e.g., doc, pdf, jpg)
+ *     responses:
+ *       201:
+ *         description: Event created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Event created successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "uuid-1234-5678-91011"
+ *                     eventTitle:
+ *                       type: string
+ *                       example: "Meeting"
+ *                     date:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2024-03-26T13:23:00Z"
+ *                     fromTime:
+ *                       type: string
+ *                       example: "13:23"
+ *                     toTime:
+ *                       type: string
+ *                       example: "15:00"
+ *                     constituency:
+ *                       type: string
+ *                       example: "Samastipur"
+ *                     boothNumber:
+ *                       type: integer
+ *                       example: 52
+ *                     mobileNumber:
+ *                       type: string
+ *                       example: "1234567890"
+ *                     owner:
+ *                       type: string
+ *                       example: "user"
+ *                     status:
+ *                       type: integer
+ *                       example: 1
+ *                     documents:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         example: "https://example.com/document1.pdf"
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Validation error
+ *       401:
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized access, please enter correct mobile number
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: User not found with the entered mobile number
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/events/v1/adminEvent:
+ *   post:
+ *     summary: Create a new event with multiple documents
+ *     tags: [Events]
+ *     consumes:
+ *       - multipart/form-data
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               eventTitle:
+ *                 type: string
+ *                 example: "Meeting"
+ *                 description: The title of the event
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-03-26"
+ *                 description: The date of the event
+ *               fromTime:
+ *                 type: string
+ *                 example: "13:23"
+ *                 description: The start time of the event
+ *               toTime:
+ *                 type: string
+ *                 example: "15:00"
+ *                 description: The end time of the event
+ *               constituency:
+ *                 type: string
+ *                 example: "Samastipur"
  *                 description: The constituency of the event
  *               boothNumber:
  *                 type: integer

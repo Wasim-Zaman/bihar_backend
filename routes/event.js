@@ -23,8 +23,13 @@ router.post(
   controller.createEventV2
 );
 
-// Get an event by ID
-router.get("/v1/events/:id", controller.getEventById);
+router.post(
+  "/v1/adminEvent",
+  uploadMultiple({ fields: [{ name: "documents" }] }),
+  controller.createAdminEvent
+),
+  // Get an event by ID
+  router.get("/v1/events/:id", controller.getEventById);
 
 // Get paginated events with optional search query
 router.get("/v1/events", controller.getEvents);

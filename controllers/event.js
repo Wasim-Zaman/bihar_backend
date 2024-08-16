@@ -94,6 +94,7 @@ exports.createEventV2 = async (req, res, next) => {
       constituency,
       boothNumber,
       mobileNumber,
+      owner,
       status,
     } = req.body;
 
@@ -112,6 +113,100 @@ exports.createEventV2 = async (req, res, next) => {
       throw new CustomError(
         "Unauthorized access, please enter correct mobile number",
         401
+      );
+    }
+
+    console.log("Files received:", req.files);
+
+    const documents =
+      req.files && req.files.documents
+        ? req.files.documents.map((file) => file.path)
+        : [];
+
+    if (owner.toLowerCase() !== "epic user" && owner.toLowerCase() !== "user") {
+      throw new CustomError(
+        "Unauthorized access, you are not the User or an Epic User",
+        401
+      );
+    }
+
+    if (
+      !eventTitle ||
+      !date ||
+      !fromTime ||
+      !toTime ||
+      //   !constituency ||
+      //   !boothNumber ||
+      !mobileNumber ||
+      !owner ||
+      status === undefined
+    ) {
+      throw new CustomError("All required fields must be provided", 400);
+    }
+
+    const eventDate = moment.tz(date, "UTC").toDate();
+    console.log("Parsed event date (UTC):", eventDate);
+
+    const newEvent = await Event.create({
+      eventTitle,
+      date: eventDate,
+      fromTime,
+      toTime,
+      constituency: constituency || user.legislativeConstituency,
+      boothNumber: boothNumber || user.boothNameOrNumber,
+      mobileNumber,
+      owner: owner.toLowerCase(),
+      status: parseInt(status, 10),
+      documents,
+    });
+
+    console.log(
+      `Event created with ID: ${newEvent.id} and title: ${eventTitle}`
+    );
+
+    // Schedule the notification
+    // scheduleNotification(
+    //   newEvent.mobileNumber,
+    //   newEvent.id,
+    //   newEvent.eventTitle,
+    //   newEvent.date,
+    //   newEvent.fromTime
+    // );
+
+    scheduleNotification(newEvent, user);
+
+    console.log("Notification scheduled.");
+
+    res
+      .status(201)
+      .json(
+        generateResponse(201, true, "Event created successfully", newEvent)
+      );
+  } catch (error) {
+    console.log(`Error in createEventV2: ${error.message}`);
+    next(error);
+  }
+};
+
+exports.createAdminEvent = async (req, res, next) => {
+  try {
+    const {
+      eventTitle,
+      date,
+      fromTime,
+      toTime,
+      constituency,
+      boothNumber,
+      mobileNumber,
+      status,
+    } = req.body;
+
+    const user = await User.findByMobileNumber(mobileNumber);
+
+    if (!user) {
+      throw new CustomError(
+        "User not found with the entered mobile number",
+        404
       );
     }
 
@@ -146,6 +241,7 @@ exports.createEventV2 = async (req, res, next) => {
       constituency: constituency || user.legislativeConstituency,
       boothNumber: boothNumber || user.boothNameOrNumber,
       mobileNumber,
+      owner: "admin",
       status: parseInt(status, 10),
       documents,
     });
@@ -153,15 +249,6 @@ exports.createEventV2 = async (req, res, next) => {
     console.log(
       `Event created with ID: ${newEvent.id} and title: ${eventTitle}`
     );
-
-    // Schedule the notification
-    // scheduleNotification(
-    //   newEvent.mobileNumber,
-    //   newEvent.id,
-    //   newEvent.eventTitle,
-    //   newEvent.date,
-    //   newEvent.fromTime
-    // );
 
     scheduleNotification(newEvent, user);
 

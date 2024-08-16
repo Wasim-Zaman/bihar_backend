@@ -58,7 +58,8 @@ model Event {
   constituency   String?
   boothNumber    String?
   mobileNumber   String?
-  status         Int      @default(0)      
+  status         Int      @default(0)
+  owner          String?      
   document       String?  
   documents      Json?    // Updated to Json to store a list of document paths
   createdAt      DateTime @default(now())
