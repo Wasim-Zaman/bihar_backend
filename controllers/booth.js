@@ -5,13 +5,13 @@ const generateResponse = require("../utils/response");
 // Create a new booth
 exports.createBooth = async (req, res, next) => {
   try {
-    const { name } = req.body;
+    const { name, constituency } = req.body;
 
-    if (!name) {
-      throw new CustomError("Name is required", 400);
+    if (!name || !constituency) {
+      throw new CustomError("Name & constituency fields are required", 400);
     }
 
-    const newBooth = await Booth.create({ name });
+    const newBooth = await Booth.create({ name, constituency });
 
     res
       .status(201)
@@ -45,12 +45,21 @@ exports.getBoothById = async (req, res, next) => {
 // Update a booth by ID
 exports.updateBoothById = async (req, res, next) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, constituency } = req.body;
 
   try {
     console.log(`Attempting to update booth with ID: ${id}`);
 
-    const updatedBooth = await Booth.updateById(id, { name });
+    const booth = await Booth.findById(id);
+
+    if (!booth) {
+      throw new CustomError("Booth not found", 404);
+    }
+
+    const updatedBooth = await Booth.updateById(id, {
+      name: name || booth.name,
+      constituency: constituency || booth.constituency,
+    });
 
     if (!updatedBooth) {
       throw new CustomError("Booth not found", 404);
@@ -72,6 +81,12 @@ exports.deleteBoothById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
+    const booth = await Booth.findById(id);
+
+    if (!booth) {
+      throw new CustomError("Booth not found", 404);
+    }
+
     console.log(`Attempting to delete booth with ID: ${id}`);
     const deletedBooth = await Booth.deleteById(id);
 

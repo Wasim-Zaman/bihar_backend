@@ -94,6 +94,7 @@ model Constituency {
 model Booth {
   id        String   @id @default(uuid())
   name      String
+  constituency String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
