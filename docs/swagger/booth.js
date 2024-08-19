@@ -35,6 +35,10 @@
  *                 type: string
  *                 example: "Booth 1"
  *                 description: The name of the booth
+ *               constituency:
+ *                 type: string
+ *                 example: "Constituency A"
+ *                 description: The constituency of the booth (optional)
  *     responses:
  *       201:
  *         description: Booth created successfully
@@ -105,6 +109,9 @@
  *                     name:
  *                       type: string
  *                       example: "Booth 1"
+ *                     constituency:
+ *                       type: string
+ *                       example: "Constituency A"
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -132,135 +139,6 @@
 
 /**
  * @swagger
- * /api/booths/v1/booths:
- *   get:
- *     summary: Retrieve paginated booths with optional search query
- *     tags: [Booths]
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: The page number to retrieve.
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: The number of items to retrieve per page.
- *       - in: query
- *         name: query
- *         schema:
- *           type: string
- *         description: The search query to filter booths.
- *     responses:
- *       200:
- *         description: Booths retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Booths retrieved successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     currentPage:
- *                       type: integer
- *                       example: 1
- *                     totalPages:
- *                       type: integer
- *                       example: 5
- *                     totalItems:
- *                       type: integer
- *                       example: 50
- *                     booths:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           id:
- *                             type: string
- *                             example: "uuid"
- *                           name:
- *                             type: string
- *                             example: "Booth 1"
- *                           createdAt:
- *                             type: string
- *                             format: date-time
- *                             example: "2023-07-24T12:00:00Z"
- *                           updatedAt:
- *                             type: string
- *                             format: date-time
- *                             example: "2023-07-25T12:00:00Z"
- *       404:
- *         description: No booths found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: No booths found
- *     security:
- *       - bearerAuth: []
- */
-
-/**
- * @swagger
- * /api/booths/v1/booths/all:
- *   get:
- *     summary: Retrieve all booths without pagination
- *     tags: [Booths]
- *     responses:
- *       200:
- *         description: All booths retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: All booths retrieved successfully
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                         example: "uuid"
- *                       name:
- *                         type: string
- *                         example: "Booth 1"
- *                       createdAt:
- *                         type: string
- *                         format: date-time
- *                         example: "2023-07-24T12:00:00Z"
- *                       updatedAt:
- *                         type: string
- *                         format: date-time
- *                         example: "2023-07-25T12:00:00Z"
- *     security:
- *       - bearerAuth: []
- */
-
-/**
- * @swagger
  * /api/booths/v1/booths/{id}:
  *   put:
  *     summary: Update a booth by ID
@@ -282,7 +160,11 @@
  *               name:
  *                 type: string
  *                 description: The name of the booth
- *                 example: "Booth 1"
+ *                 example: "Updated Booth Name"
+ *               constituency:
+ *                 type: string
+ *                 description: The constituency of the booth
+ *                 example: "Updated Constituency"
  *     responses:
  *       200:
  *         description: Booth updated successfully
@@ -305,7 +187,10 @@
  *                       example: "uuid"
  *                     name:
  *                       type: string
- *                       example: "Booth 1"
+ *                       example: "Updated Booth Name"
+ *                     constituency:
+ *                       type: string
+ *                       example: "Updated Constituency"
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -358,6 +243,131 @@
  *                 message:
  *                   type: string
  *                   example: Booth deleted successfully
+ *       404:
+ *         description: Booth not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Booth not found
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/booths/v1/booths/all:
+ *   get:
+ *     summary: Retrieve all booths without pagination
+ *     tags: [Booths]
+ *     responses:
+ *       200:
+ *         description: All booths retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: All booths retrieved successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "uuid"
+ *                       name:
+ *                         type: string
+ *                         example: "Booth 1"
+ *                       constituency:
+ *                         type: string
+ *                         example: "Constituency A"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2023-07-24T12:00:00Z"
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2023-07-25T12:00:00Z"
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/booths/v1/booths/{id}:
+ *   put:
+ *     summary: Update a booth by ID
+ *     tags: [Booths]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the booth to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The name of the booth
+ *                 example: "Booth 1"
+ *               constituency:
+ *                 type: string
+ *                 description: The constituency of the booth
+ *                 example: "Constituency A"
+ *     responses:
+ *       200:
+ *         description: Booth updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Booth updated successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "uuid"
+ *                     name:
+ *                       type: string
+ *                       example: "Booth 1"
+ *                     constituency:
+ *                       type: string
+ *                       example: "Constituency A"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-24T12:00:00Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-25T12:00:00Z"
  *       404:
  *         description: Booth not found
  *         content:
