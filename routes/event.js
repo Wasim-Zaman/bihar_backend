@@ -1,8 +1,9 @@
 const express = require("express");
+const { uploadSingle, uploadMultiple } = require("multermate");
 
 const controller = require("../controllers/event");
-const isAuth = require("../middleware/isAuth"); // Replacing 'isAdmin' with 'isAuth' for authentication
-const { uploadSingle, uploadMultiple } = require("multermate");
+const isAuth = require("../middleware/isAuth");
+const isAdmin = require("../middleware/isAdmin");
 
 const router = express.Router();
 
@@ -25,6 +26,7 @@ router.post(
 
 router.post(
   "/v1/adminEvent",
+  isAdmin,
   uploadMultiple({ fields: [{ name: "documents" }] }),
   controller.createAdminEvent
 ),
@@ -52,11 +54,7 @@ router.put(
 );
 
 // Delete an event by ID
-router.delete(
-  "/v1/events/:id",
-  //   isAdmin, // Requiring admin authentication instead of user authentication
-  controller.deleteEventById
-);
+router.delete("/v1/events/:id", isAdmin, controller.deleteEventById);
 
 // Update event status based on mobile number
 router.patch("/v1/events/status/:id", controller.updateStatus);

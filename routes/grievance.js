@@ -1,8 +1,9 @@
 const express = require("express");
+const { uploadSingle, uploadMultiple } = require("multermate");
 
 const controller = require("../controllers/grievance");
 const isAuth = require("../middleware/isAuth");
-const { uploadSingle, uploadMultiple } = require("multermate");
+const isAdmin = require("../middleware/isAdmin");
 
 const router = express.Router();
 
@@ -25,6 +26,7 @@ router.post(
 
 router.post(
   "/v1/admin/grievances",
+  isAdmin,
   uploadMultiple({ fields: [{ name: "attachments" }] }),
   controller.createAdminGrievance
 );
@@ -49,7 +51,6 @@ router.put(
 
 router.put(
   "/v2/grievances/:id",
-  isAuth,
   uploadMultiple({
     fields: [{ name: "attachments" }],
   }),
@@ -57,6 +58,6 @@ router.put(
 );
 
 // Delete a grievance by ID
-router.delete("/v1/grievances/:id", isAuth, controller.deleteGrievance);
+router.delete("/v1/grievances/:id", isAdmin, controller.deleteGrievance);
 
 module.exports = router;
