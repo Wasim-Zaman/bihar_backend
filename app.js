@@ -16,6 +16,7 @@ const eventRoutes = require("./routes/event");
 const epicUserRoutes = require("./routes/epicUser");
 const constituencyRoutes = require("./routes/constituency");
 const boothRoutes = require("./routes/booth");
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -28,6 +29,7 @@ app.use(cors());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(testRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/grievances", grievanceRoutes);
 app.use("/api/events", eventRoutes);
