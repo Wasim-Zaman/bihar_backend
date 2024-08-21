@@ -12,7 +12,7 @@ class JWT {
   static createToken(
     payload,
     options = {
-      expiresIn: "1h",
+      expiresIn: "12h",
       algorithm: "HS256",
     }
   ) {
