@@ -2,6 +2,8 @@ const { PrismaClient } = require("@prisma/client");
 
 const response = require("../utils/response");
 
+const prisma = new PrismaClient();
+
 exports.getAllCounts = async (req, res, next) => {
   try {
     const userCount = await prisma.user.count();
