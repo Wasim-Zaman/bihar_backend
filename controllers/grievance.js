@@ -2,6 +2,7 @@ const Grievance = require("../models/grievance");
 const CustomError = require("../utils/error");
 const generateResponse = require("../utils/response");
 const User = require("../models/user");
+const fileHelper = require("../utils/file");
 
 exports.createGrievance = async (req, res, next) => {
   try {
@@ -303,7 +304,11 @@ exports.deleteGrievance = async (req, res, next) => {
       throw new CustomError("Grievance not found", 404);
     }
 
-    await fileHelper.deleteFile(grievance.attachment);
+    if (grievance.attachments && grievance.attachments.length > 0) {
+      for (const file of grievance.attachments) {
+        await fileHelper.deleteFile(file);
+      }
+    }
     await Grievance.deleteById(id);
 
     res
