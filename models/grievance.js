@@ -67,8 +67,8 @@ class Grievance {
       const where = query
         ? {
             OR: [
-              { fullName: { contains: query, mode: "insensitive" } },
-              { ticketTitle: { contains: query, mode: "insensitive" } },
+              { fullName: { contains: query } },
+              { ticketTitle: { contains: query } },
             ],
           }
         : {};

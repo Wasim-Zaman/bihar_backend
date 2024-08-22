@@ -69,9 +69,9 @@ class Event {
       const where = query
         ? {
             OR: [
-              { eventTitle: { contains: query, mode: "insensitive" } },
-              { constituency: { contains: query, mode: "insensitive" } },
-              { mobileNumber: { contains: query, mode: "insensitive" } },
+              { eventTitle: { contains: query } },
+              { constituency: { contains: query } },
+              { mobileNumber: { contains: query } },
             ],
           }
         : {};

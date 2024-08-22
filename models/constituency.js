@@ -88,7 +88,7 @@ class Constituency {
 
       const where = query
         ? {
-            OR: [{ name: { contains: query, mode: "insensitive" } }],
+            OR: [{ name: { contains: query } }],
           }
         : {};
 
