@@ -90,9 +90,9 @@ class User {
       const where = query
         ? {
             OR: [
-              { fullName: { contains: query, mode: "insensitive" } },
-              { email: { contains: query, mode: "insensitive" } },
-              { mobileNumber: { contains: query, mode: "insensitive" } },
+              { fullName: { contains: query } },
+              { email: { contains: query } },
+              { mobileNumber: { contains: query } },
             ],
           }
         : {};

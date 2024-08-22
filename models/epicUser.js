@@ -96,24 +96,28 @@ class EpicUser {
     try {
       const skip = (page - 1) * limit;
 
+      // Define where condition if query is provided
       const where = query
         ? {
             OR: [
-              { fullName: { contains: query, mode: "insensitive" } },
-              { email: { contains: query, mode: "insensitive" } },
-              { mobileNumber: { contains: query, mode: "insensitive" } },
+              { fullName: { contains: query } },
+              { email: { contains: query } },
+              { mobileNumber: { contains: query } },
             ],
           }
         : {};
 
-      const users = await prisma.epicUser.findMany({
+      // Fetch the paginated users
+      const users = await prisma.user.findMany({
         skip,
         take: limit,
         where,
       });
 
-      const totalUsers = await prisma.epicUser.count({ where });
+      // Fetch the total number of users
+      const totalUsers = await prisma.user.count({ where });
 
+      // Calculate total pages
       const totalPages = Math.ceil(totalUsers / limit);
 
       return {
@@ -126,10 +130,7 @@ class EpicUser {
         },
       };
     } catch (error) {
-      console.error(
-        "Error getting EpicUsers with pagination and search:",
-        error
-      );
+      console.error("Error getting users with pagination and search:", error);
       throw error;
     }
   }
