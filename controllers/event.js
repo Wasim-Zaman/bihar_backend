@@ -5,6 +5,7 @@ const User = require("../models/user");
 const CustomError = require("../utils/error");
 const generateResponse = require("../utils/response");
 const scheduleNotification = require("../scripts/scheduleNotification");
+const fileHelper = require("../utils/file");
 
 // Create a new event
 exports.createEvent = async (req, res, next) => {
@@ -431,7 +432,11 @@ exports.deleteEventById = async (req, res, next) => {
       throw new CustomError("Event not found", 404);
     }
 
-    await fileHelper.deleteFile(event.document);
+    if (event.documents && event.documents.length > 0) {
+      for (const file of event.documents) {
+        await fileHelper.deleteFile(file);
+      }
+    }
     await Event.deleteById(id);
 
     res
