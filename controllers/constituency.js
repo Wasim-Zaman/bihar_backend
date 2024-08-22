@@ -5,13 +5,13 @@ const generateResponse = require("../utils/response");
 // Create a new constituency
 exports.createConstituency = async (req, res, next) => {
   try {
-    const { name } = req.body;
+    const { name, booths } = req.body;
 
     if (!name) {
       throw new CustomError("Name is required", 400);
     }
 
-    const newConstituency = await Constituency.create({ name });
+    const newConstituency = await Constituency.create({ name, booths });
 
     res
       .status(201)
@@ -57,12 +57,15 @@ exports.getConstituencyById = async (req, res, next) => {
 // Update a constituency by ID
 exports.updateConstituencyById = async (req, res, next) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, booths } = req.body;
 
   try {
     console.log(`Attempting to update constituency with ID: ${id}`);
 
-    const updatedConstituency = await Constituency.updateById(id, { name });
+    const updatedConstituency = await Constituency.updateById(id, {
+      name,
+      booths,
+    });
 
     if (!updatedConstituency) {
       throw new CustomError("Constituency not found", 404);

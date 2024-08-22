@@ -87,17 +87,20 @@ model EpicUser {
 model Constituency {
   id        String   @id @default(uuid())
   name      String
+  booths    Booth[]  @relation("ConstituencyBooths")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Booth {
-  id        String   @id @default(uuid())
-  name      String
-  constituency String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String        @id @default(uuid())
+  name           String
+  constituency   Constituency? @relation("ConstituencyBooths", fields: [constituencyId], references: [id])
+  constituencyId String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }
+
 
 model Admin {
   id        Int      @id @default(autoincrement())

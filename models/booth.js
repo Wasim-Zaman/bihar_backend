@@ -7,6 +7,7 @@ class Booth {
     try {
       return await prisma.booth.findUnique({
         where: { id: id },
+        include: { constituency: true }, // Include constituency in the result
       });
     } catch (error) {
       console.error("Error finding booth by id:", error);
@@ -18,7 +19,14 @@ class Booth {
     try {
       console.log(`Creating booth with data: ${JSON.stringify(data)}`);
       return await prisma.booth.create({
-        data,
+        data: {
+          name: data.name,
+          constituency: {
+            connect: {
+              id: data.constituencyId, // Use `connect` with the `constituency` field
+            },
+          },
+        },
       });
     } catch (error) {
       console.error("Error creating booth:", error);
@@ -33,7 +41,14 @@ class Booth {
       );
       return await prisma.booth.update({
         where: { id: id },
-        data,
+        data: {
+          ...data,
+          constituency: data.constituencyId
+            ? {
+                connect: { id: data.constituencyId }, // Update constituency relation
+              }
+            : undefined,
+        },
       });
     } catch (error) {
       console.error(`Error updating booth with id ${id}:`, error.message);
@@ -55,7 +70,9 @@ class Booth {
 
   static async getAll() {
     try {
-      return await prisma.booth.findMany();
+      return await prisma.booth.findMany({
+        include: { constituency: true }, // Include constituency in the result
+      });
     } catch (error) {
       console.error("Error finding all booths:", error);
       throw error;
@@ -76,6 +93,7 @@ class Booth {
         skip,
         take: limit,
         where,
+        include: { constituency: true }, // Include constituency in the result
       });
 
       const totalBooths = await prisma.booth.count({ where });

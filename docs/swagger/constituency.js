@@ -35,6 +35,14 @@
  *                 type: string
  *                 example: "Constituency 1"
  *                 description: The name of the constituency
+ *               booths:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                       example: "Booth 1"
  *     responses:
  *       201:
  *         description: Constituency created successfully
@@ -51,7 +59,32 @@
  *                   example: Constituency created successfully
  *                 data:
  *                   type: object
- *                   nullable: true
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "uuid"
+ *                     name:
+ *                       type: string
+ *                       example: "Constituency 1"
+ *                     booths:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "uuid"
+ *                           name:
+ *                             type: string
+ *                             example: "Booth 1"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-24T12:00:00Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-25T12:00:00Z"
  *       400:
  *         description: Validation error
  *         content:
@@ -105,6 +138,17 @@
  *                     name:
  *                       type: string
  *                       example: "Constituency 1"
+ *                     booths:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "uuid"
+ *                           name:
+ *                             type: string
+ *                             example: "Booth 1"
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -191,6 +235,17 @@
  *                           name:
  *                             type: string
  *                             example: "Constituency 1"
+ *                           booths:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 id:
+ *                                   type: string
+ *                                   example: "uuid"
+ *                                 name:
+ *                                   type: string
+ *                                   example: "Booth 1"
  *                           createdAt:
  *                             type: string
  *                             format: date-time
@@ -247,6 +302,17 @@
  *                       name:
  *                         type: string
  *                         example: "Constituency 1"
+ *                       booths:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: string
+ *                               example: "uuid"
+ *                             name:
+ *                               type: string
+ *                               example: "Booth 1"
  *                       createdAt:
  *                         type: string
  *                         format: date-time
@@ -283,6 +349,14 @@
  *                 type: string
  *                 description: The name of the constituency
  *                 example: "Constituency 1"
+ *               booths:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                       example: "Updated Booth 1"
  *     responses:
  *       200:
  *         description: Constituency updated successfully
@@ -306,6 +380,17 @@
  *                     name:
  *                       type: string
  *                       example: "Constituency 1"
+ *                     booths:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "uuid"
+ *                           name:
+ *                             type: string
+ *                             example: "Updated Booth 1"
  *                     createdAt:
  *                       type: string
  *                       format: date-time

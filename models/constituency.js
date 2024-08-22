@@ -7,6 +7,7 @@ class Constituency {
     try {
       return await prisma.constituency.findUnique({
         where: { id: id },
+        include: { booths: true }, // Include related booths
       });
     } catch (error) {
       console.error("Error finding constituency by id:", error);
@@ -18,7 +19,10 @@ class Constituency {
     try {
       console.log(`Creating constituency with data: ${JSON.stringify(data)}`);
       return await prisma.constituency.create({
-        data,
+        data: {
+          ...data,
+          booths: data.booths ? { create: data.booths } : undefined, // Optionally create related booths
+        },
       });
     } catch (error) {
       console.error("Error creating constituency:", error);
@@ -33,7 +37,18 @@ class Constituency {
       );
       return await prisma.constituency.update({
         where: { id: id },
-        data,
+        data: {
+          ...data,
+          booths: data.booths
+            ? {
+                upsert: data.booths.map((booth) => ({
+                  where: { id: booth.id || "" },
+                  create: booth,
+                  update: booth,
+                })),
+              }
+            : undefined,
+        },
       });
     } catch (error) {
       console.error(
@@ -58,7 +73,9 @@ class Constituency {
 
   static async getAll() {
     try {
-      return await prisma.constituency.findMany();
+      return await prisma.constituency.findMany({
+        include: { booths: true }, // Include related booths
+      });
     } catch (error) {
       console.error("Error finding all constituencies:", error);
       throw error;
@@ -79,6 +96,7 @@ class Constituency {
         skip,
         take: limit,
         where,
+        include: { booths: true }, // Include related booths
       });
 
       const totalConstituencies = await prisma.constituency.count({ where });

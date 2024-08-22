@@ -35,10 +35,10 @@
  *                 type: string
  *                 example: "Booth 1"
  *                 description: The name of the booth
- *               constituency:
+ *               constituencyId:
  *                 type: string
- *                 example: "Constituency A"
- *                 description: The constituency of the booth (optional)
+ *                 example: "uuid"
+ *                 description: The ID of the constituency the booth belongs to
  *     responses:
  *       201:
  *         description: Booth created successfully
@@ -55,7 +55,24 @@
  *                   example: Booth created successfully
  *                 data:
  *                   type: object
- *                   nullable: true
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "uuid"
+ *                     name:
+ *                       type: string
+ *                       example: "Booth 1"
+ *                     constituencyId:
+ *                       type: string
+ *                       example: "uuid"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-24T12:00:00Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-25T12:00:00Z"
  *       400:
  *         description: Validation error
  *         content:
@@ -109,9 +126,9 @@
  *                     name:
  *                       type: string
  *                       example: "Booth 1"
- *                     constituency:
+ *                     constituencyId:
  *                       type: string
- *                       example: "Constituency A"
+ *                       example: "uuid"
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -120,6 +137,15 @@
  *                       type: string
  *                       format: date-time
  *                       example: "2023-07-25T12:00:00Z"
+ *                     constituency:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                           example: "uuid"
+ *                         name:
+ *                           type: string
+ *                           example: "Constituency A"
  *       404:
  *         description: Booth not found
  *         content:
@@ -161,10 +187,10 @@
  *                 type: string
  *                 description: The name of the booth
  *                 example: "Updated Booth Name"
- *               constituency:
+ *               constituencyId:
  *                 type: string
- *                 description: The constituency of the booth
- *                 example: "Updated Constituency"
+ *                 description: The ID of the constituency the booth belongs to
+ *                 example: "uuid"
  *     responses:
  *       200:
  *         description: Booth updated successfully
@@ -188,9 +214,9 @@
  *                     name:
  *                       type: string
  *                       example: "Updated Booth Name"
- *                     constituency:
+ *                     constituencyId:
  *                       type: string
- *                       example: "Updated Constituency"
+ *                       example: "uuid"
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -199,6 +225,15 @@
  *                       type: string
  *                       format: date-time
  *                       example: "2023-07-25T12:00:00Z"
+ *                     constituency:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                           example: "uuid"
+ *                         name:
+ *                           type: string
+ *                           example: "Updated Constituency"
  *       404:
  *         description: Booth not found
  *         content:
@@ -291,9 +326,9 @@
  *                       name:
  *                         type: string
  *                         example: "Booth 1"
- *                       constituency:
+ *                       constituencyId:
  *                         type: string
- *                         example: "Constituency A"
+ *                         example: "uuid"
  *                       createdAt:
  *                         type: string
  *                         format: date-time
@@ -302,41 +337,46 @@
  *                         type: string
  *                         format: date-time
  *                         example: "2023-07-25T12:00:00Z"
+ *                       constituency:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "uuid"
+ *                           name:
+ *                             type: string
+ *                             example: "Constituency A"
  *     security:
  *       - bearerAuth: []
  */
 
 /**
  * @swagger
- * /api/booths/v1/booths/{id}:
- *   put:
- *     summary: Update a booth by ID
+ * /api/booths/v1/booths:
+ *   get:
+ *     summary: Retrieve paginated booths with optional search query
  *     tags: [Booths]
  *     parameters:
- *       - in: path
- *         name: id
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of items to retrieve per page.
+ *       - in: query
+ *         name: query
  *         schema:
  *           type: string
- *         required: true
- *         description: The ID of the booth to update
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 description: The name of the booth
- *                 example: "Booth 1"
- *               constituency:
- *                 type: string
- *                 description: The constituency of the booth
- *                 example: "Constituency A"
+ *         description: The search query to filter booths.
  *     responses:
  *       200:
- *         description: Booth updated successfully
+ *         description: Booths retrieved successfully
  *         content:
  *           application/json:
  *             schema:
@@ -347,29 +387,52 @@
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: Booth updated successfully
+ *                   example: Booths retrieved successfully
  *                 data:
  *                   type: object
  *                   properties:
- *                     id:
- *                       type: string
- *                       example: "uuid"
- *                     name:
- *                       type: string
- *                       example: "Booth 1"
- *                     constituency:
- *                       type: string
- *                       example: "Constituency A"
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2023-07-24T12:00:00Z"
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2023-07-25T12:00:00Z"
+ *                     currentPage:
+ *                       type: integer
+ *                       example: 1
+ *                     totalPages:
+ *                       type: integer
+ *                       example: 5
+ *                     totalItems:
+ *                       type: integer
+ *                       example: 50
+ *                     booths:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "uuid"
+ *                           name:
+ *                             type: string
+ *                             example: "Booth 1"
+ *                           constituencyId:
+ *                             type: string
+ *                             example: "uuid"
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2023-07-24T12:00:00Z"
+ *                           updatedAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2023-07-25T12:00:00Z"
+ *                           constituency:
+ *                             type: object
+ *                             properties:
+ *                               id:
+ *                                 type: string
+ *                                 example: "uuid"
+ *                               name:
+ *                                 type: string
+ *                                 example: "Constituency A"
  *       404:
- *         description: Booth not found
+ *         description: No booths found
  *         content:
  *           application/json:
  *             schema:
@@ -380,7 +443,7 @@
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: Booth not found
+ *                   example: No booths found
  *     security:
  *       - bearerAuth: []
  */
