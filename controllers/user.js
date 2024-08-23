@@ -2,6 +2,7 @@ const User = require("../models/user");
 const CustomError = require("../utils/error");
 const response = require("../utils/response");
 const JWT = require("../utils/jwt");
+const fileHelper = require("../utils/file");
 
 exports.login = async (req, res, next) => {
   try {
@@ -218,6 +219,9 @@ exports.deleteUser = async (req, res, next) => {
       throw new CustomError("User not found", 404);
     }
 
+    if (user.image) {
+      await fileHelper.deleteFile(user.image);
+    }
     const deletedUser = await User.deleteById(id);
     console.log(`User with id: ${id} deleted successfully`);
     if (!deletedUser) {
@@ -242,6 +246,38 @@ exports.getUser = async (req, res, next) => {
       .status(200)
       .json(response(200, true, "User retrieved successfully", req.user));
   } catch (error) {
+    next(error);
+  }
+};
+
+exports.updateStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Check if the status is valid
+    if (status !== 0 && status !== 1) {
+      throw new CustomError("Invalid status provided. Must be 0 or 1", 400);
+    }
+
+    // Find the user by id
+    let user = await User.findById(id);
+    if (!user) {
+      throw new CustomError("User not found with the provided id", 404);
+    }
+
+    // Update the status
+    user = await User.updateStatus(id, status);
+    console.log(`User status with id: ${id} updated successfully`);
+
+    res.status(200).json(
+      response(200, true, "User status updated successfully", {
+        id: user.id,
+        status: user.status,
+      })
+    );
+  } catch (error) {
+    console.log(`Error in updateStatus: ${error.message}`);
     next(error);
   }
 };

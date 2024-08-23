@@ -144,6 +144,23 @@ class User {
       throw error;
     }
   }
+
+  // New method to update the status of the user
+  static async updateStatus(id, status) {
+    try {
+      // Perform the update of the status field
+      return await prisma.user.update({
+        where: { id: id.toString() },
+        data: { status },
+      });
+    } catch (error) {
+      console.error(
+        `Error updating status for user with id ${id}:`,
+        error.message
+      );
+      throw new Error(`Unable to update status for user with id ${id}`);
+    }
+  }
 }
 
 module.exports = User;

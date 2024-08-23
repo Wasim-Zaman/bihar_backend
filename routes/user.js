@@ -26,4 +26,6 @@ router.get("/v1/users/me", isAuth, userController.getUser);
 
 router.delete("/v1/users/:id", userController.deleteUser);
 
+router.get("/v1/users/status/:id", userController.updateStatus);
+
 module.exports = router;

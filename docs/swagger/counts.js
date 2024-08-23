@@ -136,31 +136,31 @@
  *                     grievances:
  *                       type: object
  *                       properties:
- *                         status0:
+ *                         accepted:
  *                           type: integer
  *                           example: 10
- *                         status1:
+ *                         processing:
  *                           type: integer
  *                           example: 20
- *                         status2:
+ *                         completed:
  *                           type: integer
  *                           example: 5
- *                         status3:
+ *                         rejected:
  *                           type: integer
  *                           example: 15
  *                     events:
  *                       type: object
  *                       properties:
- *                         status0:
+ *                         accepted:
  *                           type: integer
  *                           example: 8
- *                         status1:
+ *                         processing:
  *                           type: integer
  *                           example: 12
- *                         status2:
+ *                         completed:
  *                           type: integer
  *                           example: 3
- *                         status3:
+ *                         rejected:
  *                           type: integer
  *                           example: 7
  *       401:
