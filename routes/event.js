@@ -4,6 +4,7 @@ const { uploadSingle, uploadMultiple } = require("multermate");
 const controller = require("../controllers/event");
 const isAuth = require("../middleware/isAuth");
 const isAdmin = require("../middleware/isAdmin");
+const isActive = require("../middleware/isActive");
 
 const router = express.Router();
 
@@ -11,6 +12,7 @@ const router = express.Router();
 router.post(
   "/v1/events",
   isAuth,
+  //   isActive,
   uploadSingle({ filename: "document" }),
   controller.createEvent
 );
@@ -18,6 +20,7 @@ router.post(
 router.post(
   "/v2/events",
   isAuth,
+  //   isActive,
   uploadMultiple({
     fields: [{ name: "documents" }],
   }),
@@ -39,14 +42,25 @@ router.get("/v1/events", controller.getEvents);
 // Update an event by ID
 router.put(
   "/v1/events/:id",
-  //   isAdmin, // Requiring admin authentication instead of user authentication
+  isAuth,
+  //   isActive,
   uploadSingle({ filename: "document" }),
   controller.updateEventById
 );
 
 router.put(
   "/v2/events/:id",
-  //   isAdmin, // Requiring admin authentication instead of user authentication
+  isAuth,
+  //   isActive,
+  uploadMultiple({
+    fields: [{ name: "documents" }],
+  }),
+  controller.updateEventByIdV2
+);
+
+router.put(
+  "/v2/adminEvent/:id",
+  isAdmin,
   uploadMultiple({
     fields: [{ name: "documents" }],
   }),
@@ -56,7 +70,6 @@ router.put(
 // Delete an event by ID
 router.delete("/v1/events/:id", isAdmin, controller.deleteEventById);
 
-// Update event status based on mobile number
 router.patch("/v1/events/status/:id", controller.updateStatus);
 
 router.get("/v1/user-events", isAuth, controller.getUserEvents);

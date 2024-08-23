@@ -757,7 +757,7 @@
  * /api/epicUser/v1/users/status/{id}:
  *   put:
  *     summary: Update the status of a user by ID
- *     tags: [User]
+ *     tags: [EpicUser]
  *     security:
  *       - bearerAuth: []
  *     parameters:

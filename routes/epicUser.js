@@ -27,6 +27,6 @@ router.get("/v1/users/me", isAuth, controller.getUser);
 
 router.delete("/v1/users/:id", isAdmin, controller.deleteUser);
 
-router.get("/v1/users/status/:id", isAdmin, controller.updateStatus);
+router.put("/v1/users/status/:id", isAdmin, controller.updateStatus);
 
 module.exports = router;

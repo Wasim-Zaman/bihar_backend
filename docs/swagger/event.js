@@ -812,6 +812,131 @@
 
 /**
  * @swagger
+ * /api/events/v2/adminEvent/{id}:
+ *   put:
+ *     summary: Update an event with multiple documents
+ *     tags: [Events]
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the event to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               eventTitle:
+ *                 type: string
+ *                 description: The title of the event
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 description: The date of the event
+ *               fromTime:
+ *                 type: string
+ *                 description: The start time of the event (e.g., "14:00")
+ *               toTime:
+ *                 type: string
+ *                 description: The end time of the event (e.g., "16:00")
+ *               constituency:
+ *                 type: string
+ *                 description: The constituency of the event
+ *               boothNumber:
+ *                 type: integer
+ *                 description: The booth number of the event
+ *               documents:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Array of new document files (e.g., doc, pdf, jpg)
+ *               status:
+ *                 type: integer
+ *                 description: The status of the event (0, 1, 2)
+ *     responses:
+ *       200:
+ *         description: Event updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Event updated successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "uuid"
+ *                     eventTitle:
+ *                       type: string
+ *                       example: "Meeting"
+ *                     date:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2024-03-26T12:42:00Z"
+ *                     fromTime:
+ *                       type: string
+ *                       example: "14:00"
+ *                     toTime:
+ *                       type: string
+ *                       example: "16:00"
+ *                     constituency:
+ *                       type: string
+ *                       example: "Samastipur"
+ *                     boothNumber:
+ *                       type: integer
+ *                       example: 52
+ *                     mobileNumber:
+ *                       type: string
+ *                       example: "1234567890"
+ *                     documents:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         example: "https://example.com/document1.pdf"
+ *                     status:
+ *                       type: integer
+ *                       example: 1
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-24T12:00:00Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-25T12:00:00Z"
+ *       404:
+ *         description: Event not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Event not found
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
  * /api/events/v1/events/{id}:
  *   delete:
  *     summary: Delete an event
