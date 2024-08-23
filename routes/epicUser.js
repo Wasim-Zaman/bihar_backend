@@ -3,6 +3,7 @@ const { uploadSingle } = require("multermate");
 
 const controller = require("../controllers/epicUser");
 const isAuth = require("../middleware/isAuth");
+const isAdmin = require("../middleware/isAdmin");
 
 const router = express.Router();
 
@@ -16,7 +17,6 @@ router.post("");
 // Update user
 router.put(
   "/v1/updateUser",
-  isAuth,
   uploadSingle({ filename: "image" }),
   controller.updateUser
 );
@@ -25,8 +25,8 @@ router.get("/v1/users", controller.getUsers);
 
 router.get("/v1/users/me", isAuth, controller.getUser);
 
-router.delete("/v1/users/:id", controller.deleteUser);
+router.delete("/v1/users/:id", isAdmin, controller.deleteUser);
 
-router.get("/v1/users/status/:id", controller.updateStatus);
+router.get("/v1/users/status/:id", isAdmin, controller.updateStatus);
 
 module.exports = router;
