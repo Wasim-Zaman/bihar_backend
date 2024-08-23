@@ -118,6 +118,14 @@
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - eventTitle
+ *               - date
+ *               - fromTime
+ *               - toTime
+ *               - mobileNumber
+ *               - owner
+ *               - status
  *             properties:
  *               eventTitle:
  *                 type: string
@@ -127,7 +135,7 @@
  *                 type: string
  *                 format: date
  *                 example: "2024-03-26"
- *                 description: The date of the event
+ *                 description: The date of the event (in UTC)
  *               fromTime:
  *                 type: string
  *                 example: "13:23"
@@ -147,7 +155,7 @@
  *               mobileNumber:
  *                 type: string
  *                 example: "1234567890"
- *                 description: The mobile number associated with the event
+ *                 description: The mobile number associated with the event. Must match the user's mobile number for authorization.
  *               owner:
  *                 type: string
  *                 example: "User"
@@ -155,7 +163,7 @@
  *               status:
  *                 type: integer
  *                 example: 1
- *                 description: The status of the event (0, 1, 2)
+ *                 description: The status of the event (0, 1, 2, or 3)
  *               documents:
  *                 type: array
  *                 items:
@@ -216,7 +224,7 @@
  *                         type: string
  *                         example: "https://example.com/document1.pdf"
  *       400:
- *         description: Validation error
+ *         description: Validation error or missing required fields
  *         content:
  *           application/json:
  *             schema:
@@ -227,7 +235,7 @@
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: Validation error
+ *                   example: All required fields must be provided
  *       401:
  *         description: Unauthorized access
  *         content:
@@ -254,6 +262,19 @@
  *                 message:
  *                   type: string
  *                   example: User not found with the entered mobile number
+ *       403:
+ *         description: Unauthorized owner type
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized access, you are not the User or an Epic User
  *     security:
  *       - bearerAuth: []
  */
@@ -262,7 +283,7 @@
  * @swagger
  * /api/events/v1/adminEvent:
  *   post:
- *     summary: Create a new event with multiple documents
+ *     summary: Create a new event with multiple documents by an admin
  *     tags: [Events]
  *     consumes:
  *       - multipart/form-data
@@ -272,6 +293,12 @@
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - eventTitle
+ *               - date
+ *               - fromTime
+ *               - toTime
+ *               - status
  *             properties:
  *               eventTitle:
  *                 type: string
@@ -281,7 +308,7 @@
  *                 type: string
  *                 format: date
  *                 example: "2024-03-26"
- *                 description: The date of the event
+ *                 description: The date of the event (in UTC)
  *               fromTime:
  *                 type: string
  *                 example: "13:23"
@@ -293,19 +320,15 @@
  *               constituency:
  *                 type: string
  *                 example: "Samastipur"
- *                 description: The constituency of the event
+ *                 description: The constituency of the event (optional)
  *               boothNumber:
  *                 type: integer
  *                 example: 52
- *                 description: The booth number of the event
- *               mobileNumber:
- *                 type: string
- *                 example: "1234567890"
- *                 description: The mobile number associated with the event
+ *                 description: The booth number of the event (optional)
  *               status:
  *                 type: integer
  *                 example: 1
- *                 description: The status of the event (0, 1, 2)
+ *                 description: The status of the event (0, 1, 2, 3)
  *               documents:
  *                 type: array
  *                 items:
@@ -351,9 +374,6 @@
  *                     boothNumber:
  *                       type: integer
  *                       example: 52
- *                     mobileNumber:
- *                       type: string
- *                       example: "1234567890"
  *                     status:
  *                       type: integer
  *                       example: 1
@@ -363,7 +383,7 @@
  *                         type: string
  *                         example: "https://example.com/document1.pdf"
  *       400:
- *         description: Validation error
+ *         description: Validation error or missing required fields
  *         content:
  *           application/json:
  *             schema:
@@ -374,7 +394,7 @@
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: Validation error
+ *                   example: All required fields must be provided or Invalid status provided, it must be one of these [0,1,2,3]
  *     security:
  *       - bearerAuth: []
  */
