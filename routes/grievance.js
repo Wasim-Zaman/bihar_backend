@@ -51,6 +51,16 @@ router.put(
 
 router.put(
   "/v2/grievances/:id",
+  isAuth,
+  uploadMultiple({
+    fields: [{ name: "attachments" }],
+  }),
+  controller.updateGrievanceV2
+);
+
+router.put(
+  "/v2/admin/grievances/:id",
+  isAdmin,
   uploadMultiple({
     fields: [{ name: "attachments" }],
   }),

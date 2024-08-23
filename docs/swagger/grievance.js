@@ -750,6 +750,168 @@
 
 /**
  * @swagger
+ * /api/admin/grievances/v2/grievances/{id}:
+ *   put:
+ *     summary: Update a grievance with multiple attachments and additional fields
+ *     tags: [Grievances]
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the grievance to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 description: The full name of the user (optional)
+ *               fatherName:
+ *                 type: string
+ *                 description: The father's name of the user (optional)
+ *               legislativeConstituency:
+ *                 type: string
+ *                 description: The legislative constituency (optional)
+ *               boothNameOrNumber:
+ *                 type: string
+ *                 description: The booth name or number (optional)
+ *               contactNumber:
+ *                 type: string
+ *                 description: The contact number of the user (optional)
+ *               gender:
+ *                 type: string
+ *                 description: The gender of the user (MALE, FEMALE, OTHER) (optional)
+ *               age:
+ *                 type: integer
+ *                 description: The age of the user (optional)
+ *               voterId:
+ *                 type: string
+ *                 description: The voter ID of the user (optional)
+ *               category:
+ *                 type: string
+ *                 description: The category of the grievance (optional)
+ *               subCategory:
+ *                 type: string
+ *                 description: The sub-category of the grievance (optional)
+ *               ticketTitle:
+ *                 type: string
+ *                 description: The title of the grievance ticket (optional)
+ *               description:
+ *                 type: string
+ *                 description: The description of the grievance (optional)
+ *               status:
+ *                 type: integer
+ *                 description: The status of the grievance (optional)
+ *               note:
+ *                 type: string
+ *                 description: Any additional notes regarding the grievance (optional)
+ *               attachments:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Array of new attachment files (e.g., doc, pdf, jpg)
+ *     responses:
+ *       200:
+ *         description: Grievance updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Grievance updated successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "uuid"
+ *                     fullName:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     fatherName:
+ *                       type: string
+ *                       example: "Father Name"
+ *                     legislativeConstituency:
+ *                       type: string
+ *                       example: "Legislative Constituency"
+ *                     boothNameOrNumber:
+ *                       type: string
+ *                       example: "Booth Name/Number"
+ *                     contactNumber:
+ *                       type: string
+ *                       example: "1234567890"
+ *                     gender:
+ *                       type: string
+ *                       example: "MALE"
+ *                     age:
+ *                       type: integer
+ *                       example: 30
+ *                     voterId:
+ *                       type: string
+ *                       example: "Voter ID"
+ *                     category:
+ *                       type: string
+ *                       example: "Category Name"
+ *                     subCategory:
+ *                       type: string
+ *                       example: "Sub Category Name"
+ *                     ticketTitle:
+ *                       type: string
+ *                       example: "Ticket Title"
+ *                     description:
+ *                       type: string
+ *                       example: "Grievance Description"
+ *                     status:
+ *                       type: integer
+ *                       example: 1
+ *                     note:
+ *                       type: string
+ *                       example: "Additional notes about the grievance"
+ *                     attachments:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         example: "https://example.com/new-attachment1.jpg"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-24T12:00:00Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-25T12:00:00Z"
+ *       404:
+ *         description: Grievance not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Grievance not found
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
  * /api/grievances/v1/grievances/{id}:
  *   delete:
  *     summary: Delete a grievance
