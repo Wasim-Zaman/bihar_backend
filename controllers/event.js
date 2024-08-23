@@ -216,14 +216,7 @@ exports.createAdminEvent = async (req, res, next) => {
         ? req.files.documents.map((file) => file.path)
         : [];
 
-    if (
-      !eventTitle ||
-      !date ||
-      !fromTime ||
-      !toTime ||
-      !mobileNumber ||
-      status === undefined
-    ) {
+    if (!eventTitle || !date || !fromTime || !toTime || status === undefined) {
       throw new CustomError("All required fields must be provided", 400);
     }
 
