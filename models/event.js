@@ -111,6 +111,7 @@ class Event {
           { mobileNumber: mobileNumber },
           //   { isAdmin: true },
           { mobileNumber: null },
+          { owner: "admin" },
         ],
         ...(query && {
           AND: [
@@ -214,8 +215,8 @@ class Event {
         where: {
           OR: [
             { mobileNumber: mobileNumber },
-            // { isAdmin: true },
             { mobileNumber: null },
+            { owner: "admin" },
           ],
           date: {
             gte: startOfDay,
@@ -229,7 +230,7 @@ class Event {
         where: {
           OR: [
             { mobileNumber: mobileNumber },
-            { isAdmin: true },
+            { owner: "admin" }, // Replaced isAdmin with owner: "admin"
             { mobileNumber: null },
           ],
           date: {
