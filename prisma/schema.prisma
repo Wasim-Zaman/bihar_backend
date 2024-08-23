@@ -21,6 +21,7 @@ model User {
   age                     Int?
   email                   String?  @unique
   timeZone                String?   @default("UTC")
+  status                  Int? @default(1)
 
   @@map("user")
 }
@@ -53,15 +54,15 @@ model Event {
   id             String   @id @default(uuid())
   eventTitle     String
   date           DateTime
-  fromTime       String?  // Make optional
-  toTime         String?  // Make optional
+  fromTime       String?  
+  toTime         String?  
   constituency   String?
   boothNumber    String?
   mobileNumber   String?
   status         Int      @default(0)
   owner          String?      
   document       String?  
-  documents      Json?    // Updated to Json to store a list of document paths
+  documents      Json?    
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -82,6 +83,7 @@ model EpicUser {
   age                     Int?
   email                   String?  @unique
   timeZone                String?   @default("UTC")
+  status                  Int? @default(1)
 }
 
 model Constituency {

@@ -29,3 +29,79 @@ exports.getAllCounts = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getCountsByStatus = async (req, res, next) => {
+  try {
+    // Fetch user counts based on status
+    const activeUserCount = await prisma.user.count({
+      where: { status: 1 },
+    });
+    const inactiveUserCount = await prisma.user.count({
+      where: { status: 0 },
+    });
+
+    // Fetch epic user counts based on status
+    const activeEpicUserCount = await prisma.epicUser.count({
+      where: { status: 1 },
+    });
+    const inactiveEpicUserCount = await prisma.epicUser.count({
+      where: { status: 0 },
+    });
+
+    // Fetch grievance counts based on status
+    const grievanceStatus0Count = await prisma.grievance.count({
+      where: { status: 0 },
+    });
+    const grievanceStatus1Count = await prisma.grievance.count({
+      where: { status: 1 },
+    });
+    const grievanceStatus2Count = await prisma.grievance.count({
+      where: { status: 2 },
+    });
+    const grievanceStatus3Count = await prisma.grievance.count({
+      where: { status: 3 },
+    });
+
+    // Fetch event counts based on status
+    const eventStatus0Count = await prisma.event.count({
+      where: { status: 0 },
+    });
+    const eventStatus1Count = await prisma.event.count({
+      where: { status: 1 },
+    });
+    const eventStatus2Count = await prisma.event.count({
+      where: { status: 2 },
+    });
+    const eventStatus3Count = await prisma.event.count({
+      where: { status: 3 },
+    });
+
+    // Return the counts in the response
+    res.status(200).json(
+      response(200, true, "Counts by status fetched successfully", {
+        users: {
+          active: activeUserCount,
+          inactive: inactiveUserCount,
+        },
+        epicUsers: {
+          active: activeEpicUserCount,
+          inactive: inactiveEpicUserCount,
+        },
+        grievances: {
+          accepted: grievanceStatus0Count,
+          processing: grievanceStatus1Count,
+          completed: grievanceStatus2Count,
+          rejected: grievanceStatus3Count,
+        },
+        events: {
+          accepted: eventStatus0Count,
+          processing: eventStatus1Count,
+          completed: eventStatus2Count,
+          rejected: eventStatus3Count,
+        },
+      })
+    );
+  } catch (error) {
+    next(error);
+  }
+};

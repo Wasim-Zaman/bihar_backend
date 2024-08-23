@@ -198,16 +198,14 @@ exports.createAdminEvent = async (req, res, next) => {
       toTime,
       constituency,
       boothNumber,
-      mobileNumber,
       status,
     } = req.body;
 
-    const user = await User.findByMobileNumber(mobileNumber);
-
-    if (!user) {
+    // if status is not 0,1,2,3 then throw error
+    if (![0, 1, 2, 3].includes(Number(status))) {
       throw new CustomError(
-        "User not found with the entered mobile number",
-        404
+        "Invalid status provided, it must be one of these [0,1,2,3]",
+        400
       );
     }
 
@@ -223,8 +221,6 @@ exports.createAdminEvent = async (req, res, next) => {
       !date ||
       !fromTime ||
       !toTime ||
-      //   !constituency ||
-      //   !boothNumber ||
       !mobileNumber ||
       status === undefined
     ) {
@@ -239,9 +235,8 @@ exports.createAdminEvent = async (req, res, next) => {
       date: eventDate,
       fromTime,
       toTime,
-      constituency: constituency || user.legislativeConstituency,
-      boothNumber: boothNumber || user.boothNameOrNumber,
-      mobileNumber,
+      constituency: constituency || null,
+      boothNumber: boothNumber || null,
       owner: "admin",
       status: parseInt(status, 10),
       documents,
@@ -251,7 +246,7 @@ exports.createAdminEvent = async (req, res, next) => {
       `Event created with ID: ${newEvent.id} and title: ${eventTitle}`
     );
 
-    scheduleNotification(newEvent, user);
+    // scheduleNotification(newEvent, user);
 
     console.log("Notification scheduled.");
 

@@ -105,13 +105,21 @@ class Event {
     try {
       const skip = (page - 1) * limit;
 
-      // Build the search condition based on mobile number and optional query
+      // Build the search condition based on mobile number, isAdmin, and optional query
       const where = {
-        mobileNumber: mobileNumber, // Filter by mobile number
+        OR: [
+          { mobileNumber: mobileNumber },
+          //   { isAdmin: true },
+          { mobileNumber: null },
+        ],
         ...(query && {
-          OR: [
-            { eventTitle: { contains: query, mode: "insensitive" } },
-            { constituency: { contains: query, mode: "insensitive" } },
+          AND: [
+            {
+              OR: [
+                { eventTitle: { contains: query } },
+                { constituency: { contains: query } },
+              ],
+            },
           ],
         }),
       };
@@ -141,7 +149,7 @@ class Event {
       };
     } catch (error) {
       console.error(
-        "Error getting events by mobile number with pagination and search:",
+        "Error getting events by mobile number, isAdmin, or mobile number null with pagination and search:",
         error
       );
       throw error;
@@ -204,7 +212,11 @@ class Event {
         skip,
         take: limit,
         where: {
-          mobileNumber: mobileNumber,
+          OR: [
+            { mobileNumber: mobileNumber },
+            // { isAdmin: true },
+            { mobileNumber: null },
+          ],
           date: {
             gte: startOfDay,
             lte: endOfDay,
@@ -215,7 +227,11 @@ class Event {
       // Count the total number of events matching the criteria
       const totalEvents = await prisma.event.count({
         where: {
-          mobileNumber: mobileNumber,
+          OR: [
+            { mobileNumber: mobileNumber },
+            { isAdmin: true },
+            { mobileNumber: null },
+          ],
           date: {
             gte: startOfDay,
             lte: endOfDay,
