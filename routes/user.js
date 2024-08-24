@@ -28,4 +28,6 @@ router.delete("/v1/users/:id", isAdmin, userController.deleteUser);
 
 router.put("/v1/users/status/:id", isAdmin, userController.updateStatus);
 
+router.get("/v1/users/search", userController.searchUsers);
+
 module.exports = router;

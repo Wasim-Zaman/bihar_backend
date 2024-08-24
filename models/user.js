@@ -161,6 +161,53 @@ class User {
       throw new Error(`Unable to update status for user with id ${id}`);
     }
   }
+
+  static async searchByMobileNumberAndEpicId(
+    phoneNumber = "",
+    epicId = "",
+    page = 1,
+    limit = 10
+  ) {
+    try {
+      const skip = (page - 1) * limit;
+
+      const where = {
+        AND: [
+          { mobileNumber: { contains: phoneNumber } },
+          { epicId: { contains: epicId } },
+        ],
+      };
+
+      // Fetch the paginated users
+      const users = await prisma.user.findMany({
+        skip,
+        take: limit,
+        where,
+      });
+
+      // Fetch the total number of users matching the search query
+      const totalUsers = await prisma.user.count({ where });
+
+      // Calculate total pages
+      const totalPages = Math.ceil(totalUsers / limit);
+
+      return {
+        users: users,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalItems: totalUsers,
+          itemsPerPage: limit,
+        },
+      };
+    } catch (error) {
+      console.error(
+        "Error searching users by mobile number and EPIC ID:",
+        error
+      );
+      throw error;
+    }
+  }
 }
 
 module.exports = User;

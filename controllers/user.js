@@ -281,3 +281,45 @@ exports.updateStatus = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.searchUsers = async (req, res, next) => {
+  try {
+    const { phoneNumber = "", epicId = "", page = 1, limit = 10 } = req.query;
+
+    // Check if at least one search parameter is provided
+    if (!phoneNumber && !epicId) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "At least one of phoneNumber or epicId is required for searching users",
+      });
+    }
+
+    // Fetch users based on phoneNumber and/or epicId
+    const result = await User.searchByMobileNumberAndEpicId(
+      phoneNumber,
+      epicId,
+      Number(page),
+      Number(limit)
+    );
+
+    // If no users found
+    if (!result.users.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No users found matching the search criteria",
+      });
+    }
+
+    // Return the users found
+    res.status(200).json({
+      success: true,
+      message: "Users retrieved successfully",
+      data: result.users,
+      pagination: result.pagination,
+    });
+  } catch (error) {
+    console.error("Error in searchUsers controller:", error);
+    next(error); // Pass the error to the global error handler
+  }
+};
