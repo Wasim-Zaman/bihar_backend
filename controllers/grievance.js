@@ -532,3 +532,39 @@ exports.assignGrievance = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.updateGrievanceStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Validate that status is provided and is a valid value
+    if (
+      typeof status === "undefined" ||
+      ![0, 1, 2, 3].includes(Number(status))
+    ) {
+      throw new CustomError(
+        "Invalid status provided, it must be one of these [0, 1, 2, 3]",
+        400
+      );
+    }
+
+    console.log(`Attempting to update status of grievance with ID: ${id}`);
+
+    const updatedGrievance = await Grievance.updateStatus(id, Number(status));
+
+    res
+      .status(200)
+      .json(
+        generateResponse(
+          200,
+          true,
+          "Grievance status updated",
+          updatedGrievance
+        )
+      );
+  } catch (error) {
+    console.error(`Error in updateGrievanceStatus: ${error.message}`);
+    next(error);
+  }
+};

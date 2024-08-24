@@ -1373,3 +1373,283 @@
  *     security:
  *       - bearerAuth: []
  */
+
+/**
+ * @swagger
+ * /api/grievances/v1/assigned-grievances:
+ *   get:
+ *     summary: Retrieve assigned grievances
+ *     tags: [Grievances]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of items to retrieve per page.
+ *     responses:
+ *       200:
+ *         description: Grievances retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Grievances retrieved successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     grievances:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "uuid"
+ *                           category:
+ *                             type: string
+ *                             example: "Category Name"
+ *                           subCategory:
+ *                             type: string
+ *                             example: "Sub Category Name"
+ *                           fullName:
+ *                             type: string
+ *                             example: "John Doe"
+ *                           contactNumber:
+ *                             type: string
+ *                             example: "1234567890"
+ *                           status:
+ *                             type: integer
+ *                             example: 1
+ *                           description:
+ *                             type: string
+ *                             example: "Grievance Description"
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2023-07-24T12:00:00Z"
+ *                           updatedAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2023-07-25T12:00:00Z"
+ *                     pagination:
+ *                       type: object
+ *                       properties:
+ *                         currentPage:
+ *                           type: integer
+ *                           example: 1
+ *                         totalPages:
+ *                           type: integer
+ *                           example: 5
+ *                         totalItems:
+ *                           type: integer
+ *                           example: 50
+ *                         itemsPerPage:
+ *                           type: integer
+ *                           example: 10
+ *       404:
+ *         description: No grievances found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: No grievances found
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/grievances/v1/assignGrievance/{id}:
+ *   patch:
+ *     summary: Assign a grievance to a different contact number
+ *     tags: [Grievances]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the grievance to assign
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               contactNumber:
+ *                 type: string
+ *                 example: "1234567890"
+ *                 description: The contact number to assign the grievance to
+ *     responses:
+ *       200:
+ *         description: Grievance assigned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Grievance assigned successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "uuid"
+ *                     fullName:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     contactNumber:
+ *                       type: string
+ *                       example: "1234567890"
+ *                     status:
+ *                       type: integer
+ *                       example: 1
+ *                     description:
+ *                       type: string
+ *                       example: "Grievance Description"
+ *                     assignedTo:
+ *                       type: string
+ *                       example: "9876543210"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-24T12:00:00Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-07-25T12:00:00Z"
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Validation error
+ *       404:
+ *         description: Grievance not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Grievance not found
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/grievances/v1/update-status/{id}:
+ *   put:
+ *     summary: Update the status of a grievance
+ *     tags: [Grievances]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the grievance to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: integer
+ *                 description: The new status of the grievance
+ *                 example: 2
+ *     responses:
+ *       200:
+ *         description: Grievance status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Grievance status updated successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "uuid"
+ *                     status:
+ *                       type: integer
+ *                       example: 2
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-08-25T12:00:00Z"
+ *       400:
+ *         description: Validation error or invalid status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Validation error or invalid status
+ *       404:
+ *         description: Grievance not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Grievance not found
+ *     security:
+ *       - bearerAuth: []
+ */

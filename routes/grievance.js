@@ -31,15 +31,17 @@ router.post(
   controller.createAdminGrievance
 );
 
+// Get paginated grievances with optional search query
+router.get("/v1/grievances", controller.getGrievances);
+
+router.get("/v1/assigned-grievances", isAuth, controller.getAssignedGrievances);
+
 router.get("/v1/admin/grievances", isAuth, controller.getAdminGrievances);
 
 router.get("/v1/grievances/by-tab", isAuth, controller.getGrievancesByTabName);
 
 // Get a grievance by ID
 router.get("/v1/grievances/:id", controller.getGrievanceById);
-
-// Get paginated grievances with optional search query
-router.get("/v1/grievances", controller.getGrievances);
 
 // Update a grievance by ID
 router.put(
@@ -67,7 +69,13 @@ router.put(
   controller.updateGrievanceV2
 );
 
+// Assign a grievance to a contact number
+router.patch("/v1/assignGrievance/:id", isAdmin, controller.assignGrievance);
+
 // Delete a grievance by ID
 router.delete("/v1/grievances/:id", isAdmin, controller.deleteGrievance);
+
+// Route to update grievance status
+router.put("/v1/update-status/:id", isAuth, controller.updateGrievanceStatus);
 
 module.exports = router;

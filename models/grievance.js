@@ -265,6 +265,24 @@ class Grievance {
       );
     }
   }
+
+  static async updateStatus(id, status) {
+    try {
+      // Update the status field for the specified grievance ID
+      const updatedGrievance = await prisma.grievance.update({
+        where: { id: id },
+        data: { status: status },
+      });
+
+      return updatedGrievance;
+    } catch (error) {
+      console.error(
+        `Error updating status of grievance with id ${id}:`,
+        error.message
+      );
+      throw new Error(`Unable to update status of grievance with id ${id}`);
+    }
+  }
 }
 
 module.exports = Grievance;
