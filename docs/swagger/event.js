@@ -1089,7 +1089,7 @@
  * @swagger
  * /api/events/v1/user-events:
  *   get:
- *     summary: Retrieve paginated events by mobile number with status 2 and optional search query
+ *     summary: Retrieve paginated events by mobile number with optional search query and tab filtering
  *     tags: [Events]
  *     parameters:
  *       - in: query
@@ -1097,16 +1097,25 @@
  *         schema:
  *           type: integer
  *         description: The page number to retrieve.
+ *         example: 1
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *         description: The number of items to retrieve per page.
+ *         example: 20
  *       - in: query
  *         name: query
  *         schema:
  *           type: string
  *         description: The search query to filter events.
+ *         example: "Meeting"
+ *       - in: query
+ *         name: tab
+ *         schema:
+ *           type: string
+ *         description: The tab to filter events. Must be 'onGoing' or 'history'.
+ *         example: "onGoing"
  *     responses:
  *       200:
  *         description: Events retrieved successfully
@@ -1168,8 +1177,8 @@
  *                             type: string
  *                             format: date-time
  *                             example: "2023-07-25T12:00:00Z"
- *       404:
- *         description: No events found with status 2
+ *       400:
+ *         description: Invalid tab value or bad request
  *         content:
  *           application/json:
  *             schema:
@@ -1180,7 +1189,33 @@
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: No events found with status 2
+ *                   example: "Invalid tab value. Must be 'onGoing' or 'history'."
+ *       404:
+ *         description: No events found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: No events found
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Server error occurred"
  *     security:
  *       - bearerAuth: []
  */

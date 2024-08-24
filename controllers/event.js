@@ -468,17 +468,26 @@ exports.updateStatus = async (req, res, next) => {
 // Get events by mobile number with status 2
 exports.getUserEvents = async (req, res, next) => {
   const { mobileNumber } = req.user;
-  const { page = 1, limit = 20, query = "" } = req.query;
+  const { page = 1, limit = 20, query = "", tab } = req.query;
 
   try {
+    // Validate the tab parameter
+    if (tab && !["onGoing", "history"].includes(tab)) {
+      throw new CustomError(
+        "Invalid tab value. Must be 'onGoing' or 'history'.",
+        400
+      );
+    }
+
     const events = await Event.getUserEvents(
       mobileNumber,
       Number(page),
       Number(limit),
-      query
+      query,
+      tab
     );
 
-    if (!events.data.length > 0) {
+    if (!events.data.length) {
       throw new CustomError("No events found", 404);
     }
 

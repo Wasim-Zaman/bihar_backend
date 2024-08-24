@@ -101,7 +101,13 @@ class Event {
     }
   }
 
-  static async getUserEvents(mobileNumber, page = 1, limit = 10, query = "") {
+  static async getUserEvents(
+    mobileNumber,
+    page = 1,
+    limit = 10,
+    query = "",
+    tab
+  ) {
     try {
       const skip = (page - 1) * limit;
 
@@ -109,7 +115,6 @@ class Event {
       const where = {
         OR: [
           { mobileNumber: mobileNumber },
-          //   { isAdmin: true },
           { mobileNumber: null },
           { owner: "admin" },
         ],
@@ -123,6 +128,12 @@ class Event {
             },
           ],
         }),
+        // Add filter based on the tab value
+        ...(tab === "onGoing"
+          ? { status: 0 }
+          : tab === "history"
+          ? { status: { in: [1, 2, 3] } }
+          : {}),
       };
 
       // Fetch the paginated events
@@ -150,7 +161,7 @@ class Event {
       };
     } catch (error) {
       console.error(
-        "Error getting events by mobile number, isAdmin, or mobile number null with pagination and search:",
+        "Error getting events by mobile number, isAdmin, or mobile number null with pagination, search, and tab filter:",
         error
       );
       throw error;
@@ -221,6 +232,9 @@ class Event {
           date: {
             gte: startOfDay,
             lte: endOfDay,
+          },
+          status: {
+            not: 0,
           },
         },
       });
