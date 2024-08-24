@@ -131,7 +131,7 @@ async function scheduleNotification(notification) {
   const { title, description, date, time } = notification;
 
   try {
-    // Combine date and time into a single UTC Date object
+    // Combine date and time into a single Date object in UTC
     const [hours, minutes] = time.split(":").map(Number);
     const scheduledDateTime = new Date(
       `${date}T${hours.toString().padStart(2, "0")}:${minutes
