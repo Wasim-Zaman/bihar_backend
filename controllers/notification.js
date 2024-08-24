@@ -128,9 +128,17 @@ exports.getNotifications = async (req, res, next) => {
 
 // Function to schedule the notification
 async function scheduleNotification(notification) {
-  const { title, description, date } = notification;
+  const { title, description, date, time } = notification;
 
   try {
+    // Combine date and time into a single Date object
+    const [hours, minutes] = time.split(":").map(Number);
+    const scheduledDateTime = new Date(date);
+    scheduledDateTime.setHours(hours);
+    scheduledDateTime.setMinutes(minutes);
+    scheduledDateTime.setSeconds(0);
+    scheduledDateTime.setMilliseconds(0);
+
     // Retrieve FCM tokens from both User and EpicUser tables
     const userTokens = await prisma.user.findMany({
       select: { fcmToken: true },
@@ -145,6 +153,8 @@ async function scheduleNotification(notification) {
       (user) => user.fcmToken
     );
 
+    console.log(allTokens);
+
     const message = {
       notification: {
         title,
@@ -154,9 +164,18 @@ async function scheduleNotification(notification) {
     };
 
     // Calculate the delay until the scheduled time
-    const delay = date.getTime() - new Date().getTime();
+    const now = new Date();
+    const delay = (scheduledDateTime.getTime() - now.getTime()) / 1000;
 
     if (delay > 0) {
+      console.log(
+        `Notification will be sent after ${Math.floor(
+          delay / 3600
+        )} hours, ${Math.floor((delay % 3600) / 60)} minutes, and ${Math.floor(
+          delay % 60
+        )} seconds`
+      );
+
       setTimeout(() => {
         messaging
           .sendMulticast(message)
@@ -166,7 +185,7 @@ async function scheduleNotification(notification) {
           .catch((error) => {
             console.error("Error sending notifications:", error.message);
           });
-      }, delay);
+      }, delay * 1000);
     } else {
       console.error("Scheduled time is in the past. Notification not sent.");
     }
