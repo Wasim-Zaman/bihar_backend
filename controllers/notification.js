@@ -139,6 +139,9 @@ async function scheduleNotification(notification) {
         .padStart(2, "0")}:00Z`
     ); // UTC time
 
+    // Log the scheduledDateTime to verify its value
+    console.log("Scheduled DateTime (UTC):", scheduledDateTime.toISOString());
+
     // Retrieve FCM tokens from both User and EpicUser tables
     const userTokens = await prisma.user.findMany({
       select: { fcmToken: true },
@@ -153,7 +156,7 @@ async function scheduleNotification(notification) {
       (user) => user.fcmToken
     );
 
-    console.log(allTokens);
+    console.log("All tokens:", allTokens);
 
     const message = {
       notification: {
@@ -165,6 +168,8 @@ async function scheduleNotification(notification) {
 
     // Calculate the delay until the scheduled time in seconds
     const now = new Date();
+    console.log("Current DateTime (UTC):", now.toISOString());
+
     const delay = (scheduledDateTime.getTime() - now.getTime()) / 1000;
 
     if (delay > 0) {
