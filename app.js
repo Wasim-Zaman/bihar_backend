@@ -3,7 +3,7 @@ const path = require("path");
 const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const bodyParser = require("body-parser");
-const cors = require("cors-magic");
+const cors = require("cors");
 require("dotenv").config();
 
 const CustomError = require("./utils/error");
