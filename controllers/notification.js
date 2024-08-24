@@ -131,13 +131,13 @@ async function scheduleNotification(notification) {
   const { title, description, date, time } = notification;
 
   try {
-    // Combine date and time into a single Date object
+    // Combine date and time into a single UTC Date object
     const [hours, minutes] = time.split(":").map(Number);
-    const scheduledDateTime = new Date(date);
-    scheduledDateTime.setHours(hours);
-    scheduledDateTime.setMinutes(minutes);
-    scheduledDateTime.setSeconds(0);
-    scheduledDateTime.setMilliseconds(0);
+    const scheduledDateTime = new Date(
+      `${date}T${hours.toString().padStart(2, "0")}:${minutes
+        .toString()
+        .padStart(2, "0")}:00Z`
+    ); // UTC time
 
     // Retrieve FCM tokens from both User and EpicUser tables
     const userTokens = await prisma.user.findMany({
@@ -163,7 +163,7 @@ async function scheduleNotification(notification) {
       tokens: allTokens, // Send to all users' tokens
     };
 
-    // Calculate the delay until the scheduled time
+    // Calculate the delay until the scheduled time in seconds
     const now = new Date();
     const delay = (scheduledDateTime.getTime() - now.getTime()) / 1000;
 
