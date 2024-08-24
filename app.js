@@ -18,6 +18,7 @@ const constituencyRoutes = require("./routes/constituency");
 const boothRoutes = require("./routes/booth");
 const adminRoutes = require("./routes/admin");
 const countsRoutes = require("./routes/counts");
+const notificationRotues = require("./routes/notification");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -38,6 +39,7 @@ app.use("/api/epicUser", epicUserRoutes);
 app.use("/api/constituencies", constituencyRoutes);
 app.use("/api/booths", boothRoutes);
 app.use("/api/counts", countsRoutes);
+app.use("/api/notifications", notificationRotues);
 // Add your routes...
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

@@ -470,3 +470,65 @@ exports.getGrievancesByTabName = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getAssignedGrievances = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+
+    const grievances = await Grievance.getAssignedGrievances(
+      req.user.mobileNumber,
+      Number(page),
+      Number(limit)
+    );
+
+    if (!grievances || grievances.length <= 0) {
+      throw new CustomError("No grievances found", 404);
+    }
+
+    res
+      .status(200)
+      .json(
+        generateResponse(
+          200,
+          true,
+          "Grievances retrieved successfully",
+          grievances
+        )
+      );
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.assignGrievance = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { contactNumber } = req.body;
+
+    if (!contactNumber) {
+      throw new CustomError("Contact number is required", 400);
+    }
+
+    const grievance = await Grievance.findById(id);
+
+    if (!grievance) {
+      throw new CustomError("Grievance not found", 404);
+    }
+
+    const updatedGrievance = await Grievance.assignTo(id, contactNumber);
+
+    res
+      .status(200)
+      .json(
+        generateResponse(
+          200,
+          true,
+          "Grievance assigned successfully",
+          updatedGrievance
+        )
+      );
+  } catch (error) {
+    console.error(`Error in assignGrievance: ${error.message}`);
+    next(error);
+  }
+};

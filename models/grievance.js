@@ -198,6 +198,73 @@ class Grievance {
       throw error;
     }
   }
+
+  static async getAssignedGrievances(contactNumber, page = 1, limit = 10) {
+    try {
+      const skip = (page - 1) * limit;
+
+      // Fetch the paginated grievances where assignedTo equals contactNumber and is not null
+      const grievances = await prisma.grievance.findMany({
+        skip,
+        take: limit,
+        where: {
+          assignedTo: contactNumber,
+          NOT: {
+            assignedTo: null,
+          },
+        },
+      });
+
+      // Fetch the total number of grievances with the specified contactNumber and assignedTo is not null
+      const totalGrievances = await prisma.grievance.count({
+        where: {
+          assignedTo: contactNumber,
+          NOT: {
+            assignedTo: null,
+          },
+        },
+      });
+
+      // Calculate total pages
+      const totalPages = Math.ceil(totalGrievances / limit);
+
+      return {
+        data: grievances,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalItems: totalGrievances,
+          itemsPerPage: limit,
+        },
+      };
+    } catch (error) {
+      console.error(
+        "Error getting grievances with pagination and contact number:",
+        error
+      );
+      throw error;
+    }
+  }
+
+  static async assignTo(id, contactNumber) {
+    try {
+      // Update the assignedTo field for the specified grievance ID
+      const updatedGrievance = await prisma.grievance.update({
+        where: { id: id },
+        data: { assignedTo: contactNumber },
+      });
+
+      return updatedGrievance;
+    } catch (error) {
+      console.error(
+        `Error assigning contact number to grievance with id ${id}:`,
+        error.message
+      );
+      throw new Error(
+        `Unable to assign contact number to grievance with id ${id}`
+      );
+    }
+  }
 }
 
 module.exports = Grievance;
