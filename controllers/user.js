@@ -366,7 +366,7 @@ exports.createUser = async (req, res, next) => {
       age,
       email,
       timeZone: timeZone || "UTC",
-      status: status !== undefined ? status : 1,
+      status: status !== undefined ? Number(status) : 1,
     });
 
     // Return success response
