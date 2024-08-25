@@ -77,7 +77,7 @@ model EpicUser {
   image                   String? 
   epicId                  String?
   mobileNumber            String   @unique
-  fcmToken                String   @unique
+  fcmToken                String 
   legislativeConstituency String?
   boothNameOrNumber       String?
   gender                  String?
