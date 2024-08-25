@@ -439,7 +439,7 @@ exports.createUser = async (req, res, next) => {
       epicId,
       image: null,
       mobileNumber,
-      fcmToken: null,
+      fcmToken: "",
       legislativeConstituency,
       boothNameOrNumber,
       gender,
@@ -452,13 +452,8 @@ exports.createUser = async (req, res, next) => {
     // Return success response
     res
       .status(201)
-      .json(generateResponse(201, true, "User created successfully", newUser));
+      .json(response(201, true, "User created successfully", newUser));
   } catch (error) {
-    next(
-      new CustomError(
-        `Unable to create user: ${error.message}`,
-        error.statusCode || 500
-      )
-    );
+    next(error);
   }
 };

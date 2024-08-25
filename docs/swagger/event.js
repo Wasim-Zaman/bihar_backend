@@ -1514,7 +1514,7 @@
 
 /**
  * @swagger
- * /v1/admin/list/accepted:
+ * /api/events/v1/admin/list/accepted:
  *   get:
  *     summary: Retrieve a list of accepted events
  *     description: This endpoint retrieves a paginated list of events that have been accepted (status is 0) for the admin side.
