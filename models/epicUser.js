@@ -108,14 +108,14 @@ class EpicUser {
         : {};
 
       // Fetch the paginated users
-      const users = await prisma.user.findMany({
+      const users = await prisma.epicUser.findMany({
         skip,
         take: limit,
         where,
       });
 
       // Fetch the total number of users
-      const totalUsers = await prisma.user.count({ where });
+      const totalUsers = await prisma.epicUser.count({ where });
 
       // Calculate total pages
       const totalPages = Math.ceil(totalUsers / limit);
