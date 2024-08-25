@@ -566,10 +566,12 @@ exports.getAdminSideRequestedEvents = async (req, res, next) => {
 exports.getAdminSideEventsList = async (req, res, next) => {
   try {
     const { page = 1, limit = 20 } = req.query;
-    const { mobileNumber } = req.user;
 
     // Fetch the events based on the user's mobile number
-    const events = await Event.get(Number(page), Number(limit));
+    const events = await Event.getAdminSideEventsList(
+      Number(page),
+      Number(limit)
+    );
 
     if (events.data.length === 0) {
       throw new CustomError("No events found", 404);
@@ -581,7 +583,6 @@ exports.getAdminSideEventsList = async (req, res, next) => {
         generateResponse(200, true, "Events retrieved successfully", events)
       );
   } catch (error) {
-    console.error(`Error in getAdminSideRequestedEvents: ${error.message}`);
     next(
       new CustomError(
         `Unable to retrieve events: ${error.message}`,

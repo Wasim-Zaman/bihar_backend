@@ -316,6 +316,38 @@ class Event {
       throw new Error(`Unable to get events ${mobileNumber}`);
     }
   }
+
+  static async getAdminSideEventsList(page = 1, limit = 10) {
+    try {
+      const skip = (page - 1) * limit;
+
+      // Fetch paginated events from the database
+      const events = await prisma.event.findMany({
+        skip,
+        take: limit,
+      });
+
+      // Count the total number of events matching the criteria
+      const totalEvents = await prisma.event.count({});
+
+      // Calculate the total number of pages
+      const totalPages = Math.ceil(totalEvents / limit);
+
+      // Return the data and pagination details
+      return {
+        data: events,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalItems: totalEvents,
+          itemsPerPage: limit,
+        },
+      };
+    } catch (error) {
+      console.error(error.message);
+      throw new Error(`Unable to get events ${mobileNumber}`);
+    }
+  }
 }
 
 module.exports = Event;
