@@ -406,21 +406,12 @@ exports.searchUsers = async (req, res, next) => {
 
 exports.createUser = async (req, res, next) => {
   try {
-    // Validate request body
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      const msg = errors.errors[0].msg;
-      throw new CustomError(msg, 422);
-    }
-
     // Extract data from request body
     const {
       fullName,
       fatherName,
       epicId,
-      image,
       mobileNumber,
-      fcmToken,
       legislativeConstituency,
       boothNameOrNumber,
       gender,
@@ -446,9 +437,9 @@ exports.createUser = async (req, res, next) => {
       fullName,
       fatherName,
       epicId,
-      image,
+      image: null,
       mobileNumber,
-      fcmToken,
+      fcmToken: null,
       legislativeConstituency,
       boothNameOrNumber,
       gender,
