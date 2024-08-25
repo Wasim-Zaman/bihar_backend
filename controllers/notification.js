@@ -16,9 +16,18 @@ exports.createNotification = async (req, res, next) => {
       );
     }
 
-    // Convert the provided date and time to UTC based on the admin's timezone
-    const notificationDate = moment
-      .tz(`${date} ${time}`, "YYYY-MM-DD HH:mm", timezone)
+    // Assume date is in UTC ISO format from the user side
+    const notificationDateUTC = moment.utc(date);
+
+    // Combine the provided UTC date and time in the user's timezone
+    const notificationDate = notificationDateUTC
+      .tz(timezone)
+      .set({
+        hour: parseInt(time.split(":")[0], 10),
+        minute: parseInt(time.split(":")[1], 10),
+        second: 0,
+        millisecond: 0,
+      })
       .utc()
       .toDate();
 
@@ -26,7 +35,7 @@ exports.createNotification = async (req, res, next) => {
     const newNotification = await Notification.create({
       title,
       description,
-      date: notificationDate,
+      date: notificationDate, // Store as UTC
       time,
       timezone, // Store the timezone for reference
     });

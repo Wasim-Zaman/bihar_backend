@@ -41,9 +41,9 @@
  *                 description: The content of the notification
  *               date:
  *                 type: string
- *                 format: date
- *                 example: "2024-03-26"
- *                 description: The date the notification should be sent (in the admin's timezone)
+ *                 format: date-time
+ *                 example: "2024-03-26T02:00:00Z"
+ *                 description: The date and time in UTC ISO format when the notification should be sent
  *               time:
  *                 type: string
  *                 example: "09:05"
@@ -65,7 +65,7 @@
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: Notification created and scheduled successfully
+ *                   example: "Notification created and scheduled successfully"
  *                 data:
  *                   type: object
  *                   properties:
