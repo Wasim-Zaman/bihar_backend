@@ -234,7 +234,7 @@ class Event {
             lte: endOfDay,
           },
           status: {
-            not: 0,
+            not: 1,
           },
         },
       });
