@@ -8,16 +8,18 @@ const prisma = new PrismaClient();
 
 exports.createNotification = async (req, res, next) => {
   try {
-    const { title, description, date, time } = req.body;
+    const { title, description, date, time, timezone } = req.body;
 
-    if (!title || !description || !date || !time) {
+    if (!title || !description || !date || !time || !timezone) {
       throw new Error(
-        "All fields (title, description, date, time) are required"
+        "All fields (title, description, date, time, timezone) are required"
       );
     }
 
+    // Convert the provided date and time to UTC based on the admin's timezone
     const notificationDate = moment
-      .tz(date + " " + time, "YYYY-MM-DD HH:mm", "UTC")
+      .tz(`${date} ${time}`, "YYYY-MM-DD HH:mm", timezone)
+      .utc()
       .toDate();
 
     // Create the notification in the database
@@ -26,6 +28,7 @@ exports.createNotification = async (req, res, next) => {
       description,
       date: notificationDate,
       time,
+      timezone, // Store the timezone for reference
     });
 
     console.log("Notification created:", newNotification);
@@ -126,21 +129,17 @@ exports.getNotifications = async (req, res, next) => {
   }
 };
 
-// Function to schedule the notification
 async function scheduleNotification(notification) {
-  const { title, description, date, time } = notification;
+  const { title, description, date, time, timezone } = notification;
 
   try {
-    // Combine date and time into a single Date object in UTC
-    const [hours, minutes] = time.split(":").map(Number);
-    const scheduledDateTime = new Date(
-      `${date}T${hours.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")}:00Z`
-    ); // UTC time
+    // Combine date and time into a single string
+    const scheduledDateTimeString = `${date} ${time}`;
 
-    // Log the scheduledDateTime to verify its value
-    console.log("Scheduled DateTime (UTC):", scheduledDateTime.toISOString());
+    // Convert the admin's local time to UTC
+    const scheduledDateTime = moment
+      .tz(scheduledDateTimeString, "YYYY-MM-DD HH:mm", timezone)
+      .utc();
 
     // Retrieve FCM tokens from both User and EpicUser tables
     const userTokens = await prisma.user.findMany({
@@ -156,7 +155,7 @@ async function scheduleNotification(notification) {
       (user) => user.fcmToken
     );
 
-    console.log("All tokens:", allTokens);
+    console.log(allTokens);
 
     const message = {
       notification: {
@@ -167,10 +166,8 @@ async function scheduleNotification(notification) {
     };
 
     // Calculate the delay until the scheduled time in seconds
-    const now = new Date();
-    console.log("Current DateTime (UTC):", now.toISOString());
-
-    const delay = (scheduledDateTime.getTime() - now.getTime()) / 1000;
+    const now = moment.utc(); // Current time in UTC
+    const delay = scheduledDateTime.diff(now, "seconds");
 
     if (delay > 0) {
       console.log(

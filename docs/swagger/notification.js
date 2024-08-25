@@ -43,11 +43,15 @@
  *                 type: string
  *                 format: date
  *                 example: "2024-03-26"
- *                 description: The date the notification should be sent (in UTC)
+ *                 description: The date the notification should be sent (in the admin's timezone)
  *               time:
  *                 type: string
- *                 example: "02:00"
- *                 description: The time the notification should be sent (in UTC)
+ *                 example: "09:05"
+ *                 description: The time the notification should be sent (in the admin's timezone)
+ *               timezone:
+ *                 type: string
+ *                 example: "Asia/Karachi"
+ *                 description: The timezone of the admin creating the notification (IANA timezone format)
  *     responses:
  *       201:
  *         description: Notification created successfully
@@ -80,7 +84,10 @@
  *                       example: "2024-03-26T02:00:00Z"
  *                     time:
  *                       type: string
- *                       example: "02:00"
+ *                       example: "09:05"
+ *                     timezone:
+ *                       type: string
+ *                       example: "Asia/Karachi"
  *       400:
  *         description: Validation error
  *         content:
@@ -93,7 +100,7 @@
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: Validation error
+ *                   example: "Validation error"
  *     security:
  *       - bearerAuth: []
  */
