@@ -84,6 +84,12 @@ router.get(
 
 router.get("/v1/admin/list", isAdmin, controller.getAdminSideEventsList);
 
+router.get(
+  "/v1/admin/list/accepted",
+  isAdmin,
+  controller.getAdminSideEventsListAccepted
+);
+
 router.get("/send-notification", controller.sendNotification);
 
 module.exports = router;

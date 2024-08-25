@@ -7,6 +7,8 @@ const isAdmin = require("../middleware/isAdmin");
 
 const router = express.Router();
 
+router.post("/v1/user", userController.createUser);
+
 // Route for user registration
 router.post("/v1/register", isAuth, userController.register);
 

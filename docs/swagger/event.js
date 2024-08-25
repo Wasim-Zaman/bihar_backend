@@ -1511,3 +1511,102 @@
  *     security:
  *       - bearerAuth: []
  */
+
+/**
+ * @swagger
+ * /v1/admin/list/accepted:
+ *   get:
+ *     summary: Retrieve a list of accepted events
+ *     description: This endpoint retrieves a paginated list of events that have been accepted (status is 0) for the admin side.
+ *     tags:
+ *       - Events
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve (pagination).
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 20
+ *         description: The number of items per page (pagination).
+ *     responses:
+ *       200:
+ *         description: A list of accepted events along with pagination details.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         description: The unique identifier of the event.
+ *                       title:
+ *                         type: string
+ *                         description: The title of the event.
+ *                       description:
+ *                         type: string
+ *                         description: The description of the event.
+ *                       status:
+ *                         type: integer
+ *                         description: The status of the event (0 for accepted).
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The creation timestamp of the event.
+ *                       updated_at:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The last update timestamp of the event.
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: integer
+ *                       description: The current page number.
+ *                     totalPages:
+ *                       type: integer
+ *                       description: The total number of pages.
+ *                     totalItems:
+ *                       type: integer
+ *                       description: The total number of items.
+ *                     itemsPerPage:
+ *                       type: integer
+ *                       description: The number of items per page.
+ *       404:
+ *         description: No events found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   description: The status code.
+ *                 message:
+ *                   type: string
+ *                   description: The error message.
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   description: The status code.
+ *                 message:
+ *                   type: string
+ *                   description: The error message.
+ *     security:
+ *       - bearerAuth: []
+ */

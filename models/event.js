@@ -348,6 +348,45 @@ class Event {
       throw new Error(`Unable to get events ${mobileNumber}`);
     }
   }
+
+  static async getAdminSideEventsListAccepted(page = 1, limit = 10) {
+    try {
+      const skip = (page - 1) * limit;
+
+      // Fetch paginated events from the database where status is 0
+      const events = await prisma.event.findMany({
+        where: {
+          status: 0, // Filter events where status is 0
+        },
+        skip,
+        take: limit,
+      });
+
+      // Count the total number of events matching the criteria where status is 0
+      const totalEvents = await prisma.event.count({
+        where: {
+          status: 0, // Count only events where status is 0
+        },
+      });
+
+      // Calculate the total number of pages
+      const totalPages = Math.ceil(totalEvents / limit);
+
+      // Return the data and pagination details
+      return {
+        data: events,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalItems: totalEvents,
+          itemsPerPage: limit,
+        },
+      };
+    } catch (error) {
+      console.error(error.message);
+      throw new Error(`Unable to get events where status is 0`);
+    }
+  }
 }
 
 module.exports = Event;

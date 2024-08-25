@@ -592,6 +592,35 @@ exports.getAdminSideEventsList = async (req, res, next) => {
   }
 };
 
+exports.getAdminSideEventsListAccepted = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 20 } = req.query;
+
+    // Fetch the events based on the user's mobile number
+    const events = await Event.getAdminSideEventsList(
+      Number(page),
+      Number(limit)
+    );
+
+    if (events.data.length === 0) {
+      throw new CustomError("No events found", 404);
+    }
+
+    res
+      .status(200)
+      .json(
+        generateResponse(200, true, "Events retrieved successfully", events)
+      );
+  } catch (error) {
+    next(
+      new CustomError(
+        `Unable to retrieve events: ${error.message}`,
+        error.statusCode || 500
+      )
+    );
+  }
+};
+
 exports.sendNotification = async (req, res, next) => {
   // Schedule the notification
   try {

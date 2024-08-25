@@ -831,3 +831,285 @@
  *                   type: string
  *                   example: "User not found with the provided id"
  */
+
+/**
+ * @swagger
+ * /api/epicUser/v1/users/search:
+ *   get:
+ *     summary: Search users by mobile number and EPIC ID
+ *     tags: [EpicUser]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: mobileNumber
+ *         schema:
+ *           type: string
+ *           example: "1234567890"
+ *         description: The mobile number to search for
+ *       - in: query
+ *         name: epicId
+ *         schema:
+ *           type: string
+ *           example: "ABC123XYZ"
+ *         description: The EPIC ID to search for
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *           description: The page number to retrieve (optional).
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *           description: The number of items per page (optional).
+ *     responses:
+ *       200:
+ *         description: Users retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Users retrieved successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "c56a4180-65aa-42ec-a945-5fd21dec0538"
+ *                       fullName:
+ *                         type: string
+ *                         example: "John Doe"
+ *                       email:
+ *                         type: string
+ *                         example: "user@example.com"
+ *                       mobileNumber:
+ *                         type: string
+ *                         example: "1234567890"
+ *                       epicId:
+ *                         type: string
+ *                         example: "ABC123XYZ"
+ *                       gender:
+ *                         type: string
+ *                         example: "MALE"
+ *                       age:
+ *                         type: integer
+ *                         example: 30
+ *                       legislativeConstituency:
+ *                         type: string
+ *                         example: "XYZ Constituency"
+ *                       boothNameOrNumber:
+ *                         type: string
+ *                         example: "Booth 12"
+ *                       image:
+ *                         type: string
+ *                         example: "https://example.com/profile-picture.jpg"
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: integer
+ *                       example: 1
+ *                     totalPages:
+ *                       type: integer
+ *                       example: 5
+ *                     totalItems:
+ *                       type: integer
+ *                       example: 50
+ *                     itemsPerPage:
+ *                       type: integer
+ *                       example: 10
+ *       400:
+ *         description: Invalid or missing query parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Query string is required for searching users"
+ *       404:
+ *         description: No users found matching the search criteria
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "No users found matching the search criteria"
+ */
+
+/**
+ * @swagger
+ * /api/epicUser/v1/user:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [EpicUser]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fullName
+ *               - mobileNumber
+ *               - fcmToken
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 example: "John Doe"
+ *                 description: The user's full name
+ *               fatherName:
+ *                 type: string
+ *                 example: "Doe Senior"
+ *                 description: The user's father's name
+ *               epicId:
+ *                 type: string
+ *                 example: "ABC123XYZ"
+ *                 description: The user's EPIC ID
+ *               mobileNumber:
+ *                 type: string
+ *                 example: "1234567890"
+ *                 description: The user's mobile number
+ *               gender:
+ *                 type: string
+ *                 enum: [MALE, FEMALE, OTHER]
+ *                 example: "MALE"
+ *                 description: The user's gender
+ *               age:
+ *                 type: integer
+ *                 example: 30
+ *                 description: The user's age
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *                 description: The user's email
+ *               legislativeConstituency:
+ *                 type: string
+ *                 example: "XYZ Constituency"
+ *                 description: The user's legislative constituency
+ *               boothNameOrNumber:
+ *                 type: string
+ *                 example: "Booth 12"
+ *                 description: The user's booth name or number
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: The user's profile picture (e.g., jpg, png)
+ *               fcmToken:
+ *                 type: string
+ *                 example: "fcm-token-string"
+ *                 description: The user's FCM token for push notifications
+ *               timeZone:
+ *                 type: string
+ *                 example: "UTC"
+ *                 description: The user's time zone
+ *               status:
+ *                 type: integer
+ *                 example: 1
+ *                 description: The user's status (0 or 1)
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "User created successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "c56a4180-65aa-42ec-a945-5fd21dec0538"
+ *                     fullName:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     fatherName:
+ *                       type: string
+ *                       example: "Doe Senior"
+ *                     epicId:
+ *                       type: string
+ *                       example: "ABC123XYZ"
+ *                     mobileNumber:
+ *                       type: string
+ *                       example: "1234567890"
+ *                     gender:
+ *                       type: string
+ *                       example: "MALE"
+ *                     age:
+ *                       type: integer
+ *                       example: 30
+ *                     email:
+ *                       type: string
+ *                       example: "user@example.com"
+ *                     legislativeConstituency:
+ *                       type: string
+ *                       example: "XYZ Constituency"
+ *                     boothNameOrNumber:
+ *                       type: string
+ *                       example: "Booth 12"
+ *                     image:
+ *                       type: string
+ *                       example: "https://example.com/profile-picture.jpg"
+ *                     fcmToken:
+ *                       type: string
+ *                       example: "fcm-token-string"
+ *                     timeZone:
+ *                       type: string
+ *                       example: "UTC"
+ *                     status:
+ *                       type: integer
+ *                       example: 1
+ *       400:
+ *         description: Validation error or missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Validation error or missing required fields"
+ *       409:
+ *         description: User with the same mobile number or email already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "User with this mobile number or email already exists"
+ */

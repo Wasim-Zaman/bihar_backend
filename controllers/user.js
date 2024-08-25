@@ -323,3 +323,71 @@ exports.searchUsers = async (req, res, next) => {
     next(error); // Pass the error to the global error handler
   }
 };
+
+exports.createUser = async (req, res, next) => {
+  try {
+    // Validate request body
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const msg = errors.errors[0].msg;
+      throw new CustomError(msg, 422);
+    }
+
+    // Extract data from request body
+    const {
+      fullName,
+      fatherName,
+      epicId,
+      image,
+      mobileNumber,
+      fcmToken,
+      legislativeConstituency,
+      boothNameOrNumber,
+      gender,
+      age,
+      email,
+      timeZone,
+      status,
+    } = req.body;
+
+    // Check if a user with the same mobile number, fcmToken, or email already exists
+    const existingUser =
+      (await User.findByMobileNumber(mobileNumber)) ||
+      (await User.findByEmail(email));
+    if (existingUser) {
+      throw new CustomError(
+        "User with this mobile number or email already exists",
+        409
+      );
+    }
+
+    // Create the new user
+    const newUser = await User.create({
+      fullName,
+      fatherName,
+      epicId,
+      image,
+      mobileNumber,
+      fcmToken,
+      legislativeConstituency,
+      boothNameOrNumber,
+      gender,
+      age,
+      email,
+      timeZone: timeZone || "UTC",
+      status: status !== undefined ? status : 1,
+    });
+
+    // Return success response
+    res
+      .status(201)
+      .json(generateResponse(201, true, "User created successfully", newUser));
+  } catch (error) {
+    next(
+      new CustomError(
+        `Unable to create user: ${error.message}`,
+        error.statusCode || 500
+      )
+    );
+  }
+};
