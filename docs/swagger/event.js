@@ -1342,3 +1342,172 @@
  *     security:
  *       - bearerAuth: []
  */
+
+/**
+ * @swagger
+ * /api/events/v1/admin/requested:
+ *   get:
+ *     summary: Retrieve requested events for admin
+ *     tags: [Events]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 20
+ *         description: The number of items to retrieve per page.
+ *     responses:
+ *       200:
+ *         description: Events retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Events retrieved successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: integer
+ *                       example: 1
+ *                     totalPages:
+ *                       type: integer
+ *                       example: 5
+ *                     totalItems:
+ *                       type: integer
+ *                       example: 50
+ *                     events:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "uuid"
+ *                           eventTitle:
+ *                             type: string
+ *                             example: "Meeting"
+ *                           date:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2024-03-26T12:42:00Z"
+ *                           mobileNumber:
+ *                             type: string
+ *                             example: "1234567890"
+ *                           owner:
+ *                             type: string
+ *                             example: "admin"
+ *                           status:
+ *                             type: integer
+ *                             example: 1
+ *       404:
+ *         description: No events found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: No events found
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/events/v1/admin/list:
+ *   get:
+ *     summary: Retrieve a list of events for admin
+ *     tags: [Events]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 20
+ *         description: The number of items to retrieve per page.
+ *     responses:
+ *       200:
+ *         description: Events retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Events retrieved successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: integer
+ *                       example: 1
+ *                     totalPages:
+ *                       type: integer
+ *                       example: 5
+ *                     totalItems:
+ *                       type: integer
+ *                       example: 50
+ *                     events:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "uuid"
+ *                           eventTitle:
+ *                             type: string
+ *                             example: "Meeting"
+ *                           date:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2024-03-26T12:42:00Z"
+ *                           mobileNumber:
+ *                             type: string
+ *                             example: "1234567890"
+ *                           status:
+ *                             type: integer
+ *                             example: 1
+ *       404:
+ *         description: No events found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: No events found
+ *     security:
+ *       - bearerAuth: []
+ */

@@ -74,7 +74,15 @@ router.patch("/v1/events/status/:id", controller.updateStatus);
 
 router.get("/v1/user-events", isAuth, controller.getUserEvents);
 
-router.get("/v1/date-events", isAuth, controller.getPaginatedEventsByDate);
+router.get("/v1/date-events", isAuth, controller.getAdminSideEventsByDate);
+
+router.get(
+  "/v1/admin/requested",
+  isAdmin,
+  controller.getAdminSideRequestedEvents
+);
+
+router.get("/v1/admin/list", isAdmin, controller.getAdminSideEventsList);
 
 router.get("/send-notification", controller.sendNotification);
 
