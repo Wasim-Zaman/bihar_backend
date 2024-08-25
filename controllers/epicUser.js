@@ -1,5 +1,5 @@
 // const User = require("../models/epicUser");
-const User = require("../models/user");
+const User = require("../models/epicUser");
 const CustomError = require("../utils/error");
 const response = require("../utils/response");
 const JWT = require("../utils/jwt");
