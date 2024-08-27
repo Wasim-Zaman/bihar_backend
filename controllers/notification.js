@@ -17,27 +17,21 @@ exports.createNotification = async (req, res, next) => {
       );
     }
 
-    // Assume date is in UTC ISO format from the user side
-    const notificationDateUTC = moment.utc(date);
+    // Combine the provided date and time in the user's timezone
+    const notificationDate = moment.tz(
+      `${date} ${time}`,
+      "YYYY-MM-DD HH:mm",
+      timezone
+    );
 
-    // Combine the provided UTC date and time in the user's timezone
-    const notificationDate = notificationDateUTC
-      .tz(timezone)
-      .set({
-        hour: parseInt(time.split(":")[0], 10),
-        minute: parseInt(time.split(":")[1], 10),
-        second: 0,
-        millisecond: 0,
-      })
-      .utc()
-      .toDate();
+    // Convert the combined date and time to UTC for storage
+    const notificationDateUTC = notificationDate.utc().toDate();
 
     // Create the notification in the database
     const newNotification = await Notification.create({
       title,
       description,
-      date: notificationDate, // Store as UTC
-      time,
+      date: notificationDateUTC, // Store as UTC
       timezone, // Store the timezone for reference
     });
 
@@ -152,7 +146,7 @@ async function scheduleNotification(notification) {
     // Combine date and time into a single string
     const scheduledDateTimeString = `${date} ${time}`;
 
-    // Convert the admin's local time to UTC
+    // Convert the scheduled date and time from the specified timezone to UTC
     const scheduledDateTime = moment
       .tz(scheduledDateTimeString, "YYYY-MM-DD HH:mm", timezone)
       .utc();
