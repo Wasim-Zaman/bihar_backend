@@ -3,6 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const Notification = require("../models/notification");
 const messaging = require("../config/firebase");
 const moment = require("moment-timezone");
+const CustomError = require("../utils/error");
 
 const prisma = new PrismaClient();
 
@@ -129,7 +130,7 @@ exports.getNotifications = async (req, res, next) => {
     );
 
     if (!notifications.data.length) {
-      throw new Error("No notifications found");
+      throw new CustomError("No notifications found");
     }
 
     res.status(200).json({
