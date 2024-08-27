@@ -165,7 +165,7 @@ async function scheduleNotification(notification) {
       (user) => user.fcmToken
     );
 
-    console.log(allTokens);
+    console.log("FCM Tokens:", allTokens);
 
     const message = {
       notification: {
@@ -175,7 +175,7 @@ async function scheduleNotification(notification) {
       tokens: allTokens, // Send to all users' tokens
     };
 
-    // Calculate the delay until the scheduled time in seconds
+    // Schedule the notification using node-schedule at the specified time
     const now = moment.utc(); // Current time in UTC
     const delay = scheduledDateTime.diff(now, "seconds");
 
@@ -188,16 +188,14 @@ async function scheduleNotification(notification) {
         )} seconds`
       );
 
-      setTimeout(() => {
-        messaging
-          .sendMulticast(message)
-          .then((response) => {
-            console.log("Notifications sent successfully:", response);
-          })
-          .catch((error) => {
-            console.error("Error sending notifications:", error.message);
-          });
-      }, delay * 1000);
+      schedule.scheduleJob(scheduledDateTime.toDate(), async () => {
+        try {
+          const response = await messaging.sendMulticast(message);
+          console.log("Notifications sent successfully:", response);
+        } catch (error) {
+          console.error("Error sending notifications:", error.message);
+        }
+      });
     } else {
       console.error("Scheduled time is in the past. Notification not sent.");
     }
