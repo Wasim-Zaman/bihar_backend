@@ -33,6 +33,7 @@ exports.createNotification = async (req, res, next) => {
       description,
       date: notificationDateUTC, // Store as UTC
       timezone, // Store the timezone for reference
+      time,
     });
 
     console.log("Notification created:", newNotification);
