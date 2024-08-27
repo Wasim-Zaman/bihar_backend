@@ -116,10 +116,11 @@ exports.getNotifications = async (req, res, next) => {
   try {
     const { page = 1, limit = 10, query = "" } = req.query;
 
-    const { id } = req.user;
+    let id;
+    if (req.user) id = req.user;
 
     const notifications = await Notification.get(
-      id,
+      id || null,
       Number(page),
       Number(limit),
       query
