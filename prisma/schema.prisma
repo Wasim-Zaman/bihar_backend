@@ -120,6 +120,7 @@ model Notification {
   date        DateTime
   time        String
   timezone    String?
+  userId      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

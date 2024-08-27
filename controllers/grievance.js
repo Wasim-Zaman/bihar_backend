@@ -1,8 +1,10 @@
 const Grievance = require("../models/grievance");
+const Notification = require("../models/notification");
 const CustomError = require("../utils/error");
 const generateResponse = require("../utils/response");
 const User = require("../models/user");
 const fileHelper = require("../utils/file");
+const { sendNotification } = require("../scripts/sendNotification");
 
 exports.createGrievance = async (req, res, next) => {
   try {
@@ -509,6 +511,15 @@ exports.assignGrievance = async (req, res, next) => {
       throw new CustomError("Contact number is required", 400);
     }
 
+    const user = await User.findByMobileNumber(contactNumber);
+
+    if (!user) {
+      throw new CustomError(
+        "User not found with the entered mobile number",
+        404
+      );
+    }
+
     const grievance = await Grievance.findById(id);
 
     if (!grievance) {
@@ -516,6 +527,24 @@ exports.assignGrievance = async (req, res, next) => {
     }
 
     const updatedGrievance = await Grievance.assignTo(id, contactNumber);
+
+    // Add this grievance to the Notification table
+    const notification = await Notification.create({
+      title: `Grievance Assigned: ${grievance.ticketTitle}`,
+      description: `Grievance with ID ${grievance.id} has been assigned to ${contactNumber}.`,
+      date: new Date(), // You can set this to the current date
+      time: new Date().toISOString().split("T")[1].slice(0, 5),
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, // Set the timezone
+      userId: user.id,
+    });
+
+    // send notification
+
+    await sendNotification(
+      user.fcmToken,
+      notification.title,
+      notification.description
+    );
 
     res
       .status(200)

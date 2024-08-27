@@ -47,18 +47,25 @@ class Notification {
     }
   }
 
-  static async get(page = 1, limit = 10, query = "") {
+  static async get(userId, page = 1, limit = 10, query = "") {
     try {
       const skip = (page - 1) * limit;
 
-      const where = query
-        ? {
-            OR: [
-              { title: { contains: query } },
-              { description: { contains: query } },
-            ],
-          }
-        : {};
+      const where = {
+        AND: [
+          {
+            OR: [{ userId: userId }, { userId: null }],
+          },
+          query
+            ? {
+                OR: [
+                  { title: { contains: query } },
+                  { description: { contains: query } },
+                ],
+              }
+            : {},
+        ],
+      };
 
       const notifications = await prisma.notification.findMany({
         skip,
@@ -81,7 +88,7 @@ class Notification {
       };
     } catch (error) {
       console.error(
-        "Error getting notifications with pagination and search:",
+        "Error getting notifications with pagination, search, and user filter:",
         error
       );
       throw error;
