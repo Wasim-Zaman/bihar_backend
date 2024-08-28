@@ -252,14 +252,8 @@ async function scheduleNotification(notification) {
           },
           tokens: allTokens,
         };
-        schedule.scheduleJob(scheduledDateTime.toDate(), async () => {
-          try {
-            const response = await messaging.sendMulticast(message);
-            console.log("Notifications sent successfully:", response);
-          } catch (error) {
-            console.error("Error sending notifications:", error.message);
-          }
-        });
+        const response = await messaging.sendMulticast(message);
+        console.log("Notifications sent successfully:", response);
       } catch (error) {
         console.error("Error sending notification:", error);
       }
@@ -268,7 +262,7 @@ async function scheduleNotification(notification) {
     console.log(
       `Notification scheduled for ${notificationTime.format(
         "YYYY-MM-DD HH:mm:ss"
-      )} in the user's timezone.`
+      )} in the admin's timezone.`
     );
   } catch (error) {
     console.error("Error in scheduleNotification:", error);
