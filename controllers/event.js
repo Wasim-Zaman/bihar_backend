@@ -100,6 +100,13 @@ exports.createEventV2 = async (req, res, next) => {
       status,
     } = req.body;
 
+    if (owner.toLowerCase() !== "epic user" && owner.toLowerCase() !== "user") {
+      throw new CustomError(
+        "Unauthorized access, you are not the User or an Epic User",
+        401
+      );
+    }
+
     let user;
     if (owner == "user") {
       user = await User.findById(req.user.id);
@@ -129,13 +136,6 @@ exports.createEventV2 = async (req, res, next) => {
       req.files && req.files.documents
         ? req.files.documents.map((file) => file.path)
         : [];
-
-    if (owner.toLowerCase() !== "epic user" && owner.toLowerCase() !== "user") {
-      throw new CustomError(
-        "Unauthorized access, you are not the User or an Epic User",
-        401
-      );
-    }
 
     if (
       !eventTitle ||

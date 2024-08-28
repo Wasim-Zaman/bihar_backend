@@ -81,6 +81,13 @@ exports.createGrievanceV2 = async (req, res, next) => {
       owner,
     } = req.body;
 
+    if (owner.toLowerCase() !== "epic user" && owner.toLowerCase() !== "user") {
+      throw new CustomError(
+        "Unauthorized access, you are not the User or an Epic User",
+        401
+      );
+    }
+
     let user;
     if (owner == "user") {
       user = await User.findByMobileNumber(contactNumber);
