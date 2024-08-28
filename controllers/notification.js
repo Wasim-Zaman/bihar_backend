@@ -5,6 +5,7 @@ const Notification = require("../models/notification");
 const messaging = require("../config/firebase");
 const moment = require("moment-timezone");
 const CustomError = require("../utils/error");
+const logger = require("../config/logger");
 
 const prisma = new PrismaClient();
 
@@ -140,71 +141,6 @@ exports.getNotifications = async (req, res, next) => {
     next(error);
   }
 };
-
-// async function scheduleNotification(notification) {
-//   const { title, description, date, time, timezone } = notification;
-
-//   try {
-//     // Combine date and time into a single string
-//     const scheduledDateTimeString = `${date} ${time}`;
-
-//     // Convert the scheduled date and time from the specified timezone to UTC
-//     const scheduledDateTime = moment
-//       .tz(scheduledDateTimeString, "YYYY-MM-DD HH:mm", timezone)
-//       .utc();
-
-//     // Retrieve FCM tokens from both User and EpicUser tables
-//     const userTokens = await prisma.user.findMany({
-//       select: { fcmToken: true },
-//     });
-
-//     const epicUserTokens = await prisma.epicUser.findMany({
-//       select: { fcmToken: true },
-//     });
-
-//     // Combine the tokens into a single array
-//     const allTokens = [...userTokens, ...epicUserTokens].map(
-//       (user) => user.fcmToken
-//     );
-
-//     console.log("FCM Tokens:", allTokens);
-
-//     const message = {
-//       notification: {
-//         title,
-//         body: description,
-//       },
-//       tokens: allTokens, // Send to all users' tokens
-//     };
-
-//     // Schedule the notification using node-schedule at the specified time
-//     const now = moment.utc(); // Current time in UTC
-//     const delay = scheduledDateTime.diff(now, "seconds");
-
-//     if (delay > 0) {
-//       console.log(
-//         `Notification will be sent after ${Math.floor(
-//           delay / 3600
-//         )} hours, ${Math.floor((delay % 3600) / 60)} minutes, and ${Math.floor(
-//           delay % 60
-//         )} seconds`
-//       );
-
-//       schedule.scheduleJob(scheduledDateTime.toDate(), async () => {
-//         try {
-//           const response = await messaging.sendMulticast(message);
-//           console.log("Notifications sent successfully:", response);
-//         } catch (error) {
-//           console.error("Error sending notifications:", error.message);
-//         }
-//       });
-//     } else {
-//       console.error("Scheduled time is in the past. Notification not sent.");
-//     }
-//   } catch (error) {
-//     console.error("Error scheduling notification:", error.message);
-//   }
-// }
 
 async function scheduleNotification(notification) {
   try {
