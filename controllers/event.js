@@ -2,6 +2,7 @@ const moment = require("moment-timezone");
 
 const Event = require("../models/event");
 const User = require("../models/user");
+const EpicUser = require("../models/epicUser");
 const CustomError = require("../utils/error");
 const generateResponse = require("../utils/response");
 const scheduleNotification = require("../scripts/scheduleNotification");
@@ -99,7 +100,12 @@ exports.createEventV2 = async (req, res, next) => {
       status,
     } = req.body;
 
-    const user = await User.findById(req.user.id);
+    let user;
+    if (owner == "user") {
+      user = await User.findById(req.user.id);
+    } else {
+      user = await EpicUser.findById(req.user.id);
+    }
 
     if (!user) {
       throw new CustomError(
