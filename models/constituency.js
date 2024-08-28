@@ -96,6 +96,9 @@ class Constituency {
         skip,
         take: limit,
         where,
+        orderBy: {
+          createdAt: "desc",
+        },
         include: { booths: true }, // Include related booths
       });
 

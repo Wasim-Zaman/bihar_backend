@@ -20,7 +20,7 @@
 
 /**
  * @swagger
- * /api/booths:
+ * /api/booths/v1/booths:
  *   post:
  *     summary: Create a new booth
  *     tags: [Booths]
@@ -99,7 +99,7 @@
 
 /**
  * @swagger
- * /api/booths/{id}:
+ * /api/booths/v1/booths/{id}:
  *   get:
  *     summary: Retrieve a booth by ID
  *     tags: [Booths]
@@ -166,7 +166,7 @@
 
 /**
  * @swagger
- * /api/booths/{id}:
+ * /api/booths/v1/booths/{id}:
  *   put:
  *     summary: Update a booth by ID
  *     tags: [Booths]
@@ -252,7 +252,7 @@
 
 /**
  * @swagger
- * /api/booths/{id}:
+ * /api/booths/v1/booths/{id}:
  *   delete:
  *     summary: Delete a booth by ID
  *     tags: [Booths]
@@ -296,7 +296,7 @@
 
 /**
  * @swagger
- * /api/booths:
+ * /api/booths/v1/booths:
  *   get:
  *     summary: Retrieve paginated booths with optional search query
  *     tags: [Booths]
@@ -388,7 +388,7 @@
 
 /**
  * @swagger
- * /api/booths/all:
+ * /api/booths/v1/booths/all:
  *   get:
  *     summary: Retrieve all booths without pagination
  *     tags: [Booths]

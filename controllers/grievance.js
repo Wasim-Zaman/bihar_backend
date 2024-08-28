@@ -3,9 +3,9 @@ const Notification = require("../models/notification");
 const CustomError = require("../utils/error");
 const generateResponse = require("../utils/response");
 const User = require("../models/user");
+const EpicUser = require("../models/epicUser");
 const fileHelper = require("../utils/file");
 const { sendNotification } = require("../scripts/sendNotification");
-const EpicUser = require("../models/epicUser");
 
 exports.createGrievance = async (req, res, next) => {
   try {
