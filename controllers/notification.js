@@ -209,7 +209,6 @@ exports.getNotifications = async (req, res, next) => {
 async function scheduleNotification(notification) {
   try {
     const { time, date, timezone, title, description } = notification;
-    // Combine the event date and fromTime in UTC, then convert to the admin's timezone
     const eventDateTimeUTC = moment.utc(date).format("YYYY-MM-DD") + ` ${time}`;
     const notificationTime = moment.tz(
       eventDateTimeUTC,
@@ -217,7 +216,6 @@ async function scheduleNotification(notification) {
       timezone
     );
 
-    // If the notification time is in the past, skip scheduling
     if (moment().isAfter(notificationTime)) {
       console.log("Notification time is in the past, skipping notification.");
       return;
@@ -229,7 +227,6 @@ async function scheduleNotification(notification) {
       notificationTime.format("YYYY-MM-DD HH:mm:ss")
     );
 
-    // Schedule the notification using node-schedule based on the user's local time
     schedule.scheduleJob(notificationTime.toDate(), async () => {
       try {
         const userTokens = await prisma.user.findMany({
@@ -240,10 +237,14 @@ async function scheduleNotification(notification) {
           select: { fcmToken: true },
         });
 
-        // Combine the tokens into a single array
-        const allTokens = [...userTokens, ...epicUserTokens].map(
-          (user) => user.fcmToken
-        );
+        const allTokens = [...userTokens, ...epicUserTokens]
+          .map((user) => user.fcmToken)
+          .filter(Boolean);
+
+        if (allTokens.length === 0) {
+          console.log("No tokens available, skipping notification.");
+          return;
+        }
 
         const message = {
           notification: {
@@ -252,6 +253,7 @@ async function scheduleNotification(notification) {
           },
           tokens: allTokens,
         };
+
         const response = await messaging.sendMulticast(message);
         console.log("Notifications sent successfully:", response);
       } catch (error) {
