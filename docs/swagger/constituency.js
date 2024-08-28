@@ -35,6 +35,10 @@
  *                 type: string
  *                 example: "Constituency 1"
  *                 description: The name of the constituency
+ *               hindiName:
+ *                 type: string
+ *                 example: "हिंदी नाम"
+ *                 description: The Hindi name of the constituency
  *               booths:
  *                 type: array
  *                 items:
@@ -66,6 +70,9 @@
  *                     name:
  *                       type: string
  *                       example: "Constituency 1"
+ *                     hindiName:
+ *                       type: string
+ *                       example: "हिंदी नाम"
  *                     booths:
  *                       type: array
  *                       items:
@@ -138,6 +145,9 @@
  *                     name:
  *                       type: string
  *                       example: "Constituency 1"
+ *                     hindiName:
+ *                       type: string
+ *                       example: "हिंदी नाम"
  *                     booths:
  *                       type: array
  *                       items:
@@ -235,6 +245,9 @@
  *                           name:
  *                             type: string
  *                             example: "Constituency 1"
+ *                           hindiName:
+ *                             type: string
+ *                             example: "हिंदी नाम"
  *                           booths:
  *                             type: array
  *                             items:
@@ -302,6 +315,9 @@
  *                       name:
  *                         type: string
  *                         example: "Constituency 1"
+ *                       hindiName:
+ *                         type: string
+ *                         example: "हिंदी नाम"
  *                       booths:
  *                         type: array
  *                         items:
@@ -349,6 +365,10 @@
  *                 type: string
  *                 description: The name of the constituency
  *                 example: "Constituency 1"
+ *               hindiName:
+ *                 type: string
+ *                 description: The Hindi name of the constituency
+ *                 example: "Updated हिंदी नाम"
  *               booths:
  *                 type: array
  *                 items:
@@ -380,6 +400,9 @@
  *                     name:
  *                       type: string
  *                       example: "Constituency 1"
+ *                     hindiName:
+ *                       type: string
+ *                       example: "Updated हिंदी नाम"
  *                     booths:
  *                       type: array
  *                       items:
@@ -456,6 +479,163 @@
  *                 message:
  *                   type: string
  *                   example: Constituency not found
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/constituencies/v1/constituencies:
+ *   get:
+ *     summary: Retrieve paginated constituencies with optional search query
+ *     tags: [Constituencies]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of items to retrieve per page.
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
+ *         description: The search query to filter constituencies.
+ *     responses:
+ *       200:
+ *         description: Constituencies retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Constituencies retrieved successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: integer
+ *                       example: 1
+ *                     totalPages:
+ *                       type: integer
+ *                       example: 5
+ *                     totalItems:
+ *                       type: integer
+ *                       example: 50
+ *                     constituencies:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "uuid"
+ *                           name:
+ *                             type: string
+ *                             example: "Constituency 1"
+ *                           hindiName:
+ *                             type: string
+ *                             example: "हिंदी नाम"
+ *                           booths:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 id:
+ *                                   type: string
+ *                                   example: "uuid"
+ *                                 name:
+ *                                   type: string
+ *                                   example: "Booth 1"
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2023-07-24T12:00:00Z"
+ *                           updatedAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2023-07-25T12:00:00Z"
+ *       404:
+ *         description: No constituencies found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: No constituencies found
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/constituencies/v1/constituencies/all:
+ *   get:
+ *     summary: Retrieve all constituencies without pagination
+ *     tags: [Constituencies]
+ *     responses:
+ *       200:
+ *         description: All constituencies retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: All constituencies retrieved successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "uuid"
+ *                       name:
+ *                         type: string
+ *                         example: "Constituency 1"
+ *                       hindiName:
+ *                         type: string
+ *                         example: "हिंदी नाम"
+ *                       booths:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: string
+ *                               example: "uuid"
+ *                             name:
+ *                               type: string
+ *                               example: "Booth 1"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2023-07-24T12:00:00Z"
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2023-07-25T12:00:00Z"
  *     security:
  *       - bearerAuth: []
  */

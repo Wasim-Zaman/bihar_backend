@@ -5,13 +5,16 @@ const generateResponse = require("../utils/response");
 // Create a new booth
 exports.createBooth = async (req, res, next) => {
   try {
-    const { name, constituencyId } = req.body;
+    const { name, constituencyId, hindiName } = req.body;
 
-    if (!name || !constituencyId) {
-      throw new CustomError("Name & constituency fields are required", 400);
+    if (!name || !constituencyId || !hindiName) {
+      throw new CustomError(
+        "All fields (name, constituencyId, hindiName) are required",
+        400
+      );
     }
 
-    const newBooth = await Booth.create({ name, constituencyId });
+    const newBooth = await Booth.create({ name, constituencyId, hindiName });
 
     res
       .status(201)
@@ -45,7 +48,7 @@ exports.getBoothById = async (req, res, next) => {
 // Update a booth by ID
 exports.updateBoothById = async (req, res, next) => {
   const { id } = req.params;
-  const { name, constituencyId } = req.body;
+  const { name, constituencyId, hindiName } = req.body;
 
   try {
     console.log(`Attempting to update booth with ID: ${id}`);
@@ -59,6 +62,7 @@ exports.updateBoothById = async (req, res, next) => {
     const updatedBooth = await Booth.updateById(id, {
       name: name || booth.name,
       constituencyId: constituencyId || booth.constituencyId,
+      hindiName: hindiName || booth.hindiName,
     });
 
     if (!updatedBooth) {

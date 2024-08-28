@@ -20,7 +20,7 @@
 
 /**
  * @swagger
- * /api/booths/v1/booths:
+ * /api/booths:
  *   post:
  *     summary: Create a new booth
  *     tags: [Booths]
@@ -38,7 +38,11 @@
  *               constituencyId:
  *                 type: string
  *                 example: "uuid"
- *                 description: The ID of the constituency the booth belongs to
+ *                 description: The ID of the constituency
+ *               hindiName:
+ *                 type: string
+ *                 example: "हिंदी नाम"
+ *                 description: The Hindi name of the booth
  *     responses:
  *       201:
  *         description: Booth created successfully
@@ -65,6 +69,9 @@
  *                     constituencyId:
  *                       type: string
  *                       example: "uuid"
+ *                     hindiName:
+ *                       type: string
+ *                       example: "हिंदी नाम"
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -92,7 +99,7 @@
 
 /**
  * @swagger
- * /api/booths/v1/booths/{id}:
+ * /api/booths/{id}:
  *   get:
  *     summary: Retrieve a booth by ID
  *     tags: [Booths]
@@ -129,6 +136,9 @@
  *                     constituencyId:
  *                       type: string
  *                       example: "uuid"
+ *                     hindiName:
+ *                       type: string
+ *                       example: "हिंदी नाम"
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -137,15 +147,6 @@
  *                       type: string
  *                       format: date-time
  *                       example: "2023-07-25T12:00:00Z"
- *                     constituency:
- *                       type: object
- *                       properties:
- *                         id:
- *                           type: string
- *                           example: "uuid"
- *                         name:
- *                           type: string
- *                           example: "Constituency A"
  *       404:
  *         description: Booth not found
  *         content:
@@ -165,7 +166,7 @@
 
 /**
  * @swagger
- * /api/booths/v1/booths/{id}:
+ * /api/booths/{id}:
  *   put:
  *     summary: Update a booth by ID
  *     tags: [Booths]
@@ -186,11 +187,15 @@
  *               name:
  *                 type: string
  *                 description: The name of the booth
- *                 example: "Updated Booth Name"
+ *                 example: "Updated Booth 1"
  *               constituencyId:
  *                 type: string
- *                 description: The ID of the constituency the booth belongs to
+ *                 description: The ID of the constituency
  *                 example: "uuid"
+ *               hindiName:
+ *                 type: string
+ *                 description: The Hindi name of the booth
+ *                 example: "अपडेटेड हिंदी नाम"
  *     responses:
  *       200:
  *         description: Booth updated successfully
@@ -213,10 +218,13 @@
  *                       example: "uuid"
  *                     name:
  *                       type: string
- *                       example: "Updated Booth Name"
+ *                       example: "Updated Booth 1"
  *                     constituencyId:
  *                       type: string
  *                       example: "uuid"
+ *                     hindiName:
+ *                       type: string
+ *                       example: "अपडेटेड हिंदी नाम"
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -225,15 +233,6 @@
  *                       type: string
  *                       format: date-time
  *                       example: "2023-07-25T12:00:00Z"
- *                     constituency:
- *                       type: object
- *                       properties:
- *                         id:
- *                           type: string
- *                           example: "uuid"
- *                         name:
- *                           type: string
- *                           example: "Updated Constituency"
  *       404:
  *         description: Booth not found
  *         content:
@@ -253,7 +252,7 @@
 
 /**
  * @swagger
- * /api/booths/v1/booths/{id}:
+ * /api/booths/{id}:
  *   delete:
  *     summary: Delete a booth by ID
  *     tags: [Booths]
@@ -297,62 +296,7 @@
 
 /**
  * @swagger
- * /api/booths/v1/booths/all:
- *   get:
- *     summary: Retrieve all booths without pagination
- *     tags: [Booths]
- *     responses:
- *       200:
- *         description: All booths retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: All booths retrieved successfully
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                         example: "uuid"
- *                       name:
- *                         type: string
- *                         example: "Booth 1"
- *                       constituencyId:
- *                         type: string
- *                         example: "uuid"
- *                       createdAt:
- *                         type: string
- *                         format: date-time
- *                         example: "2023-07-24T12:00:00Z"
- *                       updatedAt:
- *                         type: string
- *                         format: date-time
- *                         example: "2023-07-25T12:00:00Z"
- *                       constituency:
- *                         type: object
- *                         properties:
- *                           id:
- *                             type: string
- *                             example: "uuid"
- *                           name:
- *                             type: string
- *                             example: "Constituency A"
- *     security:
- *       - bearerAuth: []
- */
-
-/**
- * @swagger
- * /api/booths/v1/booths:
+ * /api/booths:
  *   get:
  *     summary: Retrieve paginated booths with optional search query
  *     tags: [Booths]
@@ -414,6 +358,9 @@
  *                           constituencyId:
  *                             type: string
  *                             example: "uuid"
+ *                           hindiName:
+ *                             type: string
+ *                             example: "हिंदी नाम"
  *                           createdAt:
  *                             type: string
  *                             format: date-time
@@ -422,15 +369,6 @@
  *                             type: string
  *                             format: date-time
  *                             example: "2023-07-25T12:00:00Z"
- *                           constituency:
- *                             type: object
- *                             properties:
- *                               id:
- *                                 type: string
- *                                 example: "uuid"
- *                               name:
- *                                 type: string
- *                                 example: "Constituency A"
  *       404:
  *         description: No booths found
  *         content:
@@ -444,6 +382,55 @@
  *                 message:
  *                   type: string
  *                   example: No booths found
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/booths/all:
+ *   get:
+ *     summary: Retrieve all booths without pagination
+ *     tags: [Booths]
+ *     responses:
+ *       200:
+ *         description: All booths retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: All booths retrieved successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "uuid"
+ *                       name:
+ *                         type: string
+ *                         example: "Booth 1"
+ *                       constituencyId:
+ *                         type: string
+ *                         example: "uuid"
+ *                       hindiName:
+ *                         type: string
+ *                         example: "हिंदी नाम"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2023-07-24T12:00:00Z"
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2023-07-25T12:00:00Z"
  *     security:
  *       - bearerAuth: []
  */

@@ -5,6 +5,7 @@ const generateResponse = require("../utils/response");
 const User = require("../models/user");
 const fileHelper = require("../utils/file");
 const { sendNotification } = require("../scripts/sendNotification");
+const EpicUser = require("../models/epicUser");
 
 exports.createGrievance = async (req, res, next) => {
   try {
@@ -77,9 +78,15 @@ exports.createGrievanceV2 = async (req, res, next) => {
       subCategory,
       ticketTitle,
       description,
+      owner,
     } = req.body;
 
-    const user = await User.findByMobileNumber(contactNumber);
+    let user;
+    if (owner == "user") {
+      user = await User.findByMobileNumber(contactNumber);
+    } else {
+      user = await EpicUser.findByMobileNumber(contactNumber);
+    }
 
     if (!user) {
       throw new CustomError(
@@ -511,13 +518,17 @@ exports.assignGrievance = async (req, res, next) => {
       throw new CustomError("Contact number is required", 400);
     }
 
-    const user = await User.findByMobileNumber(contactNumber);
+    let user;
+    user = await User.findByMobileNumber(contactNumber);
 
     if (!user) {
-      throw new CustomError(
-        "User not found with the entered mobile number",
-        404
-      );
+      user = await EpicUser.findByMobileNumber(contactNumber);
+      if (!user) {
+        throw new CustomError(
+          "User not found with the entered mobile number",
+          404
+        );
+      }
     }
 
     const grievance = await Grievance.findById(id);
