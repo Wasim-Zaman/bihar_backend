@@ -21,6 +21,7 @@ class Booth {
       return await prisma.booth.create({
         data: {
           name: data.name,
+          hindiName: data.hindiName,
           constituency: {
             connect: {
               id: data.constituencyId, // Use `connect` with the `constituency` field

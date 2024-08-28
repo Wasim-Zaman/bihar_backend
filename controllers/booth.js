@@ -14,6 +14,8 @@ exports.createBooth = async (req, res, next) => {
       );
     }
 
+    console.log(hindiName);
+
     const newBooth = await Booth.create({ name, constituencyId, hindiName });
 
     res
