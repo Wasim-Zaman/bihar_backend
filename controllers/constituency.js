@@ -5,13 +5,17 @@ const generateResponse = require("../utils/response");
 // Create a new constituency
 exports.createConstituency = async (req, res, next) => {
   try {
-    const { name, booths } = req.body;
+    const { name, booths, hindiName } = req.body;
 
-    if (!name) {
-      throw new CustomError("Name is required", 400);
+    if (!name || !hindiName) {
+      throw new CustomError("All fields (name, hindiName) are required", 400);
     }
 
-    const newConstituency = await Constituency.create({ name, booths });
+    const newConstituency = await Constituency.create({
+      name,
+      booths,
+      hindiName,
+    });
 
     res
       .status(201)
@@ -57,7 +61,7 @@ exports.getConstituencyById = async (req, res, next) => {
 // Update a constituency by ID
 exports.updateConstituencyById = async (req, res, next) => {
   const { id } = req.params;
-  const { name, booths } = req.body;
+  const { name, booths, hindiName } = req.body;
 
   try {
     console.log(`Attempting to update constituency with ID: ${id}`);
@@ -65,6 +69,7 @@ exports.updateConstituencyById = async (req, res, next) => {
     const updatedConstituency = await Constituency.updateById(id, {
       name,
       booths,
+      hindiName,
     });
 
     if (!updatedConstituency) {

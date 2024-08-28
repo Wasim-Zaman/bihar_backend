@@ -90,6 +90,7 @@ model EpicUser {
 model Constituency {
   id        String   @id @default(uuid())
   name      String
+  hindiName String?
   booths    Booth[]  @relation("ConstituencyBooths")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -98,6 +99,7 @@ model Constituency {
 model Booth {
   id             String        @id @default(uuid())
   name           String
+  hindiName      String?
   constituency   Constituency? @relation("ConstituencyBooths", fields: [constituencyId], references: [id])
   constituencyId String?
   createdAt      DateTime       @default(now())
