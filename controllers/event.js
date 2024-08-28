@@ -99,7 +99,7 @@ exports.createEventV2 = async (req, res, next) => {
       status,
     } = req.body;
 
-    const user = await User.findByMobileNumber(mobileNumber);
+    const user = await User.findById(req.user.id);
 
     if (!user) {
       throw new CustomError(
