@@ -47,6 +47,9 @@
  *                     name:
  *                       type: string
  *                       example: "Booth 1"
+ *                     hindiName:
+ *                       type: string
+ *                       example: "हिंदी नाम"
  *     responses:
  *       201:
  *         description: Constituency created successfully
