@@ -38,7 +38,7 @@ exports.createNotification = async (req, res, next) => {
       time,
     });
 
-    console.log("Notification created:", newNotification);
+    logger.info("Notification created:", newNotification);
 
     // Schedule the notification to be sent at the specified date and time
     scheduleNotification(newNotification);
@@ -49,7 +49,7 @@ exports.createNotification = async (req, res, next) => {
       data: newNotification,
     });
   } catch (error) {
-    console.error("Error in createNotification:", error.message);
+    logger.error("Error in createNotification:", error.message);
     next(error);
   }
 };
@@ -68,7 +68,7 @@ exports.getAllNotifications = async (req, res, next) => {
       data: notifications,
     });
   } catch (error) {
-    console.error("Error in getAllNotifications:", error.message);
+    logger.error("Error in getAllNotifications:", error.message);
     next(error);
   }
 };
@@ -89,7 +89,7 @@ exports.getNotificationById = async (req, res, next) => {
       data: notification,
     });
   } catch (error) {
-    console.error("Error in getNotificationById:", error.message);
+    logger.error("Error in getNotificationById:", error.message);
     next(error);
   }
 };
@@ -105,7 +105,7 @@ exports.deleteNotificationById = async (req, res, next) => {
       message: "Notification deleted successfully",
     });
   } catch (error) {
-    console.error("Error in deleteNotificationById:", error.message);
+    logger.error("Error in deleteNotificationById:", error.message);
     next(error);
   }
 };
@@ -137,7 +137,7 @@ exports.getNotifications = async (req, res, next) => {
       pagination: notifications.pagination,
     });
   } catch (error) {
-    console.error("Error in getNotifications:", error.message);
+    logger.error("Error in getNotifications:", error.message);
     next(error);
   }
 };
@@ -153,12 +153,12 @@ async function scheduleNotification(notification) {
     );
 
     if (moment().isAfter(notificationTime)) {
-      console.log("Notification time is in the past, skipping notification.");
+      logger.info("Notification time is in the past, skipping notification.");
       return;
     }
 
-    console.log("Admin Timezone:", timezone);
-    console.log(
+    logger.info("Admin Timezone:", timezone);
+    logger.info(
       "Notification Time (in admin's timezone):",
       notificationTime.format("YYYY-MM-DD HH:mm:ss")
     );
@@ -178,7 +178,7 @@ async function scheduleNotification(notification) {
           .filter(Boolean);
 
         if (allTokens.length === 0) {
-          console.log("No tokens available, skipping notification.");
+          logger.info("No tokens available, skipping notification.");
           return;
         }
 
@@ -191,18 +191,18 @@ async function scheduleNotification(notification) {
         };
 
         const response = await messaging.sendMulticast(message);
-        console.log("Notifications sent successfully:", response);
+        logger.info("Notifications sent successfully:", response);
       } catch (error) {
-        console.error("Error sending notification:", error);
+        logger.error("Error sending notification:", error);
       }
     });
 
-    console.log(
+    logger.info(
       `Notification scheduled for ${notificationTime.format(
         "YYYY-MM-DD HH:mm:ss"
       )} in the admin's timezone.`
     );
   } catch (error) {
-    console.error("Error in scheduleNotification:", error);
+    logger.error("Error in scheduleNotification:", error);
   }
 }
