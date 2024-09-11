@@ -97,9 +97,11 @@ exports.createEventV2 = async (req, res, next) => {
       boothNumber,
       mobileNumber,
       owner,
+      categoryName,
       status,
     } = req.body;
 
+    // Check if the owner is a valid user type
     if (owner.toLowerCase() !== "epic user" && owner.toLowerCase() !== "user") {
       throw new CustomError(
         "Unauthorized access, you are not the User or an Epic User",
@@ -108,7 +110,7 @@ exports.createEventV2 = async (req, res, next) => {
     }
 
     let user;
-    if (owner == "user") {
+    if (owner === "user") {
       user = await User.findById(req.user.id);
     } else {
       user = await EpicUser.findById(req.user.id);
@@ -123,6 +125,7 @@ exports.createEventV2 = async (req, res, next) => {
 
     console.log("Received event creation request:", req.body);
 
+    // Check if mobile number matches
     if (req.user.mobileNumber !== mobileNumber) {
       throw new CustomError(
         "Unauthorized access, please enter correct mobile number",
@@ -142,21 +145,52 @@ exports.createEventV2 = async (req, res, next) => {
       !date ||
       !fromTime ||
       !toTime ||
-      //   !constituency ||
-      //   !boothNumber ||
       !mobileNumber ||
       !owner ||
+      !categoryName ||
       status === undefined
     ) {
-      throw new CustomError("All required fields must be provided", 400);
+      throw new CustomError(
+        "All required fields must be provided ['eventTitle', 'date', 'fromTime', 'toTime', 'mobileNumber', 'owner', 'categoryName' ]'",
+        400
+      );
     }
 
-    const eventDate = moment.tz(date, "UTC").toDate();
+    // Convert the event date to a moment object in UTC
+    const eventDate = moment.tz(date, "UTC").startOf("day");
     console.log("Parsed event date (UTC):", eventDate);
 
+    // Get the current date and the date for tomorrow
+    const today = moment().startOf("day"); // Current date (start of day)
+    const tomorrow = moment().add(1, "days").startOf("day"); // Tomorrow date (start of day)
+
+    // Check if the selected event date is today or tomorrow
+    if (eventDate.isSame(today) || eventDate.isSame(tomorrow)) {
+      // Delete the uploaded files before throwing an error
+      deleteUploadedFiles(req.files);
+      throw new CustomError(
+        "You cannot create an event for today or tomorrow. Please select a date at least two days in the future.",
+        400
+      );
+    }
+
+    // Check if an approved event exists on the same date
+    const isApprovedEventOnSameDate = await Event.checkForApprovedEventOnDate(
+      eventDate.toDate()
+    );
+    if (isApprovedEventOnSameDate) {
+      // Delete the uploaded files before throwing an error
+      deleteUploadedFiles(req.files);
+      throw new CustomError(
+        "An approved event already exists for the selected date. You cannot create another event on this date.",
+        400
+      );
+    }
+
+    // Event data passes all restrictions, now create the event in the database
     const newEvent = await Event.create({
       eventTitle,
-      date: eventDate,
+      date: eventDate.toDate(), // Convert moment object back to Date
       fromTime,
       toTime,
       constituency: constituency || user.legislativeConstituency,
@@ -172,14 +206,6 @@ exports.createEventV2 = async (req, res, next) => {
     );
 
     // Schedule the notification
-    // scheduleNotification(
-    //   newEvent.mobileNumber,
-    //   newEvent.id,
-    //   newEvent.eventTitle,
-    //   newEvent.date,
-    //   newEvent.fromTime
-    // );
-
     scheduleNotification(newEvent, user);
 
     console.log("Notification scheduled.");
@@ -363,6 +389,7 @@ exports.updateEventByIdV2 = async (req, res, next) => {
     toTime,
     constituency,
     boothNumber,
+    categoryName,
     status,
   } = req.body;
 
@@ -397,6 +424,7 @@ exports.updateEventByIdV2 = async (req, res, next) => {
       fromTime, // Store the updated fromTime string
       toTime, // Store the updated toTime string
       constituency,
+      categoryName,
       boothNumber: parseInt(boothNumber, 10),
       status: parseInt(status, 10), // Ensure status is correctly parsed as an integer
       documents, // Update the documents field with new paths
@@ -650,3 +678,12 @@ exports.sendNotification = async (req, res, next) => {
     next(err);
   }
 };
+
+// Helper function to delete uploaded files if event creation fails
+function deleteUploadedFiles(files) {
+  if (files && files.documents) {
+    files.documents.forEach((file) => {
+      fileHelper.deleteFile(file.path);
+    });
+  }
+}

@@ -387,6 +387,37 @@ class Event {
       throw new Error(`Unable to get events where status is 0`);
     }
   }
+
+  static async checkForApprovedEventOnDate(date) {
+    try {
+      // Parse the provided date and normalize it to remove time components
+      const searchDate = new Date(date);
+      searchDate.setUTCHours(0, 0, 0, 0);
+
+      const startOfDay = new Date(searchDate);
+      const endOfDay = new Date(searchDate);
+      endOfDay.setUTCHours(23, 59, 59, 999);
+
+      // Query to find any approved event on the same day
+      const existingEvent = await prisma.event.findFirst({
+        where: {
+          date: {
+            gte: startOfDay, // Start of the day
+            lte: endOfDay, // End of the day
+          },
+          status: 0, // Only approved events
+        },
+      });
+
+      return !!existingEvent; // Return true if an approved event exists, otherwise false
+    } catch (error) {
+      console.error(
+        `Error checking for approved event on date ${date}:`,
+        error.message
+      );
+      throw new Error(`Unable to check for approved event on date ${date}`);
+    }
+  }
 }
 
 module.exports = Event;

@@ -20,6 +20,7 @@ model User {
   gender                  String?
   age                     Int?
   email                   String?  @unique
+  voterId                 String?
   timeZone                String?   @default("UTC")
   status                  Int? @default(1)
 
@@ -45,7 +46,11 @@ model Grievance {
   status                 Int      @default(0)
   note                   String?
   isAdmin                Boolean?
-  assignedTo             String?    
+  assignedTo             String?   
+  patientName            String?
+  aadharNo               String?
+  ayshmanCardNo          String?
+  hospitalName           String?
 
   createdAt              DateTime @default(now()) // Timestamp for when the grievance was created
   updatedAt              DateTime @updatedAt      // Timestamp for when the grievance was last updated
@@ -61,7 +66,8 @@ model Event {
   boothNumber    String?
   mobileNumber   String?
   status         Int      @default(0)
-  owner          String?      
+  owner          String?
+  categoryName   String?      
   document       String?  
   documents      Json?    
   createdAt      DateTime @default(now())
@@ -83,6 +89,7 @@ model EpicUser {
   gender                  String?
   age                     Int?
   email                   String?  @unique
+  voterId                 String?
   timeZone                String?   @default("UTC")
   status                  Int? @default(1)
 }

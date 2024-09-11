@@ -79,6 +79,10 @@ exports.createGrievanceV2 = async (req, res, next) => {
       ticketTitle,
       description,
       owner,
+      patientName,
+      aadharNo,
+      ayshmanCardNo,
+      hospitalName,
     } = req.body;
 
     if (owner.toLowerCase() !== "epic user" && owner.toLowerCase() !== "user") {
@@ -131,7 +135,11 @@ exports.createGrievanceV2 = async (req, res, next) => {
       subCategory,
       ticketTitle,
       description,
-      attachments, // Store the array of attachment paths
+      patientName,
+      aadharNo,
+      ayshmanCardNo,
+      hospitalName,
+      attachments,
     });
 
     console.log(`Grievance created with title: ${ticketTitle}`);
@@ -258,6 +266,10 @@ exports.updateGrievanceV2 = async (req, res, next) => {
     description,
     status,
     note,
+    patientName,
+    aadharNo,
+    ayshmanCardNo,
+    hospitalName,
   } = req.body;
 
   try {
@@ -306,6 +318,10 @@ exports.updateGrievanceV2 = async (req, res, next) => {
       attachments,
       status: Number(status || grievance.status),
       note: note || grievance.note,
+      patientName: patientName || grievance.patientName,
+      aadharNo: aadharNo || grievance.aadharNo,
+      ayshmanCardNo: ayshmanCardNo || grievance.ayshmanCardNo,
+      hospitalName: hospitalName || grievance.hospitalName,
     });
 
     res
