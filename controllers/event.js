@@ -198,6 +198,7 @@ exports.createEventV2 = async (req, res, next) => {
       mobileNumber,
       owner: owner.toLowerCase(),
       status: parseInt(status, 10),
+      categoryName,
       documents,
     });
 

@@ -120,6 +120,7 @@ exports.register = async (req, res, next) => {
     email,
     legislativeConstituency,
     boothNameOrNumber,
+    voterId,
   } = req.body;
 
   try {
@@ -165,6 +166,7 @@ exports.register = async (req, res, next) => {
       email,
       legislativeConstituency,
       boothNameOrNumber,
+      voterId,
     });
 
     console.log(
@@ -183,6 +185,7 @@ exports.register = async (req, res, next) => {
           age: user.age,
           legislativeConstituency: user.legislativeConstituency,
           boothNameOrNumber: user.boothNameOrNumber,
+          voterId: user.voterId,
         },
       })
     );
@@ -203,6 +206,7 @@ exports.updateUser = async (req, res, next) => {
     email,
     legislativeConstituency,
     boothNameOrNumber,
+    voterId,
   } = req.body;
 
   try {
@@ -245,6 +249,7 @@ exports.updateUser = async (req, res, next) => {
       gender: gender.toLowerCase() || user.gender,
       age: Number(age || user.age),
       email: email || user.email,
+      voterId: voterId || user.voterId,
       legislativeConstituency:
         legislativeConstituency || user.legislativeConstituency,
       boothNameOrNumber: boothNameOrNumber || user.boothNameOrNumber,
@@ -263,6 +268,7 @@ exports.updateUser = async (req, res, next) => {
           mobileNumber: epicUser.mobileNumber,
           epicId: epicUser.epicId,
           image: epicUser.image,
+          voterId: epicUser.voterId,
           fcmToken: epicUser.fcmToken,
         },
       })
@@ -418,6 +424,7 @@ exports.createUser = async (req, res, next) => {
       age,
       email,
       timeZone,
+      voterId,
       status,
     } = req.body;
 
@@ -445,6 +452,7 @@ exports.createUser = async (req, res, next) => {
       gender,
       age,
       email,
+      voterId,
       timeZone: timeZone || "UTC",
       status: status !== undefined ? Number(status) : 1,
     });
