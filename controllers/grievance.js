@@ -273,13 +273,14 @@ exports.updateGrievanceV2 = async (req, res, next) => {
   } = req.body;
 
   try {
-    // if status is not 0,1,2,3 then throw error
-    if (![0, 1, 2, 3].includes(Number(status))) {
-      throw new CustomError(
-        "Invalid status provided, it must be one of these [0,1,2,3]",
-        400
-      );
-    }
+    if (status)
+      if (![0, 1, 2, 3].includes(Number(status))) {
+        // if status is not 0,1,2,3 then throw error
+        throw new CustomError(
+          "Invalid status provided, it must be one of these [0,1,2,3]",
+          400
+        );
+      }
     console.log(`Attempting to update grievance with ID: ${id}`);
     const grievance = await Grievance.findById(id);
     if (!grievance) {
