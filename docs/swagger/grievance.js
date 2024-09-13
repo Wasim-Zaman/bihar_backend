@@ -188,6 +188,12 @@
  *                   type: string
  *                   format: binary
  *                 description: Array of attachment files (e.g., doc, pdf, jpg)
+ *               patientAttachments:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Array of patient-specific attachment files (e.g., images)
  *     responses:
  *       201:
  *         description: Grievance created successfully
@@ -291,9 +297,16 @@
  *                     description:
  *                       type: string
  *                       example: "Grievance Description"
- *                     attachment:
- *                       type: string
- *                       example: "https://example.com/attachment.jpg"
+ *                     attachments:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         example: "https://example.com/attachment1.jpg"
+ *                     patientAttachments:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         example: "https://example.com/patient-attachment1.jpg"
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -411,9 +424,16 @@
  *                           description:
  *                             type: string
  *                             example: "Grievance Description"
- *                           attachment:
- *                             type: string
- *                             example: "https://example.com/attachment.jpg"
+ *                           attachments:
+ *                             type: array
+ *                             items:
+ *                               type: string
+ *                               example: "https://example.com/attachment.jpg"
+ *                           patientAttachments:
+ *                             type: array
+ *                             items:
+ *                               type: string
+ *                               example: "https://example.com/patient-attachment.jpg"
  *                           createdAt:
  *                             type: string
  *                             format: date-time
@@ -438,152 +458,6 @@
  *                 message:
  *                   type: string
  *                   example: No grievances found
- */
-
-/**
- * @swagger
- * /api/grievances/v1/grievances/{id}:
- *   put:
- *     summary: Update a grievance
- *     tags: [Grievances]
- *     consumes:
- *       - multipart/form-data
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The ID of the grievance to update
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               category:
- *                 type: string
- *                 description: The category of the grievance
- *               subCategory:
- *                 type: string
- *                 description: The sub-category of the grievance
- *               fullName:
- *                 type: string
- *                 description: The full name of the user
- *               fatherName:
- *                 type: string
- *                 description: The father's name of the user
- *               legislativeConstituency:
- *                 type: string
- *                 description: The legislative constituency
- *               boothNameOrNumber:
- *                 type: string
- *                 description: The booth name or number
- *               contactNumber:
- *                 type: string
- *                 description: The contact number of the user
- *               gender:
- *                 type: string
- *                 description: The gender of the user (MALE, FEMALE, OTHER)
- *               age:
- *                 type: integer
- *                 description: The age of the user
- *               voterId:
- *                 type: string
- *                 description: The voter ID of the user
- *               ticketTitle:
- *                 type: string
- *                 description: The title of the grievance ticket
- *               description:
- *                 type: string
- *                 description: The description of the grievance
- *               attachment:
- *                 type: string
- *                 format: binary
- *                 description: The new attachment file (e.g., doc, pdf, jpg)
- *     responses:
- *       200:
- *         description: Grievance updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Grievance updated successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "uuid"
- *                     category:
- *                       type: string
- *                       example: "Category Name"
- *                     subCategory:
- *                       type: string
- *                       example: "Sub Category Name"
- *                     fullName:
- *                       type: string
- *                       example: "John Doe"
- *                     fatherName:
- *                       type: string
- *                       example: "Father Name"
- *                     legislativeConstituency:
- *                       type: string
- *                       example: "Legislative Constituency"
- *                     boothNameOrNumber:
- *                       type: string
- *                       example: "Booth Name/Number"
- *                     contactNumber:
- *                       type: string
- *                       example: "1234567890"
- *                     gender:
- *                       type: string
- *                       example: "MALE"
- *                     age:
- *                       type: integer
- *                       example: 30
- *                     voterId:
- *                       type: string
- *                       example: "Voter ID"
- *                     ticketTitle:
- *                       type: string
- *                       example: "Ticket Title"
- *                     description:
- *                       type: string
- *                       example: "Grievance Description"
- *                     attachment:
- *                       type: string
- *                       example: "https://example.com/new-attachment.jpg"
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2023-07-24T12:00:00Z"
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2023-07-25T12:00:00Z"
- *       404:
- *         description: Grievance not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Grievance not found
- *     security:
- *       - bearerAuth: []
  */
 
 /**
@@ -656,6 +530,12 @@
  *                   type: string
  *                   format: binary
  *                 description: Array of new attachment files (e.g., doc, pdf, jpg)
+ *               patientAttachments:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Array of patient-specific attachment files (e.g., images)
  *     responses:
  *       200:
  *         description: Grievance updated successfully
@@ -723,6 +603,11 @@
  *                       items:
  *                         type: string
  *                         example: "https://example.com/new-attachment1.jpg"
+ *                     patientAttachments:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         example: "https://example.com/patient-new-attachment1.jpg"
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -752,7 +637,7 @@
  * @swagger
  * /api/admin/grievances/v2/grievances/{id}:
  *   put:
- *     summary: Update a grievance with multiple attachments and additional fields
+ *     summary: Update a grievance with multiple attachments and additional fields as an admin
  *     tags: [Grievances]
  *     consumes:
  *       - multipart/form-data
@@ -818,6 +703,12 @@
  *                   type: string
  *                   format: binary
  *                 description: Array of new attachment files (e.g., doc, pdf, jpg)
+ *               patientAttachments:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Array of patient-specific attachment files (e.g., images)
  *     responses:
  *       200:
  *         description: Grievance updated successfully
@@ -885,6 +776,11 @@
  *                       items:
  *                         type: string
  *                         example: "https://example.com/new-attachment1.jpg"
+ *                     patientAttachments:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         example: "https://example.com/patient-new-attachment1.jpg"
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -937,706 +833,6 @@
  *                 message:
  *                   type: string
  *                   example: Grievance deleted successfully
- *       404:
- *         description: Grievance not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Grievance not found
- *     security:
- *       - bearerAuth: []
- */
-
-/**
- * @swagger
- * /api/grievances/v1/admin/grievances:
- *   post:
- *     summary: Create a new grievance as an admin
- *     tags: [Grievances]
- *     consumes:
- *       - multipart/form-data
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               fullName:
- *                 type: string
- *                 example: "John Doe"
- *                 description: The full name of the user registering the grievance (optional)
- *               fatherName:
- *                 type: string
- *                 example: "Father Name"
- *                 description: The father's name of the user (optional)
- *               legislativeConstituency:
- *                 type: string
- *                 example: "Legislative Constituency"
- *                 description: The legislative constituency (optional)
- *               boothNameOrNumber:
- *                 type: string
- *                 example: "Booth Name/Number"
- *                 description: The booth name or number (optional)
- *               contactNumber:
- *                 type: string
- *                 example: "1234567890"
- *                 description: The contact number of the user
- *               gender:
- *                 type: string
- *                 example: "MALE"
- *                 description: The gender of the user (MALE, FEMALE, OTHER) (optional)
- *               age:
- *                 type: integer
- *                 example: 30
- *                 description: The age of the user (optional)
- *               voterId:
- *                 type: string
- *                 example: "Voter ID"
- *                 description: The voter ID of the user (optional)
- *               category:
- *                 type: string
- *                 example: "Category Name"
- *                 description: The category of the grievance
- *               subCategory:
- *                 type: string
- *                 example: "Sub Category Name"
- *                 description: The sub-category of the grievance
- *               ticketTitle:
- *                 type: string
- *                 example: "Ticket Title"
- *                 description: The title of the grievance ticket
- *               description:
- *                 type: string
- *                 example: "Grievance Description"
- *                 description: The description of the grievance
- *               isAdmin:
- *                 type: boolean
- *                 example: true
- *                 description: Indicates if the grievance is being created by an admin
- *               attachments:
- *                 type: array
- *                 items:
- *                   type: string
- *                   format: binary
- *                 description: Array of attachment files (e.g., doc, pdf, jpg)
- *     responses:
- *       201:
- *         description: Grievance created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Grievance created successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "uuid"
- *                     fullName:
- *                       type: string
- *                       example: "John Doe"
- *                     fatherName:
- *                       type: string
- *                       example: "Father Name"
- *                     legislativeConstituency:
- *                       type: string
- *                       example: "Legislative Constituency"
- *                     boothNameOrNumber:
- *                       type: string
- *                       example: "Booth Name/Number"
- *                     contactNumber:
- *                       type: string
- *                       example: "1234567890"
- *                     gender:
- *                       type: string
- *                       example: "MALE"
- *                     age:
- *                       type: integer
- *                       example: 30
- *                     voterId:
- *                       type: string
- *                       example: "Voter ID"
- *                     category:
- *                       type: string
- *                       example: "Category Name"
- *                     subCategory:
- *                       type: string
- *                       example: "Sub Category Name"
- *                     ticketTitle:
- *                       type: string
- *                       example: "Ticket Title"
- *                     description:
- *                       type: string
- *                       example: "Grievance Description"
- *                     isAdmin:
- *                       type: boolean
- *                       example: true
- *                     attachments:
- *                       type: array
- *                       items:
- *                         type: string
- *                         example: "https://example.com/attachment1.jpg"
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2023-07-24T12:00:00Z"
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2023-07-25T12:00:00Z"
- *       400:
- *         description: Validation error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Validation error
- *       404:
- *         description: User not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: User not found with the entered mobile number
- *     security:
- *       - bearerAuth: []
- */
-
-/**
- * @swagger
- * /api/grievances/v1/admin/grievances:
- *   get:
- *     summary: Retrieve paginated admin grievances
- *     tags: [Grievances]
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: The page number to retrieve.
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: The number of items to retrieve per page.
- *     responses:
- *       200:
- *         description: Admin grievances retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Admin grievances retrieved successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     data:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           id:
- *                             type: string
- *                             example: "uuid"
- *                           fullName:
- *                             type: string
- *                             example: "John Doe"
- *                           fatherName:
- *                             type: string
- *                             example: "Father Name"
- *                           legislativeConstituency:
- *                             type: string
- *                             example: "Legislative Constituency"
- *                           boothNameOrNumber:
- *                             type: string
- *                             example: "Booth Name/Number"
- *                           contactNumber:
- *                             type: string
- *                             example: "1234567890"
- *                           gender:
- *                             type: string
- *                             example: "MALE"
- *                           age:
- *                             type: integer
- *                             example: 30
- *                           voterId:
- *                             type: string
- *                             example: "Voter ID"
- *                           category:
- *                             type: string
- *                             example: "Category Name"
- *                           subCategory:
- *                             type: string
- *                             example: "Sub Category Name"
- *                           ticketTitle:
- *                             type: string
- *                             example: "Ticket Title"
- *                           description:
- *                             type: string
- *                             example: "Grievance Description"
- *                           isAdmin:
- *                             type: boolean
- *                             example: true
- *                           attachments:
- *                             type: array
- *                             items:
- *                               type: string
- *                               example: "https://example.com/attachment1.jpg"
- *                           createdAt:
- *                             type: string
- *                             format: date-time
- *                             example: "2023-07-24T12:00:00Z"
- *                           updatedAt:
- *                             type: string
- *                             format: date-time
- *                             example: "2023-07-25T12:00:00Z"
- *                     pagination:
- *                       type: object
- *                       properties:
- *                         currentPage:
- *                           type: integer
- *                           example: 1
- *                         totalPages:
- *                           type: integer
- *                           example: 5
- *                         totalItems:
- *                           type: integer
- *                           example: 50
- *                         itemsPerPage:
- *                           type: integer
- *                           example: 10
- *       404:
- *         description: No admin grievances found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: No admin grievances found
- *     security:
- *       - bearerAuth: []
- */
-
-/**
- * @swagger
- * /api/grievances/v1/grievances/by-tab:
- *   get:
- *     summary: Retrieve grievances by tab name
- *     tags: [Grievances]
- *     parameters:
- *       - in: query
- *         name: tab
- *         schema:
- *           type: string
- *           enum: [accepted, completed]
- *           description: The tab name to filter grievances by
- *         required: true
- *         example: accepted
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: The page number to retrieve
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: The number of items to retrieve per page
- *     responses:
- *       200:
- *         description: Grievances retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Grievances retrieved successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     data:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           id:
- *                             type: string
- *                             example: "uuid"
- *                           fullName:
- *                             type: string
- *                             example: "John Doe"
- *                           contactNumber:
- *                             type: string
- *                             example: "1234567890"
- *                           status:
- *                             type: integer
- *                             example: 1
- *                           description:
- *                             type: string
- *                             example: "Grievance Description"
- *                           createdAt:
- *                             type: string
- *                             format: date-time
- *                             example: "2023-07-24T12:00:00Z"
- *                           updatedAt:
- *                             type: string
- *                             format: date-time
- *                             example: "2023-07-25T12:00:00Z"
- *                     pagination:
- *                       type: object
- *                       properties:
- *                         currentPage:
- *                           type: integer
- *                           example: 1
- *                         totalPages:
- *                           type: integer
- *                           example: 5
- *                         totalItems:
- *                           type: integer
- *                           example: 50
- *                         itemsPerPage:
- *                           type: integer
- *                           example: 10
- *       400:
- *         description: Invalid tab name or validation error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Invalid tab name, tab name must be 'accepted' or 'completed'
- *       404:
- *         description: No grievances found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: No grievances found
- *     security:
- *       - bearerAuth: []
- */
-
-/**
- * @swagger
- * /api/grievances/v1/assigned-grievances:
- *   get:
- *     summary: Retrieve assigned grievances
- *     tags: [Grievances]
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: The page number to retrieve.
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: The number of items to retrieve per page.
- *     responses:
- *       200:
- *         description: Grievances retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Grievances retrieved successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     grievances:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           id:
- *                             type: string
- *                             example: "uuid"
- *                           category:
- *                             type: string
- *                             example: "Category Name"
- *                           subCategory:
- *                             type: string
- *                             example: "Sub Category Name"
- *                           fullName:
- *                             type: string
- *                             example: "John Doe"
- *                           contactNumber:
- *                             type: string
- *                             example: "1234567890"
- *                           status:
- *                             type: integer
- *                             example: 1
- *                           description:
- *                             type: string
- *                             example: "Grievance Description"
- *                           createdAt:
- *                             type: string
- *                             format: date-time
- *                             example: "2023-07-24T12:00:00Z"
- *                           updatedAt:
- *                             type: string
- *                             format: date-time
- *                             example: "2023-07-25T12:00:00Z"
- *                     pagination:
- *                       type: object
- *                       properties:
- *                         currentPage:
- *                           type: integer
- *                           example: 1
- *                         totalPages:
- *                           type: integer
- *                           example: 5
- *                         totalItems:
- *                           type: integer
- *                           example: 50
- *                         itemsPerPage:
- *                           type: integer
- *                           example: 10
- *       404:
- *         description: No grievances found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: No grievances found
- *     security:
- *       - bearerAuth: []
- */
-
-/**
- * @swagger
- * /api/grievances/v1/assignGrievance/{id}:
- *   patch:
- *     summary: Assign a grievance to a different contact number
- *     tags: [Grievances]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The ID of the grievance to assign
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               contactNumber:
- *                 type: string
- *                 example: "1234567890"
- *                 description: The contact number to assign the grievance to
- *     responses:
- *       200:
- *         description: Grievance assigned successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Grievance assigned successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "uuid"
- *                     fullName:
- *                       type: string
- *                       example: "John Doe"
- *                     contactNumber:
- *                       type: string
- *                       example: "1234567890"
- *                     status:
- *                       type: integer
- *                       example: 1
- *                     description:
- *                       type: string
- *                       example: "Grievance Description"
- *                     assignedTo:
- *                       type: string
- *                       example: "9876543210"
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2023-07-24T12:00:00Z"
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2023-07-25T12:00:00Z"
- *       400:
- *         description: Validation error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Validation error
- *       404:
- *         description: Grievance not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Grievance not found
- *     security:
- *       - bearerAuth: []
- */
-
-/**
- * @swagger
- * /api/grievances/v1/update-status/{id}:
- *   put:
- *     summary: Update the status of a grievance
- *     tags: [Grievances]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The ID of the grievance to update
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               status:
- *                 type: integer
- *                 description: The new status of the grievance
- *                 example: 2
- *     responses:
- *       200:
- *         description: Grievance status updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Grievance status updated successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "uuid"
- *                     status:
- *                       type: integer
- *                       example: 2
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2023-08-25T12:00:00Z"
- *       400:
- *         description: Validation error or invalid status
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Validation error or invalid status
  *       404:
  *         description: Grievance not found
  *         content:

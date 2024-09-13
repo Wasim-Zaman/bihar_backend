@@ -28,33 +28,50 @@ model User {
 }
 
 model Grievance {
-  id                     String   @id @default(uuid())
-  category               String   // Category of the grievance
-  subCategory            String   // Sub-category of the grievance
-  fullName               String?  // Full name of the person submitting the grievance
-  fatherName             String?  // Father's name
-  legislativeConstituency String? // Legislative constituency of the person
-  boothNameOrNumber      String?  // Booth name or number
-  contactNumber          String   // Contact number of the person
-  gender                 String?  // Gender of the person
-  age                    Int?     // Age of the person
-  voterId                String?  // Voter ID (EPIC No)
-  ticketTitle            String   // Title of the grievance ticket
-  description            String?  // Description of the grievance
-  attachment             String?  // File path to the attachment
-  attachments            Json
-  status                 Int      @default(0)
-  note                   String?
-  isAdmin                Boolean?
-  assignedTo             String?   
-  patientName            String?
-  aadharNo               String?
-  ayshmanCardNo          String?
-  hospitalName           String?
+  id                      String   @id @default(uuid())
+  category                String   // Category of the grievance
+  subCategory             String   // Sub-category of the grievance
+  fullName                String?  // Full name of the person submitting the grievance
+  fatherName              String?  // Father's name
+  legislativeConstituency String?  // Legislative constituency of the person
+  boothNameOrNumber       String?  // Booth name or number
+  contactNumber           String   // Contact number of the person
+  gender                  String?  // Gender of the person
+  age                     Int?     // Age of the person
+  voterId                 String?  // Voter ID (EPIC No)
+  ticketTitle             String   // Title of the grievance ticket
+  description             String?  // Description of the grievance
+  attachment              String?  // File path to the attachment
+  attachments             Json     // Additional attachments in JSON format
+  status                  Int      @default(0)
+  note                    String?
+  isAdmin                 Boolean?
+  assignedTo              String?
+  
+  // Health-related fields
+  patientName             String?  // Name of the patient
+  aadharNo                String?  // Aadhar number
+  ayshmanCardNo           String?  // Ayushman card number
+  hospitalName            String?  // Hospital name
+  patientDescription      String?  // Description of the patient's condition
+  patientAttachments      Json?    // Patient-related attachments
+  isHealth                Boolean? // Whether the grievance is related to health
+  
+  // Railway-related fields
+  pnrNo                   String?  // PNR number
+  dateOfJur               DateTime? // Date of journey
+  fromStation             String?  // Originating station
+  toStation               String?  // Destination station
+  trainNo                 String?  // Train number
+  trainName               String?  // Train name
+  travelClass             String?  // Class of travel
+  isRailway               Boolean? // Whether the grievance is related to railway
 
-  createdAt              DateTime @default(now()) // Timestamp for when the grievance was created
-  updatedAt              DateTime @updatedAt      // Timestamp for when the grievance was last updated
+  createdAt               DateTime @default(now())  // Timestamp for when the grievance was created
+  updatedAt               DateTime @updatedAt       // Timestamp for when the grievance was last updated
 }
+
+
 
 model Event {
   id             String   @id @default(uuid())
@@ -67,7 +84,8 @@ model Event {
   mobileNumber   String?
   status         Int      @default(0)
   owner          String?
-  categoryName   String?      
+  categoryName   String?
+  place          string?      
   document       String?  
   documents      Json?    
   createdAt      DateTime @default(now())

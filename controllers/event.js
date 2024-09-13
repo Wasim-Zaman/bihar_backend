@@ -98,6 +98,7 @@ exports.createEventV2 = async (req, res, next) => {
       mobileNumber,
       owner,
       categoryName,
+      place,
       status,
     } = req.body;
 
@@ -148,10 +149,11 @@ exports.createEventV2 = async (req, res, next) => {
       !mobileNumber ||
       !owner ||
       !categoryName ||
+      !place ||
       status === undefined
     ) {
       throw new CustomError(
-        "All required fields must be provided ['eventTitle', 'date', 'fromTime', 'toTime', 'mobileNumber', 'owner', 'categoryName' ]'",
+        "All required fields must be provided ['eventTitle', 'date', 'fromTime', 'toTime', 'mobileNumber', 'owner', 'categoryName', 'place' ]'",
         400
       );
     }
@@ -199,6 +201,7 @@ exports.createEventV2 = async (req, res, next) => {
       owner: owner.toLowerCase(),
       status: parseInt(status, 10),
       categoryName,
+      place,
       documents,
     });
 
@@ -231,6 +234,8 @@ exports.createAdminEvent = async (req, res, next) => {
       toTime,
       constituency,
       boothNumber,
+      categoryName,
+      place,
       status,
     } = req.body;
 
@@ -265,6 +270,8 @@ exports.createAdminEvent = async (req, res, next) => {
       boothNumber: boothNumber || null,
       owner: "admin",
       status: parseInt(status, 10),
+      categoryName,
+      place,
       documents,
     });
 
@@ -391,6 +398,7 @@ exports.updateEventByIdV2 = async (req, res, next) => {
     constituency,
     boothNumber,
     categoryName,
+    place,
     status,
   } = req.body;
 
@@ -426,6 +434,7 @@ exports.updateEventByIdV2 = async (req, res, next) => {
       toTime, // Store the updated toTime string
       constituency,
       categoryName,
+      place,
       boothNumber: parseInt(boothNumber, 10),
       status: parseInt(status, 10), // Ensure status is correctly parsed as an integer
       documents, // Update the documents field with new paths

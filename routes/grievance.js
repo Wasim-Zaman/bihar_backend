@@ -19,7 +19,13 @@ router.post(
   "/v2/grievances",
   isAuth,
   uploadMultiple({
-    fields: [{ name: "attachments" }],
+    fields: [
+      {
+        name: "attachments",
+        maxCount: 10,
+      },
+      { name: "patientAttachments", maxCount: 10 },
+    ],
   }),
   controller.createGrievanceV2
 );
@@ -55,7 +61,10 @@ router.put(
   "/v2/grievances/:id",
   isAuth,
   uploadMultiple({
-    fields: [{ name: "attachments" }],
+    fields: [
+      { name: "attachments", maxCount: 10 },
+      { name: "patientAttachments", maxCount: 10 },
+    ],
   }),
   controller.updateGrievanceV2
 );
@@ -64,7 +73,10 @@ router.put(
   "/v2/admin/grievances/:id",
   isAdmin,
   uploadMultiple({
-    fields: [{ name: "attachments" }],
+    fields: [
+      { name: "attachments", maxCount: 10 },
+      { name: "patientAttachments", maxCount: 10 },
+    ],
   }),
   controller.updateGrievanceV2
 );

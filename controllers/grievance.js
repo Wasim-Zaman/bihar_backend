@@ -83,6 +83,15 @@ exports.createGrievanceV2 = async (req, res, next) => {
       aadharNo,
       ayshmanCardNo,
       hospitalName,
+      pnrNo,
+      dateOfJur,
+      fromStation,
+      toStation,
+      trainNo,
+      trainName,
+      travelClass, // Updated field name
+      isHealth,
+      isRailway,
     } = req.body;
 
     if (owner.toLowerCase() !== "epic user" && owner.toLowerCase() !== "user") {
@@ -93,7 +102,7 @@ exports.createGrievanceV2 = async (req, res, next) => {
     }
 
     let user;
-    if (owner == "user") {
+    if (owner === "user") {
       user = await User.findByMobileNumber(contactNumber);
     } else {
       user = await EpicUser.findByMobileNumber(contactNumber);
@@ -113,10 +122,17 @@ exports.createGrievanceV2 = async (req, res, next) => {
       );
     }
 
-    // Assuming multiple attachments are handled by Multer and stored in req.files
-    const attachments = req.files
-      ? req.files.attachments.map((file) => file.path)
-      : [];
+    // Handling multiple attachments
+    const attachments =
+      req.files && req.files.attachments
+        ? req.files.attachments.map((file) => file.path)
+        : [];
+
+    // Handling patient-specific attachments
+    const patientAttachments =
+      req.files && req.files.patientAttachments
+        ? req.files.patientAttachments.map((file) => file.path)
+        : [];
 
     if (!ticketTitle || !description) {
       throw new CustomError("Ticket title and description are required", 400);
@@ -139,7 +155,17 @@ exports.createGrievanceV2 = async (req, res, next) => {
       aadharNo,
       ayshmanCardNo,
       hospitalName,
+      pnrNo,
+      dateOfJur: dateOfJur ? new Date(dateOfJur) : null,
+      fromStation,
+      toStation,
+      trainNo,
+      trainName,
+      travelClass, // Updated field name
+      isHealth: isHealth ? Boolean(isHealth) : false,
+      isRailway: isRailway ? Boolean(isRailway) : false,
       attachments,
+      patientAttachments, // Added patient-specific attachments
     });
 
     console.log(`Grievance created with title: ${ticketTitle}`);
@@ -273,35 +299,64 @@ exports.updateGrievanceV2 = async (req, res, next) => {
   } = req.body;
 
   try {
-    if (status)
+    // Validate status if provided
+    if (status) {
       if (![0, 1, 2, 3].includes(Number(status))) {
-        // if status is not 0,1,2,3 then throw error
         throw new CustomError(
           "Invalid status provided, it must be one of these [0,1,2,3]",
           400
         );
       }
+    }
+
     console.log(`Attempting to update grievance with ID: ${id}`);
+
+    // Find the grievance by ID
     const grievance = await Grievance.findById(id);
     if (!grievance) {
       throw new CustomError("Grievance not found", 404);
     }
 
-    // Handle multiple attachments
+    // Handle multiple general attachments
     let attachments = grievance.attachments || [];
-
-    if (req.files && req.files.attachments.length > 0) {
+    if (
+      req.files &&
+      req.files.attachments &&
+      req.files.attachments.length > 0
+    ) {
       // Delete old attachments if new ones are uploaded
       if (grievance.attachments && grievance.attachments.length > 0) {
         for (const file of grievance.attachments) {
           await fileHelper.deleteFile(file);
         }
       }
-
       // Add new attachments
       attachments = req.files.attachments.map((file) => file.path);
     }
 
+    // Handle patient-specific attachments
+    let patientAttachments = grievance.patientAttachments || [];
+    if (
+      req.files &&
+      req.files.patientAttachments &&
+      req.files.patientAttachments.length > 0
+    ) {
+      // Delete old patient-specific attachments if new ones are uploaded
+      if (
+        grievance.patientAttachments &&
+        grievance.patientAttachments.length > 0
+      ) {
+        for (const file of grievance.patientAttachments) {
+          await fileHelper.deleteFile(file);
+        }
+      }
+      // Add new patient attachments
+      patientAttachments = req.files.patientAttachments.map(
+        (file) => file.path
+      );
+    }
+
+    // Update the grievance with the new or existing data
     const updatedGrievance = await Grievance.updateById(id, {
       fullName: fullName || grievance.fullName,
       fatherName: fatherName || grievance.fatherName,
@@ -323,6 +378,7 @@ exports.updateGrievanceV2 = async (req, res, next) => {
       aadharNo: aadharNo || grievance.aadharNo,
       ayshmanCardNo: ayshmanCardNo || grievance.ayshmanCardNo,
       hospitalName: hospitalName || grievance.hospitalName,
+      patientAttachments, // Include updated patient-specific attachments
     });
 
     res
