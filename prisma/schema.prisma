@@ -85,7 +85,7 @@ model Event {
   status         Int      @default(0)
   owner          String?
   categoryName   String?
-  place          string?      
+  place          String?      
   document       String?  
   documents      Json?    
   createdAt      DateTime @default(now())
