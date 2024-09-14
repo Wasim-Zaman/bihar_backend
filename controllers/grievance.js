@@ -78,7 +78,7 @@ exports.createGrievanceV2 = async (req, res, next) => {
       subCategory,
       ticketTitle,
       description,
-      owner,
+      owner = "user",
       patientName,
       aadharNo,
       ayshmanCardNo,

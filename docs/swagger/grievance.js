@@ -134,14 +134,6 @@
  *           schema:
  *             type: object
  *             properties:
- *               category:
- *                 type: string
- *                 example: "Category Name"
- *                 description: The category of the grievance
- *               subCategory:
- *                 type: string
- *                 example: "Sub Category Name"
- *                 description: The sub-category of the grievance
  *               fullName:
  *                 type: string
  *                 example: "John Doe"
@@ -174,6 +166,14 @@
  *                 type: string
  *                 example: "Voter ID"
  *                 description: The voter ID of the user
+ *               category:
+ *                 type: string
+ *                 example: "Category Name"
+ *                 description: The category of the grievance
+ *               subCategory:
+ *                 type: string
+ *                 example: "Sub Category Name"
+ *                 description: The sub-category of the grievance
  *               ticketTitle:
  *                 type: string
  *                 example: "Ticket Title"
@@ -182,6 +182,59 @@
  *                 type: string
  *                 example: "Grievance Description"
  *                 description: The description of the grievance
+ *               patientName:
+ *                 type: string
+ *                 example: "Patient Name"
+ *                 description: The name of the patient (optional)
+ *               aadharNo:
+ *                 type: string
+ *                 example: "1234-5678-9101"
+ *                 description: Aadhar number of the patient (optional)
+ *               ayshmanCardNo:
+ *                 type: string
+ *                 example: "AY-1234567890"
+ *                 description: Ayushman card number (optional)
+ *               hospitalName:
+ *                 type: string
+ *                 example: "Hospital Name"
+ *                 description: Name of the hospital (optional)
+ *               pnrNo:
+ *                 type: string
+ *                 example: "PNR1234567890"
+ *                 description: PNR number for travel (optional)
+ *               dateOfJur:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-05-20"
+ *                 description: Date of journey (optional)
+ *               fromStation:
+ *                 type: string
+ *                 example: "Station A"
+ *                 description: Starting station for the journey (optional)
+ *               toStation:
+ *                 type: string
+ *                 example: "Station B"
+ *                 description: Destination station for the journey (optional)
+ *               trainNo:
+ *                 type: string
+ *                 example: "12345"
+ *                 description: Train number (optional)
+ *               trainName:
+ *                 type: string
+ *                 example: "Express Train"
+ *                 description: Name of the train (optional)
+ *               travelClass:
+ *                 type: string
+ *                 example: "AC First Class"
+ *                 description: Travel class (optional)
+ *               isHealth:
+ *                 type: boolean
+ *                 example: true
+ *                 description: Indicates if the grievance is related to health (optional)
+ *               isRailway:
+ *                 type: boolean
+ *                 example: true
+ *                 description: Indicates if the grievance is related to railways (optional)
  *               attachments:
  *                 type: array
  *                 items:
@@ -224,6 +277,32 @@
  *                 message:
  *                   type: string
  *                   example: Validation error
+ *       401:
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized access, you are not the User or an Epic User
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: User not found with the entered mobile number
  *     security:
  *       - bearerAuth: []
  */
@@ -518,12 +597,46 @@
  *               description:
  *                 type: string
  *                 description: The description of the grievance (optional)
- *               status:
- *                 type: integer
- *                 description: The status of the grievance (optional)
- *               note:
+ *               patientName:
  *                 type: string
- *                 description: Any additional notes regarding the grievance (optional)
+ *                 description: The name of the patient (optional)
+ *               aadharNo:
+ *                 type: string
+ *                 description: Aadhar number of the patient (optional)
+ *               ayshmanCardNo:
+ *                 type: string
+ *                 description: Ayushman card number (optional)
+ *               hospitalName:
+ *                 type: string
+ *                 description: Name of the hospital (optional)
+ *               pnrNo:
+ *                 type: string
+ *                 description: PNR number for travel (optional)
+ *               dateOfJur:
+ *                 type: string
+ *                 format: date
+ *                 description: Date of journey (optional)
+ *               fromStation:
+ *                 type: string
+ *                 description: Starting station for the journey (optional)
+ *               toStation:
+ *                 type: string
+ *                 description: Destination station for the journey (optional)
+ *               trainNo:
+ *                 type: string
+ *                 description: Train number (optional)
+ *               trainName:
+ *                 type: string
+ *                 description: Name of the train (optional)
+ *               travelClass:
+ *                 type: string
+ *                 description: Travel class (optional)
+ *               isHealth:
+ *                 type: boolean
+ *                 description: Indicates if the grievance is related to health (optional)
+ *               isRailway:
+ *                 type: boolean
+ *                 description: Indicates if the grievance is related to railways (optional)
  *               attachments:
  *                 type: array
  *                 items:
@@ -592,22 +705,56 @@
  *                     description:
  *                       type: string
  *                       example: "Grievance Description"
- *                     status:
- *                       type: integer
- *                       example: 1
- *                     note:
+ *                     patientName:
  *                       type: string
- *                       example: "Additional notes about the grievance"
+ *                       example: "Patient Name"
+ *                     aadharNo:
+ *                       type: string
+ *                       example: "1234-5678-9101"
+ *                     ayshmanCardNo:
+ *                       type: string
+ *                       example: "AY-1234567890"
+ *                     hospitalName:
+ *                       type: string
+ *                       example: "Hospital Name"
+ *                     pnrNo:
+ *                       type: string
+ *                       example: "PNR1234567890"
+ *                     dateOfJur:
+ *                       type: string
+ *                       format: date
+ *                       example: "2024-05-20"
+ *                     fromStation:
+ *                       type: string
+ *                       example: "Station A"
+ *                     toStation:
+ *                       type: string
+ *                       example: "Station B"
+ *                     trainNo:
+ *                       type: string
+ *                       example: "12345"
+ *                     trainName:
+ *                       type: string
+ *                       example: "Express Train"
+ *                     travelClass:
+ *                       type: string
+ *                       example: "AC First Class"
+ *                     isHealth:
+ *                       type: boolean
+ *                       example: true
+ *                     isRailway:
+ *                       type: boolean
+ *                       example: true
  *                     attachments:
  *                       type: array
  *                       items:
  *                         type: string
- *                         example: "https://example.com/new-attachment1.jpg"
+ *                         example: "https://example.com/attachment.jpg"
  *                     patientAttachments:
  *                       type: array
  *                       items:
  *                         type: string
- *                         example: "https://example.com/patient-new-attachment1.jpg"
+ *                         example: "https://example.com/patient-attachment.jpg"
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -691,6 +838,46 @@
  *               description:
  *                 type: string
  *                 description: The description of the grievance (optional)
+ *               patientName:
+ *                 type: string
+ *                 description: The name of the patient (optional)
+ *               aadharNo:
+ *                 type: string
+ *                 description: Aadhar number of the patient (optional)
+ *               ayshmanCardNo:
+ *                 type: string
+ *                 description: Ayushman card number (optional)
+ *               hospitalName:
+ *                 type: string
+ *                 description: Name of the hospital (optional)
+ *               pnrNo:
+ *                 type: string
+ *                 description: PNR number for travel (optional)
+ *               dateOfJur:
+ *                 type: string
+ *                 format: date
+ *                 description: Date of journey (optional)
+ *               fromStation:
+ *                 type: string
+ *                 description: Starting station for the journey (optional)
+ *               toStation:
+ *                 type: string
+ *                 description: Destination station for the journey (optional)
+ *               trainNo:
+ *                 type: string
+ *                 description: Train number (optional)
+ *               trainName:
+ *                 type: string
+ *                 description: Name of the train (optional)
+ *               travelClass:
+ *                 type: string
+ *                 description: Travel class (optional)
+ *               isHealth:
+ *                 type: boolean
+ *                 description: Indicates if the grievance is related to health (optional)
+ *               isRailway:
+ *                 type: boolean
+ *                 description: Indicates if the grievance is related to railways (optional)
  *               status:
  *                 type: integer
  *                 description: The status of the grievance (optional)
@@ -765,6 +952,46 @@
  *                     description:
  *                       type: string
  *                       example: "Grievance Description"
+ *                     patientName:
+ *                       type: string
+ *                       example: "Patient Name"
+ *                     aadharNo:
+ *                       type: string
+ *                       example: "1234-5678-9101"
+ *                     ayshmanCardNo:
+ *                       type: string
+ *                       example: "AY-1234567890"
+ *                     hospitalName:
+ *                       type: string
+ *                       example: "Hospital Name"
+ *                     pnrNo:
+ *                       type: string
+ *                       example: "PNR1234567890"
+ *                     dateOfJur:
+ *                       type: string
+ *                       format: date
+ *                       example: "2024-05-20"
+ *                     fromStation:
+ *                       type: string
+ *                       example: "Station A"
+ *                     toStation:
+ *                       type: string
+ *                       example: "Station B"
+ *                     trainNo:
+ *                       type: string
+ *                       example: "12345"
+ *                     trainName:
+ *                       type: string
+ *                       example: "Express Train"
+ *                     travelClass:
+ *                       type: string
+ *                       example: "AC First Class"
+ *                     isHealth:
+ *                       type: boolean
+ *                       example: true
+ *                     isRailway:
+ *                       type: boolean
+ *                       example: true
  *                     status:
  *                       type: integer
  *                       example: 1
