@@ -459,7 +459,7 @@ exports.createUser = async (req, res, next) => {
     const existingUser =
       (mobileNumber && (await User.findByMobileNumber(mobileNumber))) ||
       (email && (await User.findByEmail(email))) ||
-      (await User.findByVoterId(voterId));
+      (await User.findByField("voterId", voterId));
 
     if (existingUser) {
       throw new CustomError(
