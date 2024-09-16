@@ -18,96 +18,11 @@
  *   description: Epic User management
  */
 
-// /**
-//  * @swagger
-//  * /api/epicUser/v1/login:
-//  *   post:
-//  *     summary: Login or register an epic user based on mobile number, FCM token, and Epic ID
-//  *     tags: [EpicUser]
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             type: object
-//  *             required:
-//  *               - mobileNumber
-//  *               - fcmToken
-//  *               - epicId
-//  *             properties:
-//  *               mobileNumber:
-//  *                 type: string
-//  *                 example: "1234567890"
-//  *                 description: The user's mobile number
-//  *               fcmToken:
-//  *                 type: string
-//  *                 example: "fcm-token-string"
-//  *                 description: The user's FCM token for push notifications
-//  *               epicId:
-//  *                 type: string
-//  *                 example: "ABC123XYZ"
-//  *                 description: The user's Epic ID
-//  *     responses:
-//  *       200:
-//  *         description: Login or registration successful
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 success:
-//  *                   type: boolean
-//  *                   example: true
-//  *                 message:
-//  *                   type: string
-//  *                   example: "Login successful"
-//  *                 data:
-//  *                   type: object
-//  *                   properties:
-//  *                     epicUser:
-//  *                       type: object
-//  *                       properties:
-//  *                         fullName:
-//  *                           type: string
-//  *                           example: "John Doe"
-//  *                         email:
-//  *                           type: string
-//  *                           example: "user@example.com"
-//  *                         mobileNumber:
-//  *                           type: string
-//  *                           example: "1234567890"
-//  *                         epicId:
-//  *                           type: string
-//  *                           example: "ABC123XYZ"
-//  *                         image:
-//  *                           type: string
-//  *                           example: "https://example.com/profile-picture.jpg"
-//  *                         fcmToken:
-//  *                           type: string
-//  *                           example: "fcm-token-string"
-//  *                     token:
-//  *                       type: string
-//  *                       example: "jwt-token-string"
-//  *       400:
-//  *         description: Mobile number, FCM token, or Epic ID is required
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 success:
-//  *                   type: boolean
-//  *                   example: false
-//  *                 message:
-//  *                   type: string
-//  *                   example: "Mobile number, FCM token, or Epic ID is required"
-//  */
-
 /**
  * @swagger
  * /api/epicUser/v1/login:
  *   post:
- *     summary: Login or register a user based on mobile number and FCM token
+ *     summary: Login or register a user based on mobile number, FCM token, and voter ID
  *     tags: [EpicUser]
  *     requestBody:
  *       required: true
@@ -118,6 +33,7 @@
  *             required:
  *               - mobileNumber
  *               - fcmToken
+ *               - voterId
  *             properties:
  *               mobileNumber:
  *                 type: string
@@ -127,6 +43,14 @@
  *                 type: string
  *                 example: "fcm-token-string"
  *                 description: The user's FCM token for push notifications
+ *               voterId:
+ *                 type: string
+ *                 example: "VOTER123"
+ *                 description: The user's Voter ID
+ *               timeZone:
+ *                 type: string
+ *                 example: "UTC"
+ *                 description: The user's time zone
  *     responses:
  *       200:
  *         description: Login or registration successful
@@ -140,7 +64,7 @@
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: Login successful
+ *                   example: "Login successful"
  *                 data:
  *                   type: object
  *                   properties:
@@ -156,11 +80,14 @@
  *                         fcmToken:
  *                           type: string
  *                           example: "fcm-token-string"
+ *                         voterId:
+ *                           type: string
+ *                           example: "VOTER123"
  *                     token:
  *                       type: string
  *                       example: "jwt-token-string"
  *       400:
- *         description: Mobile number or FCM token is required
+ *         description: Validation error for required fields
  *         content:
  *           application/json:
  *             schema:
@@ -171,7 +98,20 @@
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: "Mobile number is required"
+ *                   example: "Mobile number, FCM token, or Voter ID is required"
+ *       409:
+ *         description: Voter ID already registered with another mobile number
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Voter ID already registered with another mobile number"
  */
 
 /**
@@ -207,8 +147,8 @@
  *                 description: The user's mobile number
  *               gender:
  *                 type: string
- *                 enum: [MALE, FEMALE, OTHER]
- *                 example: "MALE"
+ *                 enum: [male, female, other]
+ *                 example: "male"
  *                 description: The user's gender
  *               age:
  *                 type: integer
@@ -226,6 +166,10 @@
  *                 type: string
  *                 example: "Booth 12"
  *                 description: The user's booth name or number
+ *               voterId:
+ *                 type: string
+ *                 example: "VOTER123"
+ *                 description: The user's Voter ID
  *     responses:
  *       200:
  *         description: User updated successfully
@@ -260,7 +204,7 @@
  *                       example: "ABC123XYZ"
  *                     gender:
  *                       type: string
- *                       example: "MALE"
+ *                       example: "male"
  *                     age:
  *                       type: integer
  *                       example: 30
@@ -310,7 +254,7 @@
  *                   type: string
  *                   example: "User not found"
  *       409:
- *         description: Email already registered
+ *         description: Voter ID or Email already registered
  *         content:
  *           application/json:
  *             schema:
@@ -321,7 +265,7 @@
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: "Email already registered"
+ *                   example: "Voter ID already registered"
  */
 
 /**
@@ -359,9 +303,9 @@
  *                 example: "1234567890"
  *               gender:
  *                 type: string
- *                 enum: [MALE, FEMALE, OTHER]
+ *                 enum: [male, female, other]
  *                 description: The user's gender
- *                 example: "MALE"
+ *                 example: "male"
  *               age:
  *                 type: integer
  *                 description: The user's age
@@ -460,7 +404,7 @@
  *                   type: string
  *                   example: "User not found"
  *       409:
- *         description: Email already registered
+ *         description: Voter ID or Email already registered
  *         content:
  *           application/json:
  *             schema:
@@ -471,7 +415,7 @@
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: "Email already registered"
+ *                   example: "Voter ID already registered"
  */
 
 /**
@@ -550,7 +494,7 @@
  *                             example: "ABC123XYZ"
  *                           gender:
  *                             type: string
- *                             example: "MALE"
+ *                             example: "male"
  *                           age:
  *                             type: integer
  *                             example: 30
@@ -628,7 +572,7 @@
  *                       example: "ABC123XYZ"
  *                     gender:
  *                       type: string
- *                       example: "MALE"
+ *                       example: "male"
  *                     age:
  *                       type: integer
  *                       example: 30
@@ -711,7 +655,7 @@
  *                       example: "ABC123XYZ"
  *                     gender:
  *                       type: string
- *                       example: "MALE"
+ *                       example: "male"
  *                     age:
  *                       type: integer
  *                       example: 30
@@ -901,7 +845,7 @@
  *                         example: "ABC123XYZ"
  *                       gender:
  *                         type: string
- *                         example: "MALE"
+ *                         example: "male"
  *                       age:
  *                         type: integer
  *                         example: 30
@@ -972,7 +916,7 @@
  *             required:
  *               - fullName
  *               - mobileNumber
- *               - fcmToken
+ *               - voterId
  *             properties:
  *               fullName:
  *                 type: string
@@ -992,8 +936,8 @@
  *                 description: The user's mobile number
  *               gender:
  *                 type: string
- *                 enum: [MALE, FEMALE, OTHER]
- *                 example: "MALE"
+ *                 enum: [male, female, other]
+ *                 example: "male"
  *                 description: The user's gender
  *               age:
  *                 type: integer
@@ -1061,7 +1005,7 @@
  *                       example: "1234567890"
  *                     gender:
  *                       type: string
- *                       example: "MALE"
+ *                       example: "male"
  *                     age:
  *                       type: integer
  *                       example: 30
@@ -1100,7 +1044,7 @@
  *                   type: string
  *                   example: "Validation error or missing required fields"
  *       409:
- *         description: User with the same mobile number or email already exists
+ *         description: User with the same mobile number, voter ID, or email already exists
  *         content:
  *           application/json:
  *             schema:
@@ -1111,5 +1055,5 @@
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: "User with this mobile number or email already exists"
+ *                   example: "User with this mobile number, voterId or email already exists"
  */
