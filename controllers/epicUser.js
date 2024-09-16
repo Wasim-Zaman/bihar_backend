@@ -68,14 +68,23 @@ const fileHelper = require("../utils/file");
 
 exports.login = async (req, res, next) => {
   try {
-    const { mobileNumber, fcmToken, timeZone } = req.body;
+    const { mobileNumber, fcmToken, timeZone, voterId } = req.body;
 
     if (!mobileNumber) {
       throw new CustomError("Mobile number is required", 400);
     }
 
+    const userWithVoterId = await User.findByField("voterId", voterId);
+
     // Check if the user already exists
     let user = await User.findByMobileNumber(mobileNumber);
+
+    if (userWithVoterId && userWithVoterId.mobileNumber !== mobileNumber) {
+      throw new CustomError(
+        "Voter ID already registered with another mobile number",
+        409
+      );
+    }
 
     // If the user does not exist, create a new user
     if (!user) {
@@ -83,7 +92,9 @@ exports.login = async (req, res, next) => {
         mobileNumber,
         fcmToken,
         timeZone: timeZone || "UTC",
+        voterId,
       });
+
       console.log(`New user created with mobile number: ${mobileNumber}`);
     } else {
       console.log(`User with mobile number: ${mobileNumber} already exists`);
@@ -145,7 +156,6 @@ exports.register = async (req, res, next) => {
         throw new CustomError("Email already registered", 409);
       }
     }
-    console.log(gender);
 
     if (gender) {
       if (["male", "female", "other"].indexOf(gender.toLowerCase()) === -1) {
@@ -160,7 +170,8 @@ exports.register = async (req, res, next) => {
     user = await User.updateById(user.id, {
       fullName,
       fatherName,
-      epicId,
+      epicId:
+        epicId == null ? user.epicId : epicId == voterId ? epicId : user.epicId,
       gender: gender.toLowerCase(),
       age,
       email,
@@ -210,6 +221,11 @@ exports.updateUser = async (req, res, next) => {
   } = req.body;
 
   try {
+    let existUser = await User.findByField("voterId", voterId);
+    if (existUser && existUser.id !== req.user.id) {
+      throw new CustomError("Voter ID already registered", 409);
+    }
+
     // Check if the mobile number from the token matches the mobile number in the request
     if (req.mobileNumber !== mobileNumber) {
       throw new CustomError("Unauthorized: Mobile number mismatch", 401);
@@ -245,7 +261,7 @@ exports.updateUser = async (req, res, next) => {
     user = await User.updateById(user.id, {
       fullName: fullName || user.fullName,
       fatherName: fatherName || user.fatherName,
-      epicId: epicId || user.epicId,
+      epicId: epicId == voterId ? epicId : user.epicId,
       gender: gender.toLowerCase() || user.gender,
       age: Number(age || user.age),
       email: email || user.email,
@@ -431,10 +447,11 @@ exports.createUser = async (req, res, next) => {
     // Check if a user with the same mobile number, fcmToken, or email already exists
     const existingUser =
       (await User.findByMobileNumber(mobileNumber)) ||
-      (await User.findByEmail(email));
+      (await User.findByEmail(email)) ||
+      (await User.findByField("voterId", voterId));
     if (existingUser) {
       throw new CustomError(
-        "User with this mobile number or email already exists",
+        "User with this mobile number, voterId or email already exists",
         409
       );
     }
@@ -443,7 +460,7 @@ exports.createUser = async (req, res, next) => {
     const newUser = await User.create({
       fullName,
       fatherName,
-      epicId,
+      epicId: epicId == voterId ? epicId : voterId,
       image: null,
       mobileNumber,
       fcmToken: "",

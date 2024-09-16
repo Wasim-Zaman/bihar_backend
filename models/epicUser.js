@@ -14,6 +14,21 @@ class EpicUser {
     }
   }
 
+  static async findByField(field, value) {
+    try {
+      // Construct the dynamic 'where' clause
+      const whereClause = { [field]: value };
+
+      // Perform the findUnique query
+      return await prisma.epicUser.findUnique({
+        where: whereClause,
+      });
+    } catch (error) {
+      console.error(`Error finding EpicUser by ${field}:`, error);
+      throw error;
+    }
+  }
+
   static async findByEmail(email) {
     try {
       return await prisma.epicUser.findUnique({
