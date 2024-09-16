@@ -149,6 +149,12 @@ exports.register = async (req, res, next) => {
       );
     }
 
+    // check if the voterId is already registered
+    let existUser = await User.findByField("voterId", voterId);
+    if (existUser && existUser.id !== user.id) {
+      throw new CustomError("Voter ID already registered", 409);
+    }
+
     // If an email is provided, check if it already exists for another user
     if (email) {
       const userByEmail = await User.findByEmail(email);
