@@ -107,7 +107,7 @@ model EpicUser {
   gender                  String?
   age                     Int?
   email                   String?  @unique
-  voterId                 String?
+  voterId                 String?  @unique
   timeZone                String?   @default("UTC")
   status                  Int? @default(1)
 }
