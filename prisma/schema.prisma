@@ -100,7 +100,7 @@ model EpicUser {
   fatherName              String?
   image                   String? 
   epicId                  String?
-  mobileNumber            String   @unique
+  mobileNumber            String?   @unique
   fcmToken                String 
   legislativeConstituency String?
   boothNameOrNumber       String?
