@@ -450,11 +450,12 @@ exports.createUser = async (req, res, next) => {
       status,
     } = req.body;
 
-    // Check if a user with the same mobile number, fcmToken, or email already exists
+    // Check if a user with the same mobile number, email, or voter ID already exists
     const existingUser =
       (await User.findByMobileNumber(mobileNumber)) ||
       (await User.findByEmail(email)) ||
-      (await User.findByField("voterId", voterId));
+      (await User.findByVoterId(voterId));
+
     if (existingUser) {
       throw new CustomError(
         "User with this mobile number, voterId or email already exists",
