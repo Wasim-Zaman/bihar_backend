@@ -76,15 +76,15 @@ exports.login = async (req, res, next) => {
 
     const userWithVoterId = await User.findByField("voterId", voterId);
 
-    // Check if the user already exists
-    let user = await User.findByMobileNumber(mobileNumber);
-
-    if (userWithVoterId && userWithVoterId.mobileNumber !== mobileNumber) {
+    if (userWithVoterId && userWithVoterId.mobileNumber != mobileNumber) {
       throw new CustomError(
         "Voter ID already registered with another mobile number",
         409
       );
     }
+
+    // Check if the user already exists
+    let user = await User.findByMobileNumber(mobileNumber);
 
     // If the user does not exist, create a new user
     if (!user) {
