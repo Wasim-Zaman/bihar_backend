@@ -70,47 +70,82 @@ exports.login = async (req, res, next) => {
   try {
     const { mobileNumber, fcmToken, timeZone, voterId } = req.body;
 
+    // Validate the required fields
     if (!mobileNumber) {
       throw new CustomError("Mobile number is required", 400);
     }
 
-    const userWithVoterId = await User.findByField("voterId", voterId);
+    if (!voterId) {
+      throw new CustomError("Voter ID is required", 400);
+    }
 
-    if (userWithVoterId && userWithVoterId.mobileNumber != mobileNumber) {
+    // Find a user by voterId
+    let userWithVoterId = await User.findByField("voterId", voterId);
+
+    // Handle the case where the voterId is already used by a different user with a phone number
+    if (
+      userWithVoterId &&
+      userWithVoterId.mobileNumber &&
+      userWithVoterId.mobileNumber !== mobileNumber
+    ) {
       throw new CustomError(
         "Voter ID already registered with another mobile number",
         409
       );
     }
 
-    // Check if the user already exists
-    let user = await User.findByMobileNumber(mobileNumber);
+    // Find a user by mobileNumber
+    let userWithMobileNumber = await User.findByMobileNumber(mobileNumber);
 
-    // If the user does not exist, create a new user
-    if (!user) {
-      user = await User.create({
+    // Case 1: Admin created user with voterId but without mobileNumber
+    if (userWithVoterId && !userWithVoterId.mobileNumber) {
+      console.log(
+        `User with voterId: ${voterId} found without mobile number. Updating with new mobile number: ${mobileNumber}`
+      );
+      // Update the user with the mobileNumber and other details
+      userWithVoterId = await User.updateById(userWithVoterId.id, {
+        mobileNumber,
+        fcmToken,
+        timeZone: timeZone || "UTC",
+      });
+      userWithMobileNumber = userWithVoterId; // Assign the updated user to userWithMobileNumber for JWT token creation
+    } else if (userWithMobileNumber) {
+      // Case 2: User already exists with the mobileNumber
+      console.log(`User with mobile number: ${mobileNumber} already exists`);
+
+      // Check if the existing user's voterId is different
+      if (userWithMobileNumber.voterId !== voterId) {
+        throw new CustomError("Voter ID mismatch for this mobile number", 409);
+      }
+
+      // Update the user's details
+      userWithMobileNumber = await User.updateById(userWithMobileNumber.id, {
+        fcmToken: fcmToken || userWithMobileNumber.fcmToken,
+        timeZone: timeZone || "UTC",
+      });
+    } else if (!userWithVoterId) {
+      // Case 3: No user exists with this voterId and mobileNumber, create a new user
+      console.log(
+        `No user found with voterId: ${voterId} or mobile number: ${mobileNumber}. Creating new user.`
+      );
+      userWithMobileNumber = await User.create({
         mobileNumber,
         fcmToken,
         timeZone: timeZone || "UTC",
         voterId,
       });
-
-      console.log(`New user created with mobile number: ${mobileNumber}`);
     } else {
-      console.log(`User with mobile number: ${mobileNumber} already exists`);
-      user = await User.updateById(user.id, {
-        fcmToken: fcmToken || user.fcmToken,
-        timeZone: timeZone || "UTC",
-      });
+      // If userWithVoterId has a mobileNumber, it means it's already handled above, no need to handle here
+      userWithMobileNumber = userWithVoterId;
     }
 
     // Create a JWT token
-    const token = JWT.createToken(user, (options = { algorithm: "HS256" }));
+    const token = JWT.createToken(userWithMobileNumber, { algorithm: "HS256" });
 
     // Return the user data and token
     res.status(200).json(
       response(200, true, "Login successful", {
-        user: user,
+        user: userWithMobileNumber,
         token,
       })
     );
