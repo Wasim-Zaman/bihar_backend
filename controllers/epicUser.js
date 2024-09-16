@@ -450,10 +450,15 @@ exports.createUser = async (req, res, next) => {
       status,
     } = req.body;
 
+    // Check if voterId is provided
+    if (!voterId) {
+      throw new CustomError("Voter ID is required", 400);
+    }
+
     // Check if a user with the same mobile number, email, or voter ID already exists
     const existingUser =
-      (await User.findByMobileNumber(mobileNumber)) ||
-      (await User.findByEmail(email)) ||
+      (mobileNumber && (await User.findByMobileNumber(mobileNumber))) ||
+      (email && (await User.findByEmail(email))) ||
       (await User.findByVoterId(voterId));
 
     if (existingUser) {
@@ -469,13 +474,13 @@ exports.createUser = async (req, res, next) => {
       fatherName,
       epicId: epicId == voterId ? epicId : voterId,
       image: null,
-      mobileNumber,
+      mobileNumber: mobileNumber || null,
       fcmToken: "",
-      legislativeConstituency,
-      boothNameOrNumber,
-      gender,
-      age,
-      email,
+      legislativeConstituency: legislativeConstituency || null,
+      boothNameOrNumber: boothNameOrNumber || null,
+      gender: gender || null,
+      age: age || null,
+      email: email || null,
       voterId,
       timeZone: timeZone || "UTC",
       status: status !== undefined ? Number(status) : 1,
