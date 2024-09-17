@@ -372,13 +372,15 @@ exports.deleteUser = async (req, res, next) => {
 
 exports.getUser = async (req, res, next) => {
   try {
-    if (!req.user) {
-      throw new CustomError("Unauthorized: No user found in token", 401);
+    const user = await User.findByMobileNumber(req.user.mobileNumber);
+
+    if (!user) {
+      throw new CustomError("User not found", 404);
     }
 
     res
       .status(200)
-      .json(response(200, true, "User retrieved successfully", req.user));
+      .json(response(200, true, "User retrieved successfully", user));
   } catch (error) {
     next(error);
   }
