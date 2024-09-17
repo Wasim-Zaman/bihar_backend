@@ -211,38 +211,26 @@ exports.register = async (req, res, next) => {
 
     // Update user details
     user = await User.updateById(user.id, {
-      fullName,
-      fatherName,
+      fullName: fullName ?? user.fullName,
+      fatherName: fatherName ?? user.fatherName,
       epicId:
         epicId == null ? user.epicId : epicId == voterId ? epicId : user.epicId,
-      gender: gender,
-      age,
-      email,
-      legislativeConstituency,
-      boothNameOrNumber,
-      voterId,
+      gender: gender ?? user.gender,
+      age: Number(age ?? user.age),
+      email: email ?? user.email,
+      legislativeConstituency:
+        legislativeConstituency ?? user.legislativeConstituency,
+      boothNameOrNumber: boothNameOrNumber ?? boothNameOrNumber,
+      voterId: voterId ?? user.voterId,
     });
 
     console.log(
       `User with mobile number: ${mobileNumber} updated successfully`
     );
 
-    res.status(200).json(
-      response(200, true, "User updated successfully", {
-        user: {
-          id: user.id,
-          email: user.email,
-          fullName: user.fullName,
-          fatherName: user.fatherName,
-          epicId: user.epicId,
-          gender: user.gender,
-          age: user.age,
-          legislativeConstituency: user.legislativeConstituency,
-          boothNameOrNumber: user.boothNameOrNumber,
-          voterId: user.voterId,
-        },
-      })
-    );
+    res
+      .status(200)
+      .json(response(200, true, "User updated successfully", user));
   } catch (error) {
     console.log(`Error in register: ${error.message}`);
     next(error);
