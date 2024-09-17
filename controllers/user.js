@@ -62,6 +62,8 @@ exports.register = async (req, res, next) => {
   } = req.body;
 
   try {
+    console.log(JSON.stringify(req.body));
+
     // Check if the mobile number from the token matches the mobile number in the request
     if (req.mobileNumber !== mobileNumber) {
       throw new CustomError("Unauthorized: Mobile number mismatch", 401);

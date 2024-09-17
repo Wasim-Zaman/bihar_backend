@@ -169,6 +169,8 @@ exports.register = async (req, res, next) => {
     voterId,
   } = req.body;
 
+  console.log(JSON.stringify(req.body));
+
   try {
     // Check if the mobile number from the token matches the mobile number in the request
     if (req.mobileNumber !== mobileNumber) {
