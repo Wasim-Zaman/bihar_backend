@@ -85,21 +85,21 @@ exports.register = async (req, res, next) => {
     }
     console.log(gender);
 
-    if (gender) {
-      if (["male", "female", "other"].indexOf(gender.toLowerCase()) === -1) {
-        throw new CustomError(
-          "Invalid gender provided. Must be either Male, Female, or Other",
-          400
-        );
-      }
-    }
+    // if (gender) {
+    //   if (["male", "female", "other"].indexOf(gender.toLowerCase()) === -1) {
+    //     throw new CustomError(
+    //       "Invalid gender provided. Must be either Male, Female, or Other",
+    //       400
+    //     );
+    //   }
+    // }
 
     // Update user details
     user = await User.updateById(user.id, {
       fullName,
       fatherName,
       epicId,
-      gender: gender.toLowerCase(),
+      gender: gender,
       age,
       email,
       legislativeConstituency,
