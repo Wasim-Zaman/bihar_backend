@@ -263,7 +263,7 @@ exports.updateUser = async (req, res, next) => {
     }
 
     // Find the user by mobile number
-    let user = await User.findByMobileNumber(mobileNumber);
+    const user = await User.findByMobileNumber(mobileNumber);
     if (!user) {
       throw new CustomError(
         "Epic User not found with the entered mobile number",
@@ -289,7 +289,7 @@ exports.updateUser = async (req, res, next) => {
     }
 
     // Update user details
-    user = await User.updateById(user.id, {
+    const updatedUser = await User.updateById(user.id, {
       fullName: fullName || user.fullName,
       fatherName: fatherName || user.fatherName,
       epicId: epicId == voterId ? epicId : user.epicId,
@@ -307,19 +307,9 @@ exports.updateUser = async (req, res, next) => {
       `User with mobile number: ${mobileNumber} updated successfully`
     );
 
-    res.status(200).json(
-      response(200, true, "Epic User updated successfully", {
-        epicUser: {
-          fullName: epicUser.fullName,
-          email: epicUser.email,
-          mobileNumber: epicUser.mobileNumber,
-          epicId: epicUser.epicId,
-          image: epicUser.image,
-          voterId: epicUser.voterId,
-          fcmToken: epicUser.fcmToken,
-        },
-      })
-    );
+    res
+      .status(200)
+      .json(response(200, true, "Epic User updated successfully", updatedUser));
   } catch (error) {
     console.log(`Error in updateUser: ${error.message}`);
     next(error);

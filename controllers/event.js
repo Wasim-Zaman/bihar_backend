@@ -180,6 +180,7 @@ exports.createEventV2 = async (req, res, next) => {
     const isApprovedEventOnSameDate = await Event.checkForApprovedEventOnDate(
       eventDate.toDate()
     );
+
     if (isApprovedEventOnSameDate) {
       // Delete the uploaded files before throwing an error
       deleteUploadedFiles(req.files);
