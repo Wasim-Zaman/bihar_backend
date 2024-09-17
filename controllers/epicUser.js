@@ -288,12 +288,11 @@ exports.updateUser = async (req, res, next) => {
       if (user.image) await fileHelper.deleteFile(user.image);
     }
 
-    // Update user details
-    const updatedUser = await User.updateById(user.id, {
+    const data = {
       fullName: fullName || user.fullName,
       fatherName: fatherName || user.fatherName,
       epicId: epicId == voterId ? epicId : user.epicId,
-      gender: gender.toLowerCase() || user.gender,
+      gender: gender || user.gender,
       age: Number(age || user.age),
       email: email || user.email,
       voterId: voterId || user.voterId,
@@ -301,7 +300,11 @@ exports.updateUser = async (req, res, next) => {
         legislativeConstituency || user.legislativeConstituency,
       boothNameOrNumber: boothNameOrNumber || user.boothNameOrNumber,
       image,
-    });
+    };
+
+    console.log(JSON.stringify(data));
+    // Update user details
+    const updatedUser = await User.updateById(user.id, data);
 
     console.log(
       `User with mobile number: ${mobileNumber} updated successfully`
