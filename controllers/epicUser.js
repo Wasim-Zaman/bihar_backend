@@ -252,6 +252,7 @@ exports.updateUser = async (req, res, next) => {
   } = req.body;
 
   try {
+    // Check if a user with the given voterId exists and is not the current user
     let existUser = await User.findByField("voterId", voterId);
     if (existUser && existUser.id !== req.user.id) {
       throw new CustomError("Voter ID already registered", 409);
@@ -271,27 +272,29 @@ exports.updateUser = async (req, res, next) => {
       );
     }
 
-    console.log(gender);
-    // if (gender) {
-    //   if (["male", "female", "other"].indexOf(gender.toLowerCase()) === -1) {
-    //     throw new CustomError(
-    //       "Invalid gender provided. Must be either Male, Female, or Other",
-    //       400
-    //     );
-    //   }
-    // }
+    // Validate gender if provided
+    if (gender) {
+      if (!["male", "female", "other"].includes(gender.toLowerCase())) {
+        throw new CustomError(
+          "Invalid gender provided. Must be either Male, Female, or Other",
+          400
+        );
+      }
+    }
 
     // Handle image file upload
     let image = req.file ? req.file.path : user.image;
 
-    if (req.file) {
-      if (user.image) await fileHelper.deleteFile(user.image);
+    // Delete the old image if a new one is uploaded
+    if (req.file && user.image) {
+      await fileHelper.deleteFile(user.image);
     }
 
+    // Create the updated data object
     const data = {
       fullName: fullName || user.fullName,
       fatherName: fatherName || user.fatherName,
-      epicId: epicId == voterId ? epicId : user.epicId,
+      epicId: epicId || user.epicId,
       gender: gender || user.gender,
       age: Number(age || user.age),
       email: email || user.email,
@@ -302,14 +305,19 @@ exports.updateUser = async (req, res, next) => {
       image,
     };
 
-    console.log(JSON.stringify(data));
-    // Update user details
+    // Update user details in the database
     const updatedUser = await User.updateById(user.id, data);
+
+    // If the update fails, throw an error
+    if (!updatedUser) {
+      throw new CustomError("Failed to update user", 500);
+    }
 
     console.log(
       `User with mobile number: ${mobileNumber} updated successfully`
     );
 
+    // Send the success response
     res
       .status(200)
       .json(response(200, true, "Epic User updated successfully", updatedUser));
