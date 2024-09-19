@@ -28,6 +28,16 @@ router.post(
 );
 
 router.post(
+  "/v3/events",
+  isAuth,
+  //   isActive,
+  uploadMultiple({
+    fields: [{ name: "documents" }],
+  }),
+  controller.createEventV3
+);
+
+router.post(
   "/v1/adminEvent",
   isAdmin,
   uploadMultiple({ fields: [{ name: "documents" }] }),

@@ -388,6 +388,42 @@ class Event {
     }
   }
 
+  // Event model class
+  static async checkForApprovedEventOnDateAndTime(date, fromTime, toTime) {
+    try {
+      // Parse the provided date and normalize it to remove time components
+      const searchDate = new Date(date);
+      searchDate.setUTCHours(0, 0, 0, 0);
+
+      const startOfDay = new Date(searchDate);
+      const endOfDay = new Date(searchDate);
+      endOfDay.setUTCHours(23, 59, 59, 999);
+
+      // Query to find any approved event on the same day with the same fromTime and toTime
+      const existingEvent = await prisma.event.findFirst({
+        where: {
+          date: {
+            gte: startOfDay, // Start of the day
+            lte: endOfDay, // End of the day
+          },
+          fromTime: fromTime, // Same fromTime
+          toTime: toTime, // Same toTime
+          status: 0, // Only approved events
+        },
+      });
+
+      return !!existingEvent; // Return true if an approved event with the same time exists, otherwise false
+    } catch (error) {
+      console.error(
+        `Error checking for approved event on date ${date} and time ${fromTime}-${toTime}:`,
+        error.message
+      );
+      throw new Error(
+        `Unable to check for approved event on date ${date} and time ${fromTime}-${toTime}`
+      );
+    }
+  }
+
   static async checkForApprovedEventOnDate(date) {
     try {
       // Parse the provided date and normalize it to remove time components

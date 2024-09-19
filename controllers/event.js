@@ -226,6 +226,150 @@ exports.createEventV2 = async (req, res, next) => {
   }
 };
 
+exports.createEventV3 = async (req, res, next) => {
+  try {
+    const {
+      eventTitle,
+      date,
+      fromTime,
+      toTime,
+      constituency,
+      boothNumber,
+      mobileNumber,
+      owner,
+      categoryName,
+      place,
+      status,
+    } = req.body;
+
+    // Check if the owner is a valid user type
+    if (owner.toLowerCase() !== "epic user" && owner.toLowerCase() !== "user") {
+      throw new CustomError(
+        "Unauthorized access, you are not the User or an Epic User",
+        401
+      );
+    }
+
+    let user;
+    if (owner.toLowerCase() === "user") {
+      user = await User.findById(req.user.id);
+    } else {
+      user = await EpicUser.findById(req.user.id);
+    }
+
+    if (!user) {
+      throw new CustomError(
+        "User not found with the entered mobile number",
+        404
+      );
+    }
+
+    console.log("Received event creation request:", req.body);
+
+    // Check if mobile number matches
+    if (req.user.mobileNumber !== mobileNumber) {
+      throw new CustomError(
+        "Unauthorized access, please enter correct mobile number",
+        401
+      );
+    }
+
+    console.log("Files received:", req.files);
+
+    const documents =
+      req.files && req.files.documents
+        ? req.files.documents.map((file) => file.path)
+        : [];
+
+    // Validate required fields
+    if (
+      !eventTitle ||
+      !date ||
+      !fromTime ||
+      !toTime ||
+      !mobileNumber ||
+      !owner ||
+      !categoryName ||
+      !place ||
+      status === undefined
+    ) {
+      throw new CustomError(
+        "All required fields must be provided ['eventTitle', 'date', 'fromTime', 'toTime', 'mobileNumber', 'owner', 'categoryName', 'place' ]'",
+        400
+      );
+    }
+
+    // Convert the event date to a moment object in UTC
+    const eventDate = moment.tz(date, "UTC").startOf("day");
+    console.log("Parsed event date (UTC):", eventDate);
+
+    // Get the current date and the date for tomorrow
+    const today = moment().startOf("day"); // Current date (start of day)
+    const tomorrow = moment().add(1, "days").startOf("day"); // Tomorrow date (start of day)
+
+    // Check if the selected event date is today or tomorrow
+    if (eventDate.isSame(today) || eventDate.isSame(tomorrow)) {
+      // Delete the uploaded files before throwing an error
+      deleteUploadedFiles(req.files);
+      throw new CustomError(
+        "You cannot create an event for today or tomorrow. Please select a date at least two days in the future.",
+        400
+      );
+    }
+
+    // Check if an approved event exists on the same date and time
+    const isApprovedEventOnSameDateAndTime =
+      await Event.checkForApprovedEventOnDateAndTime(
+        eventDate.toDate(),
+        fromTime,
+        toTime
+      );
+
+    if (isApprovedEventOnSameDateAndTime) {
+      // Delete the uploaded files before throwing an error
+      deleteUploadedFiles(req.files);
+      throw new CustomError(
+        "An approved event already exists on the selected date and time. You cannot create another event on this date and time.",
+        400
+      );
+    }
+
+    // Event data passes all restrictions, now create the event in the database
+    const newEvent = await Event.create({
+      eventTitle,
+      date: eventDate.toDate(), // Convert moment object back to Date
+      fromTime,
+      toTime,
+      constituency: constituency || user.legislativeConstituency,
+      boothNumber: boothNumber || user.boothNameOrNumber,
+      mobileNumber,
+      owner: owner.toLowerCase(),
+      status: parseInt(status, 10),
+      categoryName,
+      place,
+      documents,
+    });
+
+    console.log(
+      `Event created with ID: ${newEvent.id} and title: ${eventTitle}`
+    );
+
+    // Schedule the notification
+    scheduleNotification(newEvent, user);
+
+    console.log("Notification scheduled.");
+
+    res
+      .status(201)
+      .json(
+        generateResponse(201, true, "Event created successfully", newEvent)
+      );
+  } catch (error) {
+    console.log(`Error in createEventV2: ${error.message}`);
+    next(error);
+  }
+};
+
 exports.createAdminEvent = async (req, res, next) => {
   try {
     const {
