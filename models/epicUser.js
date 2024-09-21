@@ -1,4 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
@@ -9,7 +9,7 @@ class EpicUser {
         where: { id: id },
       });
     } catch (error) {
-      console.error("Error finding EpicUser by id:", error);
+      console.error('Error finding EpicUser by id:', error);
       throw error;
     }
   }
@@ -19,8 +19,8 @@ class EpicUser {
       // Construct the dynamic 'where' clause
       const whereClause = { [field]: value };
 
-      // Perform the findUnique query
-      return await prisma.epicUser.findUnique({
+      // Use findFirst for non-unique fields
+      return await prisma.epicUser.findFirst({
         where: whereClause,
       });
     } catch (error) {
@@ -35,7 +35,7 @@ class EpicUser {
         where: { email: email },
       });
     } catch (error) {
-      console.error("Error finding EpicUser by email:", error);
+      console.error('Error finding EpicUser by email:', error);
       throw error;
     }
   }
@@ -46,7 +46,7 @@ class EpicUser {
         where: { mobileNumber: mobileNumber },
       });
     } catch (error) {
-      console.error("Error finding EpicUser by mobile number:", error);
+      console.error('Error finding EpicUser by mobile number:', error);
       throw error;
     }
   }
@@ -57,7 +57,7 @@ class EpicUser {
         where: { fcmToken: fcmToken },
       });
     } catch (error) {
-      console.error("Error finding EpicUser by FCM token:", error);
+      console.error('Error finding EpicUser by FCM token:', error);
       throw error;
     }
   }
@@ -69,7 +69,7 @@ class EpicUser {
         data,
       });
     } catch (error) {
-      console.error("Error creating EpicUser:", error);
+      console.error('Error creating EpicUser:', error);
       throw error;
     }
   }
@@ -93,7 +93,7 @@ class EpicUser {
         where: { id: id },
       });
     } catch (error) {
-      console.error("Error deleting EpicUser by id:", error);
+      console.error('Error deleting EpicUser by id:', error);
       throw error;
     }
   }
@@ -102,12 +102,12 @@ class EpicUser {
     try {
       return await prisma.epicUser.findMany();
     } catch (error) {
-      console.error("Error finding all EpicUsers:", error);
+      console.error('Error finding all EpicUsers:', error);
       throw error;
     }
   }
 
-  static async get(page = 1, limit = 10, query = "") {
+  static async get(page = 1, limit = 10, query = '') {
     try {
       const skip = (page - 1) * limit;
 
@@ -145,7 +145,7 @@ class EpicUser {
         },
       };
     } catch (error) {
-      console.error("Error getting users with pagination and search:", error);
+      console.error('Error getting users with pagination and search:', error);
       throw error;
     }
   }
@@ -158,14 +158,12 @@ class EpicUser {
         user = await this.create({ mobileNumber, fcmToken, epicId });
         console.log(`Created new EpicUser with mobile number: ${mobileNumber}`);
       } else {
-        console.log(
-          `EpicUser with mobile number: ${mobileNumber} already exists`
-        );
+        console.log(`EpicUser with mobile number: ${mobileNumber} already exists`);
       }
 
       return user;
     } catch (error) {
-      console.error("Error during login process:", error);
+      console.error('Error during login process:', error);
       throw error;
     }
   }
