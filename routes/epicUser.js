@@ -14,10 +14,8 @@ router.post('/v1/login', controller.login);
 
 router.post('/v1/register', isAuth, controller.register);
 
-router.post('');
-
 // Update user
-router.put('/v1/updateUser', isAuth, uploadSingle({ filename: 'image' }), controller.updateUser);
+router.put('/v1/update', uploadSingle({ filename: 'image' }), controller.updateUser);
 
 router.get('/v1/users', controller.getUsers);
 
