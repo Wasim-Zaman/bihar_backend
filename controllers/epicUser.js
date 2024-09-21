@@ -344,25 +344,102 @@ exports.register = async (req, res, next) => {
   }
 };
 
+// exports.updateUser = async (req, res, next) => {
+//   const {
+//     fullName,
+//     fatherName,
+//     epicId,
+//     mobileNumber,
+//     gender,
+//     age,
+//     email,
+//     legislativeConstituency,
+//     boothNameOrNumber,
+//     voterId,
+//   } = req.body;
+
+//   try {
+//     // Check if a user with the given voterId exists and is not the current user
+//     let existUser = await User.findByField('voterId', voterId);
+//     if (existUser && existUser.id !== req.user.id) {
+//       throw new CustomError('Voter ID already registered', 409);
+//     }
+
+//     // Check if the mobile number from the token matches the mobile number in the request
+//     if (req.mobileNumber !== mobileNumber) {
+//       throw new CustomError('Unauthorized: Mobile number mismatch', 401);
+//     }
+
+//     // Find the user by mobile number
+//     const user = await User.findByMobileNumber(mobileNumber);
+//     if (!user) {
+//       throw new CustomError('Epic User not found with the entered mobile number', 404);
+//     }
+
+//     // Validate gender if provided
+//     if (gender) {
+//       if (!['male', 'female', 'other'].includes(gender.toLowerCase())) {
+//         throw new CustomError('Invalid gender provided. Must be either Male, Female, or Other', 400);
+//       }
+//     }
+
+//     // Handle image file upload
+//     let image = req.file ? req.file.path : user.image;
+
+//     // Delete the old image if a new one is uploaded
+//     if (req.file && user.image) {
+//       await fileHelper.deleteFile(user.image);
+//     }
+
+//     // Create the updated data object
+//     const data = {
+//       fullName: fullName || user.fullName,
+//       fatherName: fatherName || user.fatherName,
+//       epicId: epicId || user.epicId,
+//       gender: gender || user.gender,
+//       age: Number(age || user.age),
+//       email: email || user.email,
+//       voterId: voterId || user.voterId,
+//       legislativeConstituency: legislativeConstituency || user.legislativeConstituency,
+//       boothNameOrNumber: boothNameOrNumber || user.boothNameOrNumber,
+//       image,
+//     };
+
+//     // Update user details in the database
+//     const updatedUser = await User.updateById(user.id, data);
+
+//     // If the update fails, throw an error
+//     if (!updatedUser) {
+//       throw new CustomError('Failed to update user', 500);
+//     }
+
+//     console.log(`User with mobile number: ${mobileNumber} updated successfully`);
+
+//     // Send the success response
+//     res.status(200).json(response(200, true, 'Epic User updated successfully', updatedUser));
+//   } catch (error) {
+//     console.log(`Error in updateUser: ${error.message}`);
+//     next(error);
+//   }
+// };
+
 exports.updateUser = async (req, res, next) => {
   const {
     fullName,
-    fatherName,
-    epicId,
-    mobileNumber,
-    gender,
-    age,
     email,
-    legislativeConstituency,
-    boothNameOrNumber,
-    voterId,
+    mobileNumber,
+    gender, // optional
+    age, // optional
+    voterId, // optional
+    legislativeConstituency, // optional
+    boothNameOrNumber, // optional
   } = req.body;
 
   try {
-    // Check if a user with the given voterId exists and is not the current user
-    let existUser = await User.findByField('voterId', voterId);
-    if (existUser && existUser.id !== req.user.id) {
-      throw new CustomError('Voter ID already registered', 409);
+    // Find the user by mobile number
+    const user = await User.findByMobileNumber(mobileNumber);
+    if (!user) {
+      throw new CustomError('Epic User not found with the entered mobile number', 404);
     }
 
     // Check if the mobile number from the token matches the mobile number in the request
@@ -370,20 +447,22 @@ exports.updateUser = async (req, res, next) => {
       throw new CustomError('Unauthorized: Mobile number mismatch', 401);
     }
 
-    // Find the user by mobile number
-    const user = await User.findByMobileNumber(mobileNumber);
-    if (!user) {
-      throw new CustomError('Epic User not found with the entered mobile number', 404);
+    // Check if a user with the given voterId exists and is not the current user (optional voterId check)
+    if (voterId) {
+      let existUser = await User.findByField('voterId', voterId);
+      if (existUser && existUser.id !== req.user.id) {
+        throw new CustomError('Voter ID already registered', 409);
+      }
     }
 
-    // Validate gender if provided
+    // Validate gender if provided (optional)
     if (gender) {
       if (!['male', 'female', 'other'].includes(gender.toLowerCase())) {
         throw new CustomError('Invalid gender provided. Must be either Male, Female, or Other', 400);
       }
     }
 
-    // Handle image file upload
+    // Handle image file upload (optional)
     let image = req.file ? req.file.path : user.image;
 
     // Delete the old image if a new one is uploaded
@@ -391,18 +470,17 @@ exports.updateUser = async (req, res, next) => {
       await fileHelper.deleteFile(user.image);
     }
 
-    // Create the updated data object
+    // Create the updated data object, only updating the provided fields
     const data = {
       fullName: fullName || user.fullName,
-      fatherName: fatherName || user.fatherName,
-      epicId: epicId || user.epicId,
-      gender: gender || user.gender,
-      age: Number(age || user.age),
       email: email || user.email,
-      voterId: voterId || user.voterId,
-      legislativeConstituency: legislativeConstituency || user.legislativeConstituency,
-      boothNameOrNumber: boothNameOrNumber || user.boothNameOrNumber,
-      image,
+      mobileNumber: mobileNumber || user.mobileNumber,
+      image, // new image or existing image
+      gender: gender || user.gender, // optional
+      age: age ? Number(age) : user.age, // optional
+      voterId: voterId || user.voterId, // optional
+      legislativeConstituency: legislativeConstituency || user.legislativeConstituency, // optional
+      boothNameOrNumber: boothNameOrNumber || user.boothNameOrNumber, // optional
     };
 
     // Update user details in the database
