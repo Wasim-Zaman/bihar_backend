@@ -53,7 +53,7 @@ class EpicUser {
 
   static async findByFcmToken(fcmToken) {
     try {
-      return await prisma.epicUser.findUnique({
+      return await prisma.epicUser.findFirst({
         where: { fcmToken: fcmToken },
       });
     } catch (error) {
@@ -77,7 +77,7 @@ class EpicUser {
   static async updateById(id, data) {
     try {
       return await prisma.epicUser.update({
-        where: { id: id.toString() },
+        where: { id: id },
         data,
       });
     } catch (error) {
@@ -158,7 +158,11 @@ class EpicUser {
         user = await this.create({ mobileNumber, fcmToken, epicId });
         console.log(`Created new EpicUser with mobile number: ${mobileNumber}`);
       } else {
-        console.log(`EpicUser with mobile number: ${mobileNumber} already exists`);
+        // Update the fcmToken if it has changed
+        if (user.fcmToken !== fcmToken) {
+          user = await this.updateById(user.id, { fcmToken });
+          console.log(`Updated fcmToken for EpicUser with mobile number: ${mobileNumber}`);
+        }
       }
 
       return user;
